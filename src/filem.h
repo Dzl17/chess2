@@ -1,0 +1,4 @@
+#ifndef CHESS2_FILEM_H
+#define CHESS2_FILEM_H
+
+#endif //CHESS2_FILEM_H

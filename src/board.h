@@ -1,0 +1,4 @@
+#ifndef CHESS2_BOARD_H
+#define CHESS2_BOARD_H
+
+#endif //CHESS2_BOARD_H
