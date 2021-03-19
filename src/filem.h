@@ -6,10 +6,33 @@
 //IMPORTANTE: intentar "aislar" este módulo, no utilizar la estructura Board ni nada parecido
 //Probablemente haya que cambiar la forma de pasar arrays de loadGame()
 
-void saveForm(int id, char *code); // Guardar formación actual
-const char * loadForm(int id); // Leer formación, TODO 4 IDs en total?
+/**
+ * Guarda una formación en un archivo.
+ * @param id Id del archivo
+ * @param code Array de la formación
+ */
+void saveForm(int id, char *code);
 
-void saveGame(int time, int turn, int pieces[][4]); // Guardar estado del juego
-int** loadGame(); // Cargar estado del juego (entrada 0 son los datos extras, las siguientes son piezas)
+/**
+ * Devuelve una formacion guardada en un archivo.
+ * @param id Id del archivo
+ * @return Puntero al array de la formación
+ */
+const char * loadForm(int id); //TODO 4 IDs en total?
+
+
+/**
+ * Guarda en un archivo el estado del juego.
+ * @param time Tiempo de juego //TODO tiempo por cada lado?
+ * @param turn Turno de juego
+ * @param pieces Estado de las piezas (id,vida,x,y)
+ */
+void saveGame(int time, int turn, int pieces[][4]);
+
+/**
+ * Devuelve un array con el estado del juego.
+ * @return Array de estado (entrada 0 -> datos, entradas 1+ -> piezas)
+ */
+int** loadGame();
 
 #endif //CHESS2_FILEM_H
