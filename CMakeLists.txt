@@ -10,4 +10,6 @@ add_executable(chess2
         src/board.h
         src/filem.c
         src/filem.h
-        src/main.c)
+        src/main.c
+        src/tempiece.c
+        src/tempiece.h)

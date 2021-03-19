@@ -9,18 +9,18 @@ void saveForm(int id, char *code)
 {
     char intBuffer[12]; //Pasa la ID a un string
     sprintf(intBuffer, "%d", id);
-    FILE *filew = fopen(conc("file", intBuffer, ".txt"), "w"); // Si el archivo no existe, se crea
+    FILE *filew = fopen(conc("..\\data\\file", intBuffer, ".txt"), "w"); // Si el archivo no existe, se crea
     for (int i = 0; i < FORM_LENGTH; i++) {
         fprintf(filew, "%c", code[i]);
     }
     fclose(filew);
 }
 
-const char * loadForm(int id) //TODO NECESARIO LIBERAR PUNTERO DEVUELTO -> free((char*) c)
+char * loadForm(int id) //TODO NECESARIO LIBERAR PUNTERO DEVUELTO -> free((char*) c)
 {
     char intBuffer[12]; //Pasa la ID a un string
     sprintf(intBuffer, "%d", id);
-    FILE *filer = fopen(conc("file", intBuffer, ".txt"), "r");
+    FILE *filer = fopen(conc("..\\data\\file", intBuffer, ".txt"), "r");
     if (filer == NULL) return NULL;
     char *form = malloc(21);
     char c;
@@ -32,11 +32,13 @@ const char * loadForm(int id) //TODO NECESARIO LIBERAR PUNTERO DEVUELTO -> free(
     return form;
 }
 
-void saveGame(int time, int turn, int pieces[][4]){
+void saveGame(int time, int turn, int pieces[][4])
+{
 
 }
 
-int** loadGame(){
+int** loadGame()
+{
 
 }
 

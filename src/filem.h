@@ -18,7 +18,7 @@ void saveForm(int id, char *code);
  * @param id Id del archivo
  * @return Puntero al array de la formación
  */
-const char * loadForm(int id); //TODO 4 IDs en total?
+char * loadForm(int id); //TODO 4 IDs en total?
 
 
 /**
