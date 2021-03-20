@@ -29,7 +29,7 @@ void printBoard(Board board)
     printf("\n");
 }
 
-int * locateId(Board board, int x, int y)   //Buscar ID
+int locateId(Board board, int x, int y)   //Buscar ID
 {
     return board.data[x][y];
 }

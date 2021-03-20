@@ -19,13 +19,12 @@ int canMove(TestPiece *piece, int originX, int originY, int destinyX, int destin
 {
     if (destinyX < 0 || destinyX > 10 || destinyY < 0 || destinyY > 6) return 0;
     switch (pieceType(piece)) {
-        case 0:
+        case 0: // Lancero
 
-        case 1:
+        case 2: // Asesino
 
-        case 2:
-
-        case 3:
+        case 1: // Mago
+        case 3: // Golem
             if ((abs(originX - destinyX) == 1 && abs(originY - destinyY) == 0) ||
                 (abs(originY - destinyY) == 1 && abs(originX - destinyX) == 0) ||
                 (abs(originX - destinyX) == 1 && abs(originY - destinyY) == 1)) return 1;

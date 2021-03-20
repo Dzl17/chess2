@@ -22,11 +22,12 @@ typedef struct {
 void printBoard(Board board);
 
 /**
- * Devuelve la x/y de la pieza requerida.
+ * Devuelve la id de la pieza en la posición requerida.
  * @param board Tablero
- * @param id Id de la pieza necesitada
- * @return Puntero a array con x e y.
+ * @param x X de la pieza
+ * @param y Y de la pieza
+ * @return ID de la pieza
  */
-int * locateId(Board board, int x, int y);
+int locateId(Board board, int x, int y);
 
 #endif //CHESS2_BOARD_H

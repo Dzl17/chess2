@@ -8,7 +8,7 @@ typedef struct {
     TestPiece pieces[24];
 } Game;
 
-void updatePiece(TestPiece *piece, Board *board, const char *origin, const char *destiny);
+void updatePiece(Game *game, const char *origin, const char *destiny);
 void movePiece(TestPiece *piece, Board *board, int originX, int originY, int destinyX, int destinyY);
 void attackPiece(TestPiece *piece1, TestPiece *piece2, Board *board);
 
