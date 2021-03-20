@@ -27,6 +27,6 @@ void printBoard(Board board);
  * @param id Id de la pieza necesitada
  * @return Puntero a array con x e y.
  */
-int * locateId(Board board, int id);
+int * locateId(Board board, int x, int y);
 
 #endif //CHESS2_BOARD_H
