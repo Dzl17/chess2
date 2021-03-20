@@ -5,17 +5,35 @@
 
 int main() {
     Board b;
+    int p=0;
+    int d=0;
+    char f[21] = {'a','w','w','w','e','e','w','w','w','e','e','e','e','e','w','e','w','w','w','e','e'};
+    char e[21] = {'a','w','w','w','e','e','w','w','w','e','e','e','e','e','w','e','w','w','w','e','e'};
     for (int i = 0; i < B_ROWS; i++)
     {
         for (int j = 0; j < B_COLUMNS; j++)
         {
-            b.data[i][j] = i + j;
+            if (j<3){
+                if (f[p]!='w') {
+                    b.data[i][j] = 1;
+                }else{
+                    b.data[i][j] = 0;
+                }
+                p++;
+            }else if (j>7){
+                if (e[d]!='w') {
+                    b.data[i][j] = 1;
+                }else{
+                    b.data[i][j] = 0;
+                }
+                d++;
+            } else{
+                b.data[i][j] = 0;
+            }
+
         }
     }
-    b.data[2][6] = 0;
-    b.data[2][2] = 0;
-    b.data[1][6] = 0;
-    b.data[0][3] = 0;
+
     printBoard(b);
     char c[21] = {'a','w','w','w','e','e','w','w','w','e','e','e','e','e','w','e','e','w','e','w','e'};
     saveForm(1, c);
