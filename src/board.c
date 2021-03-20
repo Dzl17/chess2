@@ -4,8 +4,7 @@
 
 void printBoard(Board board)
 {
-    for (int i = 0; i < 7; i++)
-    {
+    for (int i = 0; i < 7; i++) {
         printf("%d > |", i + 1);
         for (int j = 0; j < 11; j++)
         {
@@ -19,14 +18,12 @@ void printBoard(Board board)
     }
 
     printf("     "); // Formateo
-    for (int i = 0; i < 11; i++)
-    {
+    for (int i = 0; i < 11; i++) {
         printf("^ "); // Formateo
     }
 
     printf("\n     "); // Formateo
-    for (int i = 0; i < 11; i++)
-    {
+    for (int i = 0; i < 11; i++) {
         printf("%c ", 'a' + i);
     }
     printf("\n");
