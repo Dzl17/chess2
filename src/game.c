@@ -9,7 +9,7 @@ void updatePiece(Game *game, const char *origin, const char *destiny)
     int destinyX = destiny[0] - 'a';
     int destinyY = destiny[1] - '0';
 
-    int id = locateId(game->board, originX, originY);
+    int id = locateId(*game, originX, originY);
     TestPiece *piece = NULL;
     for (int i = 0; i < 22; i++) {
         if (game->pieces[i].id == id) {
@@ -19,9 +19,9 @@ void updatePiece(Game *game, const char *origin, const char *destiny)
     }
 
     int team = piece->id <= 12 ? 0 : 1; // 0 equipo "blanco", 1 equipo "negro"
-    int destinyCode = game->board.data[destinyX][destinyY];
+    int destinyCode = game->data[destinyX][destinyY];
     if (destinyCode == 0) {
-        movePiece(piece, &(game->board), originX, originY, destinyX, destinyY);
+        movePiece(piece, game, originX, originY, destinyX, destinyY);
     }
     else if ((destinyCode <= 12 && team == 1) || (destinyCode >= 12 && team == 0)) {
         //attackPiece();
@@ -32,17 +32,49 @@ void updatePiece(Game *game, const char *origin, const char *destiny)
     }
 }
 
-void movePiece(TestPiece *piece, Board *board, int originX, int originY, int destinyX, int destinyY)
+void movePiece(TestPiece *piece, Game *game, int originX, int originY, int destinyX, int destinyY)
 {
     if (canMove(piece, originX, originY, destinyX, destinyY)) {
-        board->data[originX][originY] = 0;
-        board->data[destinyX][destinyY] = piece->id;
+        game->data[originX][originY] = 0;
+        game->data[destinyX][destinyY] = piece->id;
     } else {
         printf("Movimiento ilegal\n");
     }
 }
 
-void attackPiece(TestPiece *piece1, TestPiece *piece2, Board *board)
+void attackPiece(TestPiece *piece1, TestPiece *piece2, Game *game)
 {
 
+}
+
+void printBoard(Game game)
+{
+    for (int i = 0; i < 7; i++) {
+        printf("%d > |", i + 1);
+        for (int j = 0; j < 11; j++)
+        {
+            int piece = game.data[i][j];
+            char tempChar;
+            if (piece == 0) tempChar = ' ';
+            else tempChar = 'p';
+            printf("%c|", tempChar);
+        }
+        printf("\n"); // Formateo
+    }
+
+    printf("     "); // Formateo
+    for (int i = 0; i < 11; i++) {
+        printf("^ "); // Formateo
+    }
+
+    printf("\n     "); // Formateo
+    for (int i = 0; i < 11; i++) {
+        printf("%c ", 'a' + i);
+    }
+    printf("\n");
+}
+
+int locateId(Game game, int x, int y)   //Buscar ID
+{
+    return game.data[x][y];
 }

@@ -1,10 +1,10 @@
 #include <stdio.h>
 
-#include "board.h"
+#include "game.h"
 #include "filem.h"
 
 int main() {
-    Board b;
+    Game game;
     int p=0;
     int d=0;
     char f[21] = {'a','w','w','w','e','e','w','w','w','e','e','e','e','e','w','e','w','w','w','e','e'};
@@ -15,26 +15,26 @@ int main() {
         {
             if (j<3){
                 if (f[p]!='w') {
-                    b.data[i][j] = 1;
+                    game.data[i][j] = 1;
                 }else{
-                    b.data[i][j] = 0;
+                    game.data[i][j] = 0;
                 }
                 p++;
             }else if (j>7){
                 if (e[d]!='w') {
-                    b.data[i][j] = 1;
+                    game.data[i][j] = 1;
                 }else{
-                    b.data[i][j] = 0;
+                    game.data[i][j] = 0;
                 }
                 d++;
             } else{
-                b.data[i][j] = 0;
+                game.data[i][j] = 0;
             }
 
         }
     }
 
-    printBoard(b);
+    printBoard(game);
     char c[21] = {'a','w','w','w','e','e','w','w','w','e','e','e','e','e','w','e','e','w','e','w','e'};
     saveForm(1, c);
 
