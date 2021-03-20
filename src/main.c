@@ -5,42 +5,12 @@
 
 int main() {
     Game game;
-    int p=0;
-    int d=0;
-    char f[21] = {'a','w','w','w','e','e','w','w','w','e','e','e','e','e','w','e','w','w','w','e','e'};
-    char e[21] = {'a','w','w','w','e','e','w','w','w','e','e','e','e','e','w','e','w','w','w','e','e'};
-    for (int i = 0; i < B_ROWS; i++)
-    {
-        for (int j = 0; j < B_COLUMNS; j++)
-        {
-            if (j<3){
-                if (f[p]!='w') {
-                    game.data[i][j] = 1;
-                }else{
-                    game.data[i][j] = 0;
-                }
-                p++;
-            }else if (j>7){
-                if (e[d]!='w') {
-                    game.data[i][j] = 1;
-                }else{
-                    game.data[i][j] = 0;
-                }
-                d++;
-            } else{
-                game.data[i][j] = 0;
-            }
-
-        }
-    }
-
+    startGame(&game, 1, 1);
     printBoard(game);
-    char c[21] = {'a','w','w','w','e','e','w','w','w','e','e','e','e','e','w','e','e','w','e','w','e'};
-    saveForm(1, c);
 
-    char *tempForm = loadForm(1);
-    for (int i = 0; i < 21; i++)
-    {
-        printf("%c", tempForm[i]);
-    }
+    /*
+    TestPiece pi[24] = {{1, 10}, {2, 10}, {3, 10}, {4, 10}, {5, 10}, {6, 10}, {7, 10}, {8, 10}, {9, 10}, {10, 10}, {11, 10},
+                   {12, 10}, {13, 10}, {14, 10}, {15, 10}, {16, 10}, {17, 10}, {18, 10}, {19, 10}, {20, 10}, {21, 10},
+                   {22, 10}, {23, 10}, {24, 10}};
+                   */
 }

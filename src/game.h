@@ -12,6 +12,7 @@ typedef struct {
     int time, turn;
 } Game;
 
+void startGame(Game *game, int f1, int f2);
 void updatePiece(Game *game, const char *origin, const char *destiny);
 void movePiece(TestPiece *piece, Game *game, int originX, int originY, int destinyX, int destinyY);
 void attackPiece(TestPiece *piece1, TestPiece *piece2, Game *game);
