@@ -12,7 +12,7 @@ int main() {
     char c1[2];
     char c2[2];
     while (game.nexus1hp > 0 && game.nexus2hp > 0) {
-        printf("%d:%d, T%d\n", game.nexus1hp, game.nexus2hp);
+        printf("%d:%d, T%d\n", game.nexus1hp, game.nexus2hp, game.turn);
         printf("Casilla origen: ");
         scanf("%c%c", &c1[0], &c1[1]);
         clearStdin();

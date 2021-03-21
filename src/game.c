@@ -128,7 +128,7 @@ int updatePiece(Game *game, const char *origin, const char *destiny)
 
 void movePiece(TestPiece *piece, Game *game, int originX, int originY, int destinyX, int destinyY)
 {
-    if ((destinyX == 3 && (destinyY == 0) || destinyY == 10)) {
+    if (destinyX == 3 && ((destinyY == 0) || destinyY == 10)) {
         printf("Casilla de nexo\n"); // TODO comprobar en updatePiece()
     }
     else if (canMove(piece, originX, originY, destinyX, destinyY)) {
