@@ -11,6 +11,7 @@ typedef struct {
  * @return ID 0-3 de la pieza
  */
 int pieceType(TestPiece *piece);
+char pieceLetter(int id);
 
 /**
  * Devuelve si se puede mover una pieza a una posición objetivo

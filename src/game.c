@@ -14,34 +14,66 @@ void startGame(Game *game, int f1, int f2)
 {
     game->time = 0;
     game->turn = 0;
+    game->nexus1hp = NEXUS_HP;
+    game->nexus2hp = NEXUS_HP;
     char *form1 = loadForm(f1);
     char *form2 = loadForm(f2);
 
     for (int i = 0; i < 24; i++) game->pieces[i] = (TestPiece) {i+1,10};
 
-    int p = 0;
-    int d = 0;
-    int fol1=1;
-    int fol2=13;
-    for (int i = 0; i < B_ROWS; i++) {
-        for (int j = 0; j < B_COLUMNS; j++) {
-            if (j < 3) {
-                if (form1[p] != 'w'){
-                    game->data[i][j] = p+1;
-                    fol1++;
-                }
-                else game->data[i][j] = 0;
-                p++;
-            } else if (j > 7) {
-                if (form2[d] != 'w'){
-                    game->data[i][j] = fol2;
-                    fol2++;
-                }
-                else game->data[i][j] = 0;
-                d++;
-            } else {
-                game->data[i][j] = 0;
+    int s = 1;      // Lanceros
+    int w = 5;      // Magos
+    int a = 8;      // Asesinos
+    int g = 11;     // Golems
+    for (int i = 0; i < B_ROWS; i++) { // Lado izquierdo
+        for (int j = 0; j < 3; j++) {
+            switch (form1[3 * i + j]) {
+                case 's':
+                    game->data[i][j] = s++;
+                    break;
+                case 'w':
+                    game->data[i][j] = w++;
+                    break;
+                case 'a':
+                    game->data[i][j] = a++;
+                    break;
+                case 'g':
+                    game->data[i][j] = g++;
+                    break;
+                case 'e':
+                    game->data[i][j] = 0;
+                    break;
             }
+        }
+    }
+    s = 13;      // Lanceros
+    w = 17;      // Magos
+    a = 20;      // Asesinos
+    g = 23;     // Golems
+    for (int i = 0; i < B_ROWS; i++) { // Lado derecho
+        for (int j = 2; j >= 0; j--) {
+            switch (form2[3 * i + 2 - j]) {
+                case 's':
+                    game->data[i][j+8] = s++;
+                    break;
+                case 'w':
+                    game->data[i][j+8] = w++;
+                    break;
+                case 'a':
+                    game->data[i][j+8] = a++;
+                    break;
+                case 'g':
+                    game->data[i][j+8] = g++;
+                    break;
+                case 'e':
+                    game->data[i][j+8] = 0;
+                    break;
+            }
+        }
+    }
+    for (int i = 0; i < B_ROWS; i++) { // Lado central
+        for (int j = 3; j < 8; j++) {
+            game->data[i][j] = 0;
         }
     }
     free(form1);
@@ -96,7 +128,10 @@ int updatePiece(Game *game, const char *origin, const char *destiny)
 
 void movePiece(TestPiece *piece, Game *game, int originX, int originY, int destinyX, int destinyY)
 {
-    if (canMove(piece, originX, originY, destinyX, destinyY)) {
+    if ((destinyX == 3 && (destinyY == 0) || destinyY == 10)) {
+        printf("Casilla de nexo\n"); // TODO comprobar en updatePiece()
+    }
+    else if (canMove(piece, originX, originY, destinyX, destinyY)) {
         game->data[originX][originY] = 0;
         game->data[destinyX][destinyY] = piece->id;
     } else {
@@ -115,11 +150,9 @@ void printBoard(Game game)
         printf("%d > |", i + 1);
         for (int j = 0; j < 11; j++)
         {
-            int piece = game.data[i][j];
-            char tempChar;
-            if (piece == 0) tempChar = ' ';
-            else tempChar = 'p';
-            printf("%c|", tempChar);
+            int pieceCode = game.data[i][j];
+            printf("%c|", pieceLetter(pieceCode));
+            //printf("%d|", pieceCode);
         }
         printf("\n"); // Formateo
     }

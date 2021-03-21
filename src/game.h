@@ -3,6 +3,7 @@
 
 #define B_ROWS 7 //Por si se cambia el tamaño
 #define B_COLUMNS 11
+#define NEXUS_HP 100
 
 #include "tempiece.h"
 
@@ -10,6 +11,7 @@ typedef struct {
     TestPiece pieces[24];
     int data[B_ROWS][B_COLUMNS];
     int time, turn;
+    int nexus1hp, nexus2hp; // Vidas de los nexos
 } Game;
 
 /**

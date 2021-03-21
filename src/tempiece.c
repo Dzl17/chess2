@@ -17,19 +17,37 @@ int pieceType(TestPiece *piece)
     }
 }
 
+char pieceLetter(int id)
+{
+    if ((id >= 1 && id <= 4) || (id >= 13 && id <= 16)) {
+        return 's';
+    } else if ((id >= 5 && id <= 7) || (id >= 17 && id <= 19)) {
+        return 'w';
+    } else if ((id >= 8 && id <= 10) || (id >= 20 && id <= 22)) {
+        return 'a';
+    } else if ((id >= 11 && id <= 12) || (id >= 23 && id <= 24)){
+        return 'g';
+    } else {
+        return ' ';
+    }
+}
+
 int canMove(TestPiece *piece, int originX, int originY, int destinyX, int destinyY)
 {
     if (destinyX < 0 || destinyX > 6 || destinyY < 0 || destinyY > 10) return 0;
     switch (pieceType(piece)) {
-        case 0: // Lancero
+        case 0: // Lancero - s
 
-        case 2: // Asesino
+        case 2: // Asesino - a
 
-        case 1: // Mago
-        case 3: // Golem
+        case 1: // Mago - w
+        case 3: // Golem - g
             if ((abs(originX - destinyX) == 1 && abs(originY - destinyY) == 0) ||
                 (abs(originY - destinyY) == 1 && abs(originX - destinyX) == 0) ||
                 (abs(originX - destinyX) == 1 && abs(originY - destinyY) == 1)) return 1;
             else return 0;
+        default:
+            return 0;
     }
 }
+
