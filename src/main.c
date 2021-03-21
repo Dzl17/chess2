@@ -19,9 +19,15 @@ int main() {
         scanf("%c%c", &c2[0], &c2[1]);
         if (c1[0] == 'm') break;
         clearStdin();
-        updatePiece(&game, c1, c2);
+        int jugada=updatePiece(&game, c1, c2);
         //system("cls"); // Para consola
+        if (game.turn==0 && jugada) {
+            game.turn=1;
+        } else if (game.turn==1 && jugada){
+            game.turn=0;
+        }
         printBoard(game);
+
     }
     printBoard(game);
     /*

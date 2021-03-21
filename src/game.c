@@ -21,14 +21,22 @@ void startGame(Game *game, int f1, int f2)
 
     int p = 0;
     int d = 0;
+    int fol1=1;
+    int fol2=13;
     for (int i = 0; i < B_ROWS; i++) {
         for (int j = 0; j < B_COLUMNS; j++) {
             if (j < 3) {
-                if (form1[p] != 'w') game->data[i][j] = 3;
+                if (form1[p] != 'w'){
+                    game->data[i][j] = p+1;
+                    fol1++;
+                }
                 else game->data[i][j] = 0;
                 p++;
             } else if (j > 7) {
-                if (form2[d] != 'w') game->data[i][j] = 3;
+                if (form2[d] != 'w'){
+                    game->data[i][j] = fol2;
+                    fol2++;
+                }
                 else game->data[i][j] = 0;
                 d++;
             } else {
@@ -40,7 +48,7 @@ void startGame(Game *game, int f1, int f2)
     free(form2);
 }
 
-void updatePiece(Game *game, const char *origin, const char *destiny)
+int updatePiece(Game *game, const char *origin, const char *destiny)
 {
     int originX = origin[1] - '0' - 1;
     int originY = origin[0] - 'a';
@@ -49,14 +57,15 @@ void updatePiece(Game *game, const char *origin, const char *destiny)
 
     if (invalidPositions(originX, originY, destinyX, destinyY)) {
         printf("Posicion no valida.\n");
-        return;
+        return 0;
     }
 
     int id = locateId(*game, originX, originY); // ID de la pieza en la posición de origen
     if (id == 0) { // Si no hay pieza
         printf("Casilla vacia.\n");
-        return;
+        return 0;
     }
+
     TestPiece *piece = NULL; // Puntero a pieza objetivo
     for (int i = 0; i < 22; i++) { // Encontrar y asignar pieza objetivo
         if (game->pieces[i].id == id) {
@@ -67,15 +76,21 @@ void updatePiece(Game *game, const char *origin, const char *destiny)
 
     int team = piece->id <= 12 ? 0 : 1; // 0 equipo "blanco", 1 equipo "negro"
     int destinyCode = game->data[destinyX][destinyY]; // Comprobar estado de la casilla objetivo
-    if (destinyCode == 0) { // Casilla vacía
+
+    if (destinyCode == 0 && team == game->turn) { // Casilla vacía
         movePiece(piece, game, originX, originY, destinyX, destinyY);
+        return 1;
+    }
+    else if(team != game->turn){
+        printf("Esa no es una de tus piezas.\n");
+        return 0;
     }
     else if ((destinyCode <= 12 && team == 1) || (destinyCode >= 12 && team == 0)) { // Pieza enemiga
         //attackPiece();
     }
     else {
-        printf("La casilla está ocupada por una pieza propia.\n");
-        return;
+        printf("La casilla esta ocupada por una pieza propia.\n");
+        return 0;
     }
 }
 

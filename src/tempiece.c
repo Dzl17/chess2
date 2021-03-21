@@ -4,6 +4,7 @@
 
 int pieceType(TestPiece *piece)
 {
+
     return 3; // TODO esqueleto
     if ((piece->id >= 1 && piece->id <= 4) || (piece->id >= 13 && piece->id <= 16)) {
         return 0;
