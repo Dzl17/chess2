@@ -18,7 +18,7 @@ int pieceType(TestPiece *piece)
 
 int canMove(TestPiece *piece, int originX, int originY, int destinyX, int destinyY)
 {
-    if (destinyX < 0 || destinyX > 10 || destinyY < 0 || destinyY > 6) return 0;
+    if (destinyX < 0 || destinyX > 6 || destinyY < 0 || destinyY > 10) return 0;
     switch (pieceType(piece)) {
         case 0: // Lancero
 
