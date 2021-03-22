@@ -22,11 +22,10 @@ int main() {
         clearStdin();
         int jugada = updatePiece(&game, c1, c2);
         //system("cls"); // Para consola
-        if (game.turn == 0 && jugada) {
-            game.turn = 1;
-        } else if (game.turn == 1 && jugada){
-            game.turn = 0;
+        if (jugada) {
+            game.turn++;
         }
+        printf("\n");
         printBoard(game);
 
     }

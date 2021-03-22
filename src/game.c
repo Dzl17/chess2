@@ -109,11 +109,11 @@ int updatePiece(Game *game, const char *origin, const char *destiny)
     int team = piece->id <= 12 ? 0 : 1; // 0 equipo "blanco", 1 equipo "negro"
     int destinyCode = game->data[destinyX][destinyY]; // Comprobar estado de la casilla objetivo
 
-    if (destinyCode == 0 && team == game->turn) { // Casilla vacía
+    if (destinyCode == 0 && team == game->turn%2) { // Casilla vacía
         movePiece(piece, game, originX, originY, destinyX, destinyY);
         return 1;
     }
-    else if(team != game->turn){
+    else if(team != game->turn%2){
         printf("Esa no es una de tus piezas.\n");
         return 0;
     }

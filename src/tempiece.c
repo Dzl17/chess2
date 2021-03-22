@@ -19,15 +19,23 @@ int pieceType(TestPiece *piece)
 
 char pieceLetter(int id)
 {
-    if ((id >= 1 && id <= 4) || (id >= 13 && id <= 16)) {
+    if ((id >= 1 && id <= 4)) {
         return 's';
-    } else if ((id >= 5 && id <= 7) || (id >= 17 && id <= 19)) {
+    } else if ((id >= 5 && id <= 7)) {
         return 'w';
-    } else if ((id >= 8 && id <= 10) || (id >= 20 && id <= 22)) {
+    } else if ((id >= 8 && id <= 10)) {
         return 'a';
-    } else if ((id >= 11 && id <= 12) || (id >= 23 && id <= 24)){
+    } else if ((id >= 11 && id <= 12)){
         return 'g';
-    } else {
+    } else if ((id >= 13 && id <= 16)) {
+        return 'l';
+    } else if ((id >= 17 && id <= 19)) {
+        return 'm';
+    } else if ((id >= 20 && id <= 22)) {
+        return 'd';
+    } else if ((id >= 23 && id <= 24)){
+        return 'p';
+    }else {
         return ' ';
     }
 }
