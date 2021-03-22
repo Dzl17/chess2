@@ -40,7 +40,7 @@ int updatePiece(Game *game, const char *origin, const char *destiny);
  * @param destinyY Y destino
  */
 void movePiece(TestPiece *piece, Game *game, int originX, int originY, int destinyX, int destinyY);
-void attackPiece(TestPiece *piece1, TestPiece *piece2, Game *game);
+int attackPiece(TestPiece *piece1, TestPiece *piece2, Game *game);
 
 /**
  * Imprime el estado actual de el tablero.

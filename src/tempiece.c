@@ -28,7 +28,7 @@ char pieceLetter(int id)
     } else if ((id >= 11 && id <= 12)){
         return 'g';
     } else if ((id >= 13 && id <= 16)) {
-        return 'l';
+        return 'c';
     } else if ((id >= 17 && id <= 19)) {
         return 'm';
     } else if ((id >= 20 && id <= 22)) {

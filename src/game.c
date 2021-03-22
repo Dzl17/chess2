@@ -118,7 +118,24 @@ int updatePiece(Game *game, const char *origin, const char *destiny)
         return 0;
     }
     else if ((destinyCode <= 12 && team == 1) || (destinyCode >= 12 && team == 0)) { // Pieza enemiga
-        //attackPiece();
+
+        TestPiece *enemypiece = NULL; // Puntero a pieza enemiga
+        int enemId=locateId(*game, destinyX, destinyY);
+
+        for (int i = 0; i < 22; i++) { // Encontrar y asignar pieza enemiga
+            if (game->pieces[i].id == enemId) {
+                if (game->pieces[i].hp > 0) {
+                    enemypiece = &game->pieces[i]; // Asignar si la pieza está "viva"
+                }
+                break;
+            }
+        }
+
+        int suc=attackPiece(piece,enemypiece,game);
+        if (suc) {
+            movePiece(piece, game, originX, originY, destinyX, destinyY);
+            return 1;
+        }
     }
     else {
         printf("La casilla esta ocupada por una pieza propia.\n");
@@ -139,9 +156,11 @@ void movePiece(TestPiece *piece, Game *game, int originX, int originY, int desti
     }
 }
 
-void attackPiece(TestPiece *piece1, TestPiece *piece2, Game *game)
+int attackPiece(TestPiece *piece1, TestPiece *piece2, Game *game)
 {
-
+    piece2->hp=piece2->hp-15;
+    if (piece2->hp<1) return 1;
+    else return 0;
 }
 
 void printBoard(Game game)
