@@ -135,6 +135,12 @@ int updatePiece(Game *game, const char *origin, const char *destiny)
         if (suc) {
             movePiece(piece, game, originX, originY, destinyX, destinyY);
             return 1;
+        }else{
+            int contr=attackPiece(enemypiece,piece,game);
+            if (contr) {
+                movePiece(piece, game, originX, originY, destinyX, destinyY);
+            }
+            return 1;
         }
     }
     else {
@@ -158,7 +164,7 @@ void movePiece(TestPiece *piece, Game *game, int originX, int originY, int desti
 
 int attackPiece(TestPiece *piece1, TestPiece *piece2, Game *game)
 {
-    piece2->hp=piece2->hp-15;
+    piece2->hp=piece2->hp-5;
     if (piece2->hp<1) return 1;
     else return 0;
 }
