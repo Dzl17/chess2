@@ -130,16 +130,17 @@ int updatePiece(Game *game, const char *origin, const char *destiny)
                 break;
             }
         }
-
         int suc=attackPiece(piece,enemypiece,game);
         if (suc) {
             movePiece(piece, game, originX, originY, destinyX, destinyY);
+            printf("Pieza eliminada\n");
             return 1;
         }else{
             int contr=attackPiece(enemypiece,piece,game);
             if (contr) {
                 movePiece(piece, game, originX, originY, destinyX, destinyY);
             }
+            printf("Ataque realizado\n");
             return 1;
         }
     }

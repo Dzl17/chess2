@@ -2,12 +2,53 @@
 #include <stdlib.h>
 
 #include "game.h"
+#include "filem.h"
 
 void clearStdin();
 
+void choseForm(int f)
+{
+    printf("Formacion %d:\n",f);
+    char *form3 = loadForm(f);
+    int seg=0;
+    for (int i = 0; i < 7; i++) {
+        printf("%d > |", i + 1);
+        for (int j = 0; j < 3; j++)
+        {
+            switch (form3[3 * i + j]) {
+                case 's':
+                    printf("%c|",form3[seg]);
+                    break;
+                case 'w':
+                    printf("%c|",form3[seg]);
+                    break;
+                case 'a':
+                    printf("%c|",form3[seg]);
+                    break;
+                case 'g':
+                    printf("%c|",form3[seg]);
+                    break;
+                case 'e':
+                    printf(" |");
+                    break;
+            }
+            seg++;
+        }
+        printf("\n"); // Formateo
+    }
+    printf("\n");
+}
+
 int main() {
+    choseForm(1);
+    choseForm(3);
     Game game;
-    startGame(&game, 1, 1);
+    char form;
+    printf("Escoger formacion: ");
+    scanf("%d", &form);
+    clearStdin();
+    printf("\n");
+    startGame(&game, form, 1);
     printBoard(game);
     char c1[2];
     char c2[2];
