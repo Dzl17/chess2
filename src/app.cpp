@@ -3,8 +3,9 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-#define STB_IMAGE_IMPLEMENTATION // Para que stb_image pueda utilizarse
-#include "libs/stb_image.h"
+//#define STB_IMAGE_IMPLEMENTATION // Para que stb_image pueda utilizarse
+//#include "libs/stb_image.h"
+#include "../dependencies/blah/src/third_party/stb_image.h"
 
 #define RGB_DIV 255.0f // Para normalizar colores de RGB a [0-1]
 
@@ -16,7 +17,7 @@ static void glfw_error_callback(int error, const char* description) // Para impr
 	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-int main(int, char**)
+int maian(int, char**)
 {
 	// Setup window
 	glfwSetErrorCallback(glfw_error_callback); // Redirigir errores a glfw_error_callback
