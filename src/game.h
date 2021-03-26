@@ -3,12 +3,12 @@
 
 #define B_ROWS 7 //Por si se cambia el tamaño
 #define B_COLUMNS 11
-#define NEXUS_HP 100
+#define NEXUS_HP 20
 
 #include "tempiece.h"
 
 typedef struct {
-    TestPiece pieces[24];
+    TestPiece pieces[26];
     int data[B_ROWS][B_COLUMNS];
     int time, turn;
     int nexus1hp, nexus2hp; // Vidas de los nexos
@@ -39,8 +39,8 @@ int updatePiece(Game *game, const char *origin, const char *destiny);
  * @param destinyX X destino
  * @param destinyY Y destino
  */
-void movePiece(TestPiece *piece, Game *game, int originX, int originY, int destinyX, int destinyY);
-int attackPiece(TestPiece *piece1, TestPiece *piece2, Game *game);
+int movePiece(TestPiece *piece, Game *game, int originX, int originY, int destinyX, int destinyY);
+int attackPiece(TestPiece *piece, Game *game);
 
 /**
  * Imprime el estado actual de el tablero.

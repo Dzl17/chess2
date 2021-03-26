@@ -20,11 +20,13 @@ void startGame(Game *game, int f1, int f2)
     char *form2 = loadForm(f2);
 
     for (int i = 0; i < 24; i++) game->pieces[i] = (TestPiece) {i+1,10};
-
+    game->pieces[24]=(TestPiece) {25,NEXUS_HP};
+    game->pieces[25]=(TestPiece) {26,NEXUS_HP};
     int s = 1;      // Lanceros
     int w = 5;      // Magos
     int a = 8;      // Asesinos
     int g = 11;     // Golems
+
     for (int i = 0; i < B_ROWS; i++) { // Lado izquierdo
         for (int j = 0; j < 3; j++) {
             switch (form1[3 * i + j]) {
@@ -43,9 +45,13 @@ void startGame(Game *game, int f1, int f2)
                 case 'e':
                     game->data[i][j] = 0;
                     break;
+                case 'N':
+                    game->data[i][j] = 25;
+                    break;
             }
         }
     }
+
     s = 13;      // Lanceros
     w = 17;      // Magos
     a = 20;      // Asesinos
@@ -68,20 +74,26 @@ void startGame(Game *game, int f1, int f2)
                 case 'e':
                     game->data[i][j+8] = 0;
                     break;
+                case 'N':
+                    game->data[i][j+8] = 26;
+                    break;
             }
         }
     }
+
     for (int i = 0; i < B_ROWS; i++) { // Lado central
         for (int j = 3; j < 8; j++) {
             game->data[i][j] = 0;
         }
     }
+
     free(form1);
     free(form2);
 }
 
 int updatePiece(Game *game, const char *origin, const char *destiny)
 {
+
     int originX = origin[1] - '0' - 1;
     int originY = origin[0] - 'a';
     int destinyX = destiny[1] - '0' - 1;
@@ -96,10 +108,12 @@ int updatePiece(Game *game, const char *origin, const char *destiny)
     if (id == 0) { // Si no hay pieza
         printf("Casilla vacia.\n");
         return 0;
+    } else if(id>24){
+        printf("No se puede mover el nexo.\n");
+        return 0;
     }
-
     TestPiece *piece = NULL; // Puntero a pieza objetivo
-    for (int i = 0; i < 22; i++) { // Encontrar y asignar pieza objetivo
+    for (int i = 0; i < 24; i++) { // Encontrar y asignar pieza objetivo
         if (game->pieces[i].id == id) {
             if (game->pieces[i].hp > 0) piece = &game->pieces[i]; // Asignar si la pieza está "viva"
             break;
@@ -110,19 +124,20 @@ int updatePiece(Game *game, const char *origin, const char *destiny)
     int destinyCode = game->data[destinyX][destinyY]; // Comprobar estado de la casilla objetivo
 
     if (destinyCode == 0 && team == game->turn%2) { // Casilla vacía
-        movePiece(piece, game, originX, originY, destinyX, destinyY);
-        return 1;
+        int movida=movePiece(piece, game, originX, originY, destinyX, destinyY);
+        if (movida) return 1;
+        else return 0;
     }
     else if(team != game->turn%2){
         printf("Esa no es una de tus piezas.\n");
         return 0;
     }
-    else if ((destinyCode <= 12 && team == 1) || (destinyCode >= 12 && team == 0)) { // Pieza enemiga
+    else if (((destinyCode <= 12 || destinyCode==24) && team == 1) || ((destinyCode >= 12 || destinyCode==25) && team == 0)) { // Pieza enemiga
 
         TestPiece *enemypiece = NULL; // Puntero a pieza enemiga
         int enemId=locateId(*game, destinyX, destinyY);
 
-        for (int i = 0; i < 22; i++) { // Encontrar y asignar pieza enemiga
+        for (int i = 0; i < 26; i++) { // Encontrar y asignar pieza enemiga
             if (game->pieces[i].id == enemId) {
                 if (game->pieces[i].hp > 0) {
                     enemypiece = &game->pieces[i]; // Asignar si la pieza está "viva"
@@ -130,17 +145,24 @@ int updatePiece(Game *game, const char *origin, const char *destiny)
                 break;
             }
         }
-        int suc=attackPiece(piece,enemypiece,game);
-        if (suc) {
+
+        int suc=attackPiece(enemypiece,game);
+        if (suc==1) {
             movePiece(piece, game, originX, originY, destinyX, destinyY);
             printf("Pieza eliminada\n");
             return 1;
-        }else{
-            int contr=attackPiece(enemypiece,piece,game);
+        }else if (suc==0){
+            int contr=attackPiece(piece,game);
             if (contr) {
-                movePiece(piece, game, originX, originY, destinyX, destinyY);
+                movePiece(enemypiece, game, originX, originY, destinyX, destinyY);
             }
             printf("Ataque realizado\n");
+            return 1;
+        } else if (suc==2){
+            if (enemypiece->id==25) game->nexus1hp-=5;
+            else if (enemypiece->id==26) game->nexus2hp-=5;
+            return 1;
+        }else{
             return 1;
         }
     }
@@ -150,23 +172,30 @@ int updatePiece(Game *game, const char *origin, const char *destiny)
     }
 }
 
-void movePiece(TestPiece *piece, Game *game, int originX, int originY, int destinyX, int destinyY)
+int movePiece(TestPiece *piece, Game *game, int originX, int originY, int destinyX, int destinyY)
 {
     if (destinyX == 3 && ((destinyY == 0) || destinyY == 10)) {
         printf("Casilla de nexo\n"); // TODO comprobar en updatePiece()
+        return 1;
     }
     else if (canMove(piece, originX, originY, destinyX, destinyY)) {
         game->data[originX][originY] = 0;
         game->data[destinyX][destinyY] = piece->id;
+        return 1;
     } else {
         printf("Movimiento ilegal\n");
+        return 0;
     }
 }
 
-int attackPiece(TestPiece *piece1, TestPiece *piece2, Game *game)
+int attackPiece(TestPiece *piece, Game *game)
 {
-    piece2->hp=piece2->hp-5;
-    if (piece2->hp<1) return 1;
+    piece->hp=piece->hp-5;
+    if (piece->hp<1 && piece->id<25) return 1;
+    else if (piece->id>24) return 2;
+    else if (piece->hp<1 && piece->id>24) {
+        return 3;
+    }
     else return 0;
 }
 

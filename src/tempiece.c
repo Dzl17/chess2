@@ -35,6 +35,8 @@ char pieceLetter(int id)
         return 'd';
     } else if ((id >= 23 && id <= 24)){
         return 'p';
+    }else if (id>24) {
+        return 'N';
     }else {
         return ' ';
     }
@@ -43,6 +45,7 @@ char pieceLetter(int id)
 int canMove(TestPiece *piece, int originX, int originY, int destinyX, int destinyY)
 {
     if (destinyX < 0 || destinyX > 6 || destinyY < 0 || destinyY > 10) return 0;
+    if (piece->id<0) return 0;
     switch (pieceType(piece)) {
         case 0: // Lancero - s
 

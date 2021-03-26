@@ -128,6 +128,8 @@ int main() {
             printBoard(game);
 
         }
+        printf("Partida terminada\n");
+        printf("Gana el equipo %d\n",game.turn%2);
     } else if(option==2){
         printf("\n");
         char pies[]="ssssggwwwaaa";
