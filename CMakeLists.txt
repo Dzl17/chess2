@@ -5,7 +5,7 @@ set(CMAKE_C_STANDARD 11)
 
 #set(MAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES src/app.cpp)
+set(SOURCE_FILES src/main.c)
 
 include_directories(
         ${PROJECT_SOURCE_DIR}/dependencies/GLFW/include

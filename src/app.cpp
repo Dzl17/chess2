@@ -1,5 +1,7 @@
 #include <GL/glew.h> // Loader de extensiones de OpenGL
+//#include "../dependencies/GLEW/include/GLA/glew.h"
 #include <GLFW/glfw3.h>
+//#include "../dependencies/GLFW/include/GLFWA/glfw3.h"
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
@@ -16,7 +18,7 @@ static void glfw_error_callback(int error, const char* description) // Para impr
 	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-int main(int, char**)
+int maian(int, char**)
 {
 	// Setup window
 	glfwSetErrorCallback(glfw_error_callback); // Redirigir errores a glfw_error_callback

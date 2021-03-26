@@ -6,6 +6,47 @@
 
 void clearStdin();
 
+void halfBoard(char* espaces){
+
+    int seg=0;
+
+    for (int i = 0; i < 7; i++) {
+        printf("%d > |", i + 1);
+        for (int j = 0; j < 3; j++)
+        {
+            switch (espaces[seg]) {
+                case 's':
+                    printf("%c|",espaces[seg]);
+                    break;
+                case 'w':
+                    printf("%c|",espaces[seg]);
+                    break;
+                case 'a':
+                    printf("%c|",espaces[seg]);
+                    break;
+                case 'g':
+                    printf("%c|",espaces[seg]);
+                    break;
+                case 'e':
+                    printf(" |");
+                    break;
+            }
+            seg++;
+        }
+        printf("\n"); // Formateo
+    }
+    printf("     "); // Formateo
+    for (int i = 0; i < 3; i++) {
+        printf("^ "); // Formateo
+    }
+
+    printf("\n     "); // Formateo
+    for (int i = 0; i < 3; i++) {
+        printf("%c ", 'a' + i);
+    }
+    printf("\n");
+}
+
 void choseForm(int f)
 {
     printf("Formacion %d:\n",f);
@@ -48,7 +89,7 @@ void choseForm(int f)
     printf("\n");
 }
 
-int maian() {
+int main() {
     printf("MENU PRINCIPAL: \n");
     printf("1) Jugar en local: \n");
     printf("2) Crear una formacion: \n");
@@ -92,74 +133,28 @@ int maian() {
         char pies[]="ssssggwwwaaa";
         char espaces[]="eeeeeeeeeeeeeeeeeeeee";
 
-        for (int i = 0; i < 7; i++) {
-            printf("%d > |", i + 1);
-            for (int j = 0; j < 3; j++)
-            {
-                printf(" |");
-            }
-            printf("\n"); // Formateo
-        }
-        printf("     "); // Formateo
-        for (int i = 0; i < 3; i++) {
-            printf("^ "); // Formateo
-        }
-
-        printf("\n     "); // Formateo
-        for (int i = 0; i < 3; i++) {
-            printf("%c ", 'a' + i);
-        }
-        printf("\n");
         char c1[2];
         int x;
         int y;
-
-        for (int i = 0; i < 12; ++i) {
-            printf("Donde quieres colocar %c\n",pies[i]);
+        int p=0;
+        while (p<12) {
+            halfBoard(espaces);
+            printf("Donde quieres colocar %c\n",pies[p]);
             scanf("%c%c", &c1[0], &c1[1]);
             clearStdin();
             x = c1[1] - '0' - 1;
             y = c1[0] - 'a';
             int pos=y+(x*3);
-            espaces[pos]=pies[i];
-        }
-
-        int seg=0;
-
-        for (int i = 0; i < 7; i++) {
-            printf("%d > |", i + 1);
-            for (int j = 0; j < 3; j++)
-            {
-                switch (espaces[seg]) {
-                    case 's':
-                        printf("%c|",espaces[seg]);
-                        break;
-                    case 'w':
-                        printf("%c|",espaces[seg]);
-                        break;
-                    case 'a':
-                        printf("%c|",espaces[seg]);
-                        break;
-                    case 'g':
-                        printf("%c|",espaces[seg]);
-                        break;
-                    case 'e':
-                        printf(" |");
-                        break;
-                }
-                seg++;
+            if (espaces[pos] == 'e' && (x>=0 && x<7) && (y>=0 && y<3)){
+                espaces[pos]=pies[p];
+                p++;
+            } else{
+                printf("No se puede colocar en esa casilla\n");
             }
-            printf("\n"); // Formateo
         }
-        printf("     "); // Formateo
-        for (int i = 0; i < 3; i++) {
-            printf("^ "); // Formateo
-        }
-
-        printf("\n     "); // Formateo
-        for (int i = 0; i < 3; i++) {
-            printf("%c ", 'a' + i);
-        }
+        halfBoard(espaces);
+        printf("Formacion terminada\n");
+        saveForm(1,espaces);
 
     }
 
