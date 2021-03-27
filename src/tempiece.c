@@ -2,9 +2,8 @@
 
 #include "tempiece.h"
 
-int pieceType(TestPiece *piece)
+int pieceType(Piece *piece)
 {
-
     return 3; // TODO esqueleto
     if ((piece->id >= 1 && piece->id <= 4) || (piece->id >= 13 && piece->id <= 16)) {
         return 0;
@@ -35,17 +34,17 @@ char pieceLetter(int id)
         return 'd';
     } else if ((id >= 23 && id <= 24)){
         return 'p';
-    }else if (id>24) {
+    }else if (id > 24) {
         return 'N';
-    }else {
+    } else {
         return ' ';
     }
 }
 
-int canMove(TestPiece *piece, int originX, int originY, int destinyX, int destinyY)
+int canMove(Piece *piece, int originX, int originY, int destinyX, int destinyY)
 {
     if (destinyX < 0 || destinyX > 6 || destinyY < 0 || destinyY > 10) return 0;
-    if (piece->id<0) return 0;
+    if (piece->id < 0) return 0;
     switch (pieceType(piece)) {
         case 0: // Lancero - s
 

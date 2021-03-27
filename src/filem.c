@@ -44,10 +44,6 @@ int** loadGame()
 
 /**
  * Devuelve la unión de 3 strings.
- * @param a String 1
- * @param b String 2
- * @param c String 3
- * @return String unido
  */
 char *conc(const char *a, const char *b, const char *c) {
     size_t alen = strlen(a);

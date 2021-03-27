@@ -3,14 +3,14 @@
 
 typedef struct {
     int id, hp;
-} TestPiece;
+} Piece;
 
 /**
  * Devuelve el tipo de pieza.
  * @param piece Pieza requerida
  * @return ID 0-3 de la pieza
  */
-int pieceType(TestPiece *piece);
+int pieceType(Piece *piece);
 char pieceLetter(int id);
 
 /**
@@ -22,6 +22,6 @@ char pieceLetter(int id);
  * @param destinyY Y destino
  * @return
  */
-int canMove(TestPiece *piece, int originX, int originY, int destinyX, int destinyY);
+int canMove(Piece *piece, int originX, int originY, int destinyX, int destinyY);
 
 #endif //CHESS2_TEMPIECE_H
