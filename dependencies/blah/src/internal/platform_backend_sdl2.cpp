@@ -719,7 +719,7 @@ void* PlatformBackend::d3d11_get_hwnd()
 	SDL_SysWMinfo info;
 	SDL_VERSION(&info.version);
 	SDL_GetWindowWMInfo(window, &info);
-	//return info.info.win.window;
+	return info.info.win.window;
 #else
 	return nullptr;
 #endif

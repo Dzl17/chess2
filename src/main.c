@@ -89,7 +89,7 @@ void choseForm(int f)
     printf("\n");
 }
 
-int main() {
+int maian() {
     printf("MENU PRINCIPAL: \n");
     printf("1) Jugar en local: \n");
     printf("2) Crear una formacion: \n");

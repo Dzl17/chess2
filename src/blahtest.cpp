@@ -30,6 +30,11 @@ void render()
     batch.clear();
 }
 
+void shutdown()
+{
+
+}
+
 int main()
 {
     Config config;
@@ -37,6 +42,7 @@ int main()
     config.width = 1280;
     config.height = 720;
     config.on_startup = startup;
+    config.on_shutdown = shutdown;
     config.on_render = render;
     config.target_framerate = 60;
 
