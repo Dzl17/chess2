@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "piece.h"
 
@@ -67,10 +68,14 @@ int canMove(Piece *piece, int originX, int originY, int destinyX, int destinyY)
     }
 }
 
-int canAttack(Piece *piece, int originX, int originY, int destinyX, int destinyY)
+int canAttack(Piece *piece,Piece *enempiece, int originX, int originY, int destinyX, int destinyY)
 {
     if (destinyX < 0 || destinyX > 6 || destinyY < 0 || destinyY > 10) return 0;
     if (piece->id < 0) return 0;
+
+    int team=piece->id <= 12 || piece->id==25 ? 0 : 1;
+    int enemteam=enempiece->id <= 12 || enempiece->id==25 ? 0 : 1;
+    if (team == enemteam) return 0;
     switch (pieceType(piece)) {
         case 0: // Lancero - s
             if (piece->id <= 12) return destinyX == originX + 1 && (abs(destinyY - originY) <= 1);

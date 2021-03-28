@@ -111,10 +111,6 @@ int updatePiece(Game *game, const char *origin, const char *destiny)
         return 0;
     }
     else if (((destinyCode <= 12 || destinyCode == 24) && team == 1) || ((destinyCode >= 12) && team == 0)) { // Atacar a pieza enemiga
-        if (!canAttack(piece, originX, originY, destinyX, destinyY)) {
-            printf("No puedes atacar esa casilla.\n");
-            return 0;
-        }
         // Localizar pieza enemiga
         Piece *enemypiece = NULL; // Puntero a pieza enemiga
         int enemyId = locateId(*game, destinyX, destinyY);
@@ -127,7 +123,13 @@ int updatePiece(Game *game, const char *origin, const char *destiny)
             }
         }
 
+        if (!canAttack(piece, enemypiece,originX, originY, destinyX, destinyY)) {
+            printf("No puedes atacar esa casilla.\n");
+            return 0;
+        }
+
         int attackResult = attackPiece(enemypiece);
+
         if (attackResult == 0) {
             if (attackPiece(piece)) movePiece(enemypiece, game, originX, originY, destinyX, destinyY); // Contraataque
             printf("Ataque realizado.\n");
@@ -161,7 +163,7 @@ int movePiece(Piece *piece, Game *game, int originX, int originY, int destinyX, 
 
 int attackPiece(Piece *piece)
 {
-    piece->hp -= piece->dmg;
+    piece->hp -= 5;
     if (piece->hp < 1 && piece->id <= 24) return 1; // Pieza eliminada
     else if (piece->id > 24) return 2; // Nexo golpeado
     else if (piece->hp < 1 && piece->id > 24) return 3; // Nexo eliminado

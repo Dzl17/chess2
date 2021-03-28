@@ -46,6 +46,6 @@ int canMove(Piece *piece, int originX, int originY, int destinyX, int destinyY);
  * @param destinyY Y destino
  * @return Resultado del cálculo
  */
-int canAttack(Piece *piece, int originX, int originY, int destinyX, int destinyY);
+int canAttack(Piece *piece,Piece *enempiece, int originX, int originY, int destinyX, int destinyY);
 
 #endif //CHESS2_PIECE_H
