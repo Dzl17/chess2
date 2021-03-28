@@ -47,7 +47,8 @@ int canMove(Piece *piece, int originX, int originY, int destinyX, int destinyY)
     if (piece->id < 0) return 0;
     switch (pieceType(piece)) {
         case 0: // Lancero - s
-
+            if (piece->id <= 12) return (destinyX == originX + 1 || destinyX == originX + 2) && originY == destinyY;
+            else return (destinyX == originX - 1 || destinyX == originX - 2) && originY == destinyY;
         case 2: // Asesino - a
 
         case 1: // Mago - w
@@ -56,6 +57,24 @@ int canMove(Piece *piece, int originX, int originY, int destinyX, int destinyY)
                 (abs(originY - destinyY) == 1 && abs(originX - destinyX) == 0) ||
                 (abs(originX - destinyX) == 1 && abs(originY - destinyY) == 1)) return 1;
             else return 0;
+        default:
+            return 0;
+    }
+}
+
+int canAttack(Piece *piece, int originX, int originY, int destinyX, int destinyY)
+{
+    if (destinyX < 0 || destinyX > 6 || destinyY < 0 || destinyY > 10) return 0;
+    if (piece->id < 0) return 0;
+    switch (pieceType(piece)) {
+        case 0: // Lancero - s
+            if (piece->id <= 12) return destinyX == originX + 1 && (abs(destinyY - originY) <= 1);
+            else return destinyX == originX - 1 && (abs(destinyY - originY) <= 1);
+        case 1: // Mago - w
+
+        case 2: // Asesino - a
+        case 3: // Golem - g
+            return canMove(piece, originX, originY, destinyX, destinyY);
         default:
             return 0;
     }
