@@ -141,8 +141,8 @@ add_executable(chess2 ${SOURCE_FILES}
         src/filem.c
         src/filem.h
         src/main.c
-        src/tempiece.c
-        src/tempiece.h
+        src/piece.c
+        src/piece.h
         src/game.c
         src/game.h
         src/blahtest.cpp

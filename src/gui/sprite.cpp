@@ -17,7 +17,7 @@ void Sprite::setY(int yNum) {
 }
 
 void Sprite::draw(Batch *batch) {
-    batch->tex(this->texture, Vec2(this->x - App::width()/2, this->y - App::height()/2 - 12), Color::white); // TODO
+    batch->tex(this->texture, Vec2(this->x - App::width()/2, this->y - App::height()/2), Color::white); // TODO
 }
 
 std::ostream& operator<<(std::ostream &strm, const Sprite &sprite) {

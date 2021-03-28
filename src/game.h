@@ -5,7 +5,7 @@
 #define B_COLUMNS 11
 #define NEXUS_HP 20 // Vida fija del nexo
 
-#include "tempiece.h"
+#include "piece.h"
 
 typedef struct {
     Piece pieces[26];

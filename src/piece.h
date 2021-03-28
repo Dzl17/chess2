@@ -1,8 +1,8 @@
-#ifndef CHESS2_TEMPIECE_H
-#define CHESS2_TEMPIECE_H
+#ifndef CHESS2_PIECE_H
+#define CHESS2_PIECE_H
 
 typedef struct {
-    int id, hp;
+    int id, hp, dmg;
 } Piece;
 
 /**
@@ -18,6 +18,13 @@ int pieceType(Piece *piece);
  * @return Caracter
  */
 char pieceLetter(int id);
+
+/**
+ * Devuelve el daño de una pieza.
+ * @param id Id de la pieza
+ * @return Daño de la pieza
+ */
+int getDamage(int id);
 
 /**
  * Devuelve si se puede mover una pieza a una posición objetivo
@@ -41,4 +48,4 @@ int canMove(Piece *piece, int originX, int originY, int destinyX, int destinyY);
  */
 int canAttack(Piece *piece, int originX, int originY, int destinyX, int destinyY);
 
-#endif //CHESS2_TEMPIECE_H
+#endif //CHESS2_PIECE_H

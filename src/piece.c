@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "tempiece.h"
+#include "piece.h"
 
 int pieceType(Piece *piece)
 {
@@ -38,6 +38,19 @@ char pieceLetter(int id)
         return 'N';
     } else {
         return ' ';
+    }
+}
+
+int getDamage(int id)
+{
+    if ((id >= 1 && id <= 4) || (id >= 13 && id <= 16)) {
+        return 0; // Daño lancero
+    } else if ((id >= 5 && id <= 7) || (id >= 17 && id <= 19)) {
+        return 1; // Daño mago
+    } else if ((id >= 8 && id <= 10) || (id >= 20 && id <= 22)) {
+        return 2; // Daño asesino
+    } else {
+        return 3; // Daño golem
     }
 }
 
