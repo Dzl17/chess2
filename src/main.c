@@ -26,6 +26,8 @@ int main() {
         clearStdin();
         printf("\n");
         startGame(&game, form, 1);
+        //system("cls"); // Para consola
+        printf("Juego iniciado.\n\n");
         printBoard(game);
         char c1[2];
         char c2[2];
@@ -33,12 +35,12 @@ int main() {
             printf("%d:%d, T%d, %c\n", game.nexus1hp, game.nexus2hp, game.turn, game.turn % 2 ? 'D' : 'I');
             printf("Casilla origen: ");
             scanf("%c%c", &c1[0], &c1[1]);
+            if (c1[0] == 'm') break;
             clearStdin();
             printf("Casilla destino: ");
             scanf("%c%c", &c2[0], &c2[1]);
-            if (c1[0] == 'm') break;
             clearStdin();
-            system("cls"); // Para consola
+            //system("cls"); // Para consola
             int jugada = updatePiece(&game, c1, c2);
             if (jugada) {
                 game.turn++;

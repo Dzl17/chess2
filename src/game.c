@@ -174,20 +174,21 @@ void printBoard(Game game)
         printf("%d > |", i + 1);
         for (int j = 0; j < 11; j++) {
             int pieceCode = game.data[i][j];
-            printf("%c|", pieceLetter(pieceCode));
-            //printf("%d|", pieceCode);
+            if (pieceCode == 0) printf("%c |", pieceLetter(pieceCode));
+            else if (pieceCode == 25) printf("%cI|", pieceLetter(pieceCode));
+            else printf(pieceCode <= 12 ? "%cI|" : "%cD|", pieceLetter(pieceCode));
         }
         printf("\n"); // Formateo
     }
 
-    printf("     "); // Formateo
+    printf("      "); // Formateo
     for (int i = 0; i < 11; i++) {
-        printf("^ "); // Formateo
+        printf("^  "); // Formateo
     }
 
-    printf("\n     "); // Formateo
+    printf("\n      "); // Formateo
     for (int i = 0; i < 11; i++) {
-        printf("%c ", 'a' + i);
+        printf("%c  ", 'a' + i);
     }
     printf("\n");
 }
