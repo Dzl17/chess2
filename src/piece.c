@@ -37,13 +37,13 @@ char pieceLetter(int id)
 int getDamage(int id)
 {
     if ((id >= 1 && id <= 4) || (id >= 13 && id <= 16)) {
-        return 0; // Daño lancero
+        return 5; // Daño lancero
     } else if ((id >= 5 && id <= 7) || (id >= 17 && id <= 19)) {
-        return 1; // Daño mago
+        return 5; // Daño mago
     } else if ((id >= 8 && id <= 10) || (id >= 20 && id <= 22)) {
-        return 2; // Daño asesino
+        return 5; // Daño asesino
     } else {
-        return 3; // Daño golem
+        return 5; // Daño golem
     }
 }
 
@@ -68,14 +68,14 @@ int canMove(Piece *piece, int originX, int originY, int destinyX, int destinyY)
     }
 }
 
-int canAttack(Piece *piece,Piece *enempiece, int originX, int originY, int destinyX, int destinyY)
+int canAttack(Piece *piece, Piece *enemyPiece, int originX, int originY, int destinyX, int destinyY)
 {
     if (destinyX < 0 || destinyX > 6 || destinyY < 0 || destinyY > 10) return 0;
     if (piece->id < 0) return 0;
 
-    int team=piece->id <= 12 || piece->id==25 ? 0 : 1;
-    int enemteam=enempiece->id <= 12 || enempiece->id==25 ? 0 : 1;
-    if (team == enemteam) return 0;
+    int team = piece->id <= 12 || piece->id == 25 ? 0 : 1;
+    int enemyTeam = enemyPiece->id <= 12 || enemyPiece->id == 25 ? 0 : 1;
+    if (team == enemyTeam) return 0;
     switch (pieceType(piece)) {
         case 0: // Lancero - s
             if (piece->id <= 12) return destinyX == originX + 1 && (abs(destinyY - originY) <= 1);

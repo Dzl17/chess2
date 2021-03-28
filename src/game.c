@@ -163,7 +163,7 @@ int movePiece(Piece *piece, Game *game, int originX, int originY, int destinyX, 
 
 int attackPiece(Piece *piece)
 {
-    piece->hp -= 5;
+    piece->hp -= getDamage(piece->id);
     if (piece->hp < 1 && piece->id <= 24) return 1; // Pieza eliminada
     else if (piece->id > 24) return 2; // Nexo golpeado
     else if (piece->hp < 1 && piece->id > 24) return 3; // Nexo eliminado

@@ -40,12 +40,13 @@ int canMove(Piece *piece, int originX, int originY, int destinyX, int destinyY);
 /**
  * Devuelve si una pieza puede atacar la posición objetivo.
  * @param piece Pieza atacante
+ * @param enemyPiece Pieza atacada
  * @param originX X origen
  * @param originY Y origen
  * @param destinyX X destino
  * @param destinyY Y destino
  * @return Resultado del cálculo
  */
-int canAttack(Piece *piece,Piece *enempiece, int originX, int originY, int destinyX, int destinyY);
+int canAttack(Piece *piece, Piece *enemyPiece, int originX, int originY, int destinyX, int destinyY);
 
 #endif //CHESS2_PIECE_H
