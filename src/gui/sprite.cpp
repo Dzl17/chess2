@@ -9,7 +9,7 @@ void Sprite::setX(int xNum) {
 }
 
 int Sprite::getY() {
-    return 0;
+    return this->y;
 }
 
 void Sprite::setY(int yNum) {

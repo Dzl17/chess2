@@ -14,8 +14,8 @@ GuiButton testButton;
 
 void startup()
 {
-    testButton.load(0, 0, 64, 64,
-                    "../data/img/boredlion.png", "../data/img/boredlion.png");
+    testButton.load(32, 16, 192, 64,
+                    "../data/img/testButtonIdle.png", "../data/img/testButtonPressed.png");
     background.load(0, 0, "../data/img/background.png");
     //Sprites::load();
 }
