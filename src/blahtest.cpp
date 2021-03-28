@@ -1,15 +1,16 @@
 #include <blah.h>
+#include "gui/sprite.h"
 
 using namespace Blah;
 
 Batch batch;
-TextureRef gridTex;
-TextureRef lionTex;
+Sprite testSprite;
 
 void startup()
 {
-    gridTex = Texture::create("../data/img/grid.png");
-    lionTex = Texture::create("../data/img/boredlion.png");
+    testSprite.load(0,0,"../data/img/boredlion.png");
+
+    //Sprites::load();
 }
 
 void render()
@@ -22,20 +23,22 @@ void render()
 
     batch.push_matrix(transform);
     //batch.rect(Rect(-32, -32, 64, 64), Color::red);
-    batch.tex(gridTex, Vec2(-330, -350), Color::white);
-    batch.tex(lionTex, Vec2(-330, -350), Color::white);
+    testSprite.draw(&batch);
     batch.pop_matrix();
 
     batch.render();
     batch.clear();
+
+    //Sprites::update();
+    //Sprites::render();
 }
 
 void shutdown()
 {
-
+    //Sprites::clear(); ??
 }
 
-int main()
+int maian()
 {
     Config config;
     config.name = "Chess 2";

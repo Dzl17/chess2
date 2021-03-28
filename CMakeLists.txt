@@ -147,6 +147,9 @@ add_executable(chess2 ${SOURCE_FILES}
         src/game.h
         src/blahtest.cpp
 
+        src/gui/sprite.cpp
+        src/gui/sprite.h
+
         dependencies/blah/src/core/app.cpp
         dependencies/blah/src/core/filesystem.cpp
         dependencies/blah/src/core/common.cpp

@@ -100,7 +100,10 @@ int updatePiece(Game *game, const char *origin, const char *destiny)
     int destinyCode = game->data[destinyX][destinyY]; // Comprobar estado de la casilla objetivo
 
     if (destinyCode == 0 && team == game->turn % 2) { // Casilla vacía y pieza aliada
-        if (movePiece(piece, game, originX, originY, destinyX, destinyY)) return 1;
+        if (movePiece(piece, game, originX, originY, destinyX, destinyY)) {
+            printf("Pieza movida correctamente.\n");
+            return 1;
+        }
         else return 0;
     }
     else if (team != game->turn % 2) { // Mover a pieza enemiga
@@ -130,6 +133,7 @@ int updatePiece(Game *game, const char *origin, const char *destiny)
         } else if (attackResult == 2) {
             if (enemypiece->id == 25) game->nexus1hp -= 5;
             else if (enemypiece->id == 26) game->nexus2hp -= 5;
+            printf("Nexo atacado.\n");
         }
         return 1;
     }
