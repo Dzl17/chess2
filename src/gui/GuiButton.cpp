@@ -37,6 +37,15 @@ void GuiButton::updateTouched() {
     Vec2 mouse = Input::mouse_draw();
     int x = (int) mouse.x;
     int y = (int) mouse.y;
-    this->touched = this->getX() <= x && this->getX() + this->width >= x && this->getY() <= y && this->getY() + this->height >= y;
+    this->touched = this->overlapsPoint(x, y);
+}
+
+bool GuiButton::isJustClicked() {
+    Vec2 mouse = Input::mouse_draw();
+    return this->overlapsPoint(mouse.x, mouse.y) && Input::pressed(MouseButton::Left);
+}
+
+bool GuiButton::overlapsPoint(int x, int y) {
+    return this->getX() <= x && this->getX() + this->width >= x && this->getY() <= y && this->getY() + this->height >= y;
 }
 
