@@ -3,7 +3,6 @@
 
 #include <blah.h>
 #include <iostream>
-#include <stdarg.h>
 
 using namespace Blah;
 

@@ -1,21 +1,29 @@
 #include <blah.h>
 #include "gui/sprite.h"
 #include "gui/GuiButton.h"
+#include "gui/staticSprite.h"
 
 using namespace Blah;
 
+bool fullscreen = false;
+
 Batch batch;
+
+StaticSprite background;
 GuiButton testButton;
 
 void startup()
 {
-    testButton.load(0, 0, 64, 64, "../data/img/boredlion.png", "../data/img/grid.png");
-
+    testButton.load(0, 0, 64, 64,
+                    "../data/img/boredlion.png", "../data/img/boredlion.png");
+    background.load(0, 0, "../data/img/background.png");
     //Sprites::load();
 }
 
 void render()
 {
+    if (Input::pressed(Key::F11)) App::fullscreen(fullscreen = !fullscreen);
+
     App::backbuffer->clear(Color::black);
 
     testButton.update();
@@ -26,6 +34,7 @@ void render()
 
     batch.push_matrix(transform);
     //batch.rect(Rect(-32, -32, 64, 64), Color::red);
+    background.draw(&batch);
     testButton.draw(&batch);
     batch.pop_matrix();
 
@@ -39,7 +48,6 @@ void render()
 void shutdown()
 {
     batch.dispose();
-    //Sprites::clear(); ??
 }
 
 int main()

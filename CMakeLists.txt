@@ -145,7 +145,7 @@ add_executable(chess2 ${SOURCE_FILES}
         src/piece.h
         src/game.c
         src/game.h
-        src/blahtest.cpp
+        src/app.cpp
 
         src/gui/sprite.cpp
         src/gui/sprite.h
@@ -202,6 +202,6 @@ add_executable(chess2 ${SOURCE_FILES}
         dependencies/blah/src/internal/graphics_backend_dummy.cpp
         dependencies/blah/src/internal/platform_backend_sdl2.cpp
         dependencies/blah/src/internal/platform_backend_win32.cpp
-        )
+        src/gui/StaticSprite.cpp src/gui/StaticSprite.h)
 
 target_link_libraries(chess2 PUBLIC ${LIBS} SDL2)
