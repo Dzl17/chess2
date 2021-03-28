@@ -1,14 +1,15 @@
 #include <blah.h>
 #include "gui/sprite.h"
+#include "gui/GuiButton.h"
 
 using namespace Blah;
 
 Batch batch;
-Sprite testSprite;
+GuiButton testButton;
 
 void startup()
 {
-    testSprite.load(0,0,"../data/img/boredlion.png");
+    testButton.load(0, 0, 64, 64, "../data/img/boredlion.png", "../data/img/grid.png");
 
     //Sprites::load();
 }
@@ -17,13 +18,15 @@ void render()
 {
     App::backbuffer->clear(Color::black);
 
+    testButton.update();
+
     auto center = Vec2(App::backbuffer->width(), App::backbuffer->height()) / 2;
     //auto rotation = Time::seconds * Calc::TAU;
     auto transform = Mat3x2::create_transform(center, Vec2::zero, Vec2::one, 0);
 
     batch.push_matrix(transform);
     //batch.rect(Rect(-32, -32, 64, 64), Color::red);
-    testSprite.draw(&batch);
+    testButton.draw(&batch);
     batch.pop_matrix();
 
     batch.render();
@@ -35,10 +38,11 @@ void render()
 
 void shutdown()
 {
+    batch.dispose();
     //Sprites::clear(); ??
 }
 
-int maian()
+int main()
 {
     Config config;
     config.name = "Chess 2";

@@ -3,6 +3,7 @@
 
 #include <blah.h>
 #include <iostream>
+#include <stdarg.h>
 
 using namespace Blah;
 
@@ -10,17 +11,16 @@ class Sprite {
 private:
     int x, y;
     friend std::ostream& operator<<(std::ostream &strm, const Sprite &sprite);
-
+protected:
+    Sprite() = default;
 public:
-    void load(int x, int y, const String& texturePath);
     TextureRef texture;
     int getX();
     void setX(int);
     int getY();
     void setY(int);
-    void draw(Batch *batch);
-
-    Sprite() = default;
+    virtual void update() = 0;
+    virtual void draw(Batch *batch) = 0;
 };
 
 
