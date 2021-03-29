@@ -9,7 +9,7 @@ void StaticSprite::load(int x, int y, const String &texturePath) {
 }
 
 void StaticSprite::draw(Batch *batch) {
-    batch->tex(this->texture, Vec2(this->getX() - App::width()/2, this->getY() - App::height()/2), Color::white);
+    batch->tex(this->texture, Vec2(this->getX(), this->getY()), Color::white);
 }
 
 void StaticSprite::update() {

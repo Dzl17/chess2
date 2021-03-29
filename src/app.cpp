@@ -29,9 +29,8 @@ void render()
 
     testButton.update();
 
-    auto center = Vec2(App::backbuffer->width(), App::backbuffer->height()) / 2;
     //auto rotation = Time::seconds * Calc::TAU;
-    auto transform = Mat3x2::create_transform(center, Vec2::zero, Vec2::one, 0);
+    auto transform = Mat3x2::create_transform(Vec2::zero, Vec2::zero, Vec2::one, 0);
 
     batch.push_matrix(transform);
     //batch.rect(Rect(-32, -32, 64, 64), Color::red);
