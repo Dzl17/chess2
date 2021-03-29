@@ -16,7 +16,7 @@ public:
     void setWidth(int widthNum);
     void setHeight(int heigthNum);
     void update() override;
-    bool isJustClicked();
+    bool isClicked();
     void load(int x, int y, int width, int height, const String& idleTex, const String& pressedTex);
     void draw(Batch *batch) override;
 };

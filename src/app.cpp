@@ -23,7 +23,7 @@ void startup()
 void render()
 {
     if (Input::pressed(Key::F11)) App::fullscreen(fullscreen = !fullscreen);
-    if (testButton.isJustClicked()) App::exit();
+    if (testButton.isClicked()) App::exit();
 
     App::backbuffer->clear(Color::black);
 

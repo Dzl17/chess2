@@ -25,7 +25,6 @@ void GuiButton::load(int xNum, int yNum, int widthNum, int heightNum, const Stri
 
 void GuiButton::update() {
     this->updateTouched();
-    if (this->touched) ; // TODO función en otro sitio
 }
 
 void GuiButton::draw(Batch *batch) {
@@ -40,9 +39,9 @@ void GuiButton::updateTouched() {
     this->touched = this->overlapsPoint(x, y);
 }
 
-bool GuiButton::isJustClicked() {
+bool GuiButton::isClicked() {
     Vec2 mouse = Input::mouse_draw();
-    return this->overlapsPoint(mouse.x, mouse.y) && Input::pressed(MouseButton::Left);
+    return this->overlapsPoint((int) mouse.x, (int) mouse.y) && Input::pressed(MouseButton::Left);
 }
 
 bool GuiButton::overlapsPoint(int x, int y) {

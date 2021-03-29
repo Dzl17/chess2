@@ -138,13 +138,13 @@ endif()
 include_directories(${PROJECT_SOURCE_DIR}/dependencies/blah/include)
 
 add_executable(chess2 ${SOURCE_FILES}
-        src/filem.c
-        src/filem.h
-        src/main.c
-        src/piece.c
-        src/piece.h
-        src/game.c
-        src/game.h
+        src/game/filem.c
+        src/game/filem.h
+        src/game/main.c
+        src/game/piece.c
+        src/game/piece.h
+        src/game/game.c
+        src/game/game.h
         src/app.cpp
 
         src/gui/sprite.cpp
