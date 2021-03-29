@@ -30,8 +30,8 @@ void render()
     testButton.update();
 
     //auto rotation = Time::seconds * Calc::TAU;
-    auto transform = Mat3x2::create_transform(Vec2::zero, Vec2::zero, Vec2::one, 0);
-
+    auto scale = Vec2((float) App::width()/1280, (float) App::height()/720);
+    auto transform = Mat3x2::create_transform(Vec2::zero, Vec2::zero, scale, 0);
     batch.push_matrix(transform);
     //batch.rect(Rect(-32, -32, 64, 64), Color::red);
     background.draw(&batch);
