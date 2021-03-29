@@ -81,7 +81,8 @@ int canAttack(Piece *piece, Piece *enemyPiece, int originX, int originY, int des
             if (piece->id <= 12) return destinyX == originX + 1 && (abs(destinyY - originY) <= 1);
             else return destinyX == originX - 1 && (abs(destinyY - originY) <= 1);
         case 1: // Mago - w
-
+            return (abs(originX - destinyX) == 2 && abs(originY - destinyY) <= 2) ||
+                    (abs(originY - destinyY) == 2 && abs(originX - destinyX) <= 2);
         case 2: // Asesino - a
         case 3: // Golem - g
             return canMove(piece, originX, originY, destinyX, destinyY);
