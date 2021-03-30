@@ -8,7 +8,7 @@ void clearStdin();
 void halfBoard(char* espaces);
 void chooseForm(int f);
 
-int maian() {
+int main() {
     printf("MENU PRINCIPAL: \n");
     printf("1) Jugar en local: \n");
     printf("2) Crear una formacion: \n");
@@ -26,7 +26,7 @@ int maian() {
         clearStdin();
         printf("\n");
         startGame(&game, form, 1);
-        //system("cls"); // Para consola
+        system("cls"); // Para consola
         printf("Juego iniciado.\n\n");
         printBoard(game);
         char c1[2];
@@ -40,7 +40,7 @@ int maian() {
             printf("Casilla destino: ");
             scanf("%c%c", &c2[0], &c2[1]);
             clearStdin();
-            //system("cls"); // Para consola
+            system("cls"); // Para consola
             int jugada = updatePiece(&game, c1, c2);
             if (jugada) {
                 game.turn++;
