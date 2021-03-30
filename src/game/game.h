@@ -56,6 +56,12 @@ int attackPiece(Piece *piece);
 void printBoard(Game game);
 
 /**
+ * Imprime la vida de las piezas en el tablero.
+ * @param game Datos de la tabla
+ */
+void printLifeBoard(Game game);
+
+/**
  * Devuelve la id de la pieza en la posición requerida.
  * @param board Tablero
  * @param x X de la pieza

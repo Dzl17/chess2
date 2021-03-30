@@ -36,6 +36,20 @@ int main() {
             printf("Casilla origen: ");
             scanf("%c%c", &c1[0], &c1[1]);
             if (c1[0] == 'm') break;
+            else if (c1[0] == 'h' && c1[1] == 'p') {
+                clearStdin();
+                system("cls");
+                printf("Vida de las piezas.\n\n");
+                printLifeBoard(game);
+                printf("Pulse 'enter' para salir. ");
+                scanf("%c");
+                clearStdin();
+                system("cls");
+                printf("Elegir movimiento.\n\n");
+                printBoard(game);
+                printf("Casilla origen: ");
+                scanf("%c%c", &c1[0], &c1[1]);
+            }
             clearStdin();
             printf("Casilla destino: ");
             scanf("%c%c", &c2[0], &c2[1]);

@@ -10,6 +10,13 @@
  */
 int invalidPositions(int x1, int y1, int x2, int y2);
 
+/**
+ * Devuelve la vida de la pieza.
+ * @param id Id de la pieza
+ * @return Vida de la pieza
+ */
+int getPieceHp(Game game, int id);
+
 void startGame(Game *game, int f1, int f2)
 {
     game->time = 0;
@@ -195,6 +202,30 @@ void printBoard(Game game)
     printf("\n");
 }
 
+void printLifeBoard(Game game)
+{
+    for (int i = 0; i < 7; i++) {
+        printf("%d > |", i + 1);
+        for (int j = 0; j < 11; j++) {
+            int hp = getPieceHp(game, game.data[i][j]);
+            if (hp <= 0) printf("  |");
+            else printf(hp < 10 ? "0%d|" : "%d|", hp);
+        }
+        printf("\n"); // Formateo
+    }
+
+    printf("      "); // Formateo
+    for (int i = 0; i < 11; i++) {
+        printf("^  "); // Formateo
+    }
+
+    printf("\n      "); // Formateo
+    for (int i = 0; i < 11; i++) {
+        printf("%c  ", 'a' + i);
+    }
+    printf("\n");
+}
+
 int locateId(Game game, int x, int y)   //Buscar ID
 {
     return game.data[x][y];
@@ -203,4 +234,14 @@ int locateId(Game game, int x, int y)   //Buscar ID
 int invalidPositions(int x1, int y1, int x2, int y2)
 {
     return x1 < 0 || y1 < 0 || x2 < 0 || y2 < 0 || x1 > 6 || y1 > 10 || x2 > 6 || y2 > 10;
+}
+
+int getPieceHp(Game game, int id)
+{
+    for (int i = 0; i < 26; i++) { // Encontrar y asignar pieza enemiga
+        if (game.pieces[i].id == id) {
+            return game.pieces[i].hp;
+        }
+    }
+    return 0;
 }
