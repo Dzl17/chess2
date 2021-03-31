@@ -17,6 +17,11 @@ int invalidPositions(int x1, int y1, int x2, int y2);
  */
 int getPieceHp(Game game, int id);
 
+/**
+ * Comprueba si hay una pieza entre medias para un movimiento largo de lancero.
+ */
+int spearBlock(int data[B_ROWS][B_COLUMNS], int team, int originX, int originY, int destinyY);
+
 void startGame(Game *game, int f1, int f2)
 {
     game->time = 0;
@@ -107,6 +112,10 @@ int updatePiece(Game *game, const char *origin, const char *destiny)
     int destinyCode = game->data[destinyX][destinyY]; // Comprobar estado de la casilla objetivo
 
     if (destinyCode == 0 && team == game->turn % 2) { // Casilla vacía y pieza aliada
+        if (spearBlock(game->data, team, originX, originY, destinyY)) {
+            printf("El lancero no puede atravesar piezas enemigas.\n");
+            return 0;
+        }
         if (movePiece(piece, game, originX, originY, destinyX, destinyY)) {
             printf("Pieza movida correctamente.\n");
             return 1;
@@ -244,4 +253,10 @@ int getPieceHp(Game game, int id)
         }
     }
     return 0;
+}
+
+int spearBlock(int data[B_ROWS][B_COLUMNS], int team, int originX, int originY, int destinyY)
+{
+    return (team == 0 && (destinyY - originY == 2 && data[originX][originY + 1] != 0)) ||
+           (team == 1 && (originY - destinyY == 2 && data[originX][originY - 1] != 0));
 }
