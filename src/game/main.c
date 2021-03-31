@@ -18,6 +18,7 @@ int main() {
     clearStdin();
     if (option == 1) {
         chooseForm(1);
+        chooseForm(2);
         chooseForm(3);
         Game game;
         char form;
@@ -25,7 +26,7 @@ int main() {
         scanf("%d", &form);
         clearStdin();
         printf("\n");
-        startGame(&game, form, 1);
+        startGame(&game, form, 4);
         system("cls"); // Para consola
         printf("Juego iniciado.\n\n");
         printBoard(game);
