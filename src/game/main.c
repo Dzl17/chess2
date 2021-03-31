@@ -49,6 +49,22 @@ int main() {
                 printBoard(game);
                 printf("Casilla origen: ");
                 scanf("%c%c", &c1[0], &c1[1]);
+            } else if (c1[0] == '?' && c1[1] == '?'){
+                clearStdin();
+                system("cls");
+                printf("Movimiento y ataque de las piezas.\n\n");
+                printf("Lanceros (s): Se mueven 1 o 2 casillas para adelante y atacan en 3 casillas verticales al frente\n");
+                printf("Mago (w): Se mueven 1 casilla en todas las direcciones y atacan a distancia de 2 casillas\n");
+                printf("Golem (g): Se mueven y atacan a 1 casilla en todas las direcciones\n");
+                printf("Asesino (a): Se mueven y atacan a 3 casillas en vertical y horizontal. Ademas pueden atravesar piezas para moverse\n\n");
+                printf("Pulse 'enter' para salir. ");
+                scanf("%c");
+                clearStdin();
+                system("cls");
+                printf("Elegir movimiento.\n\n");
+                printBoard(game);
+                printf("Casilla origen: ");
+                scanf("%c%c", &c1[0], &c1[1]);
             }
             clearStdin();
             printf("Casilla destino: ");
