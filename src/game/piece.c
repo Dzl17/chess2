@@ -51,7 +51,7 @@ int canMove(Piece *piece, int originX, int originY, int destinyX, int destinyY)
     if (destinyX < 0 || destinyX > 6 || destinyY < 0 || destinyY > 10) return 0;
     if (piece->id < 0) return 0;
     switch (pieceType(piece)) {
-        case 0: // Lancero - s // TODO bloqueo de piezas
+        case 0: // Lancero - s
             if (piece->id <= 12) return (destinyY == originY + 1 || destinyY == originY + 2) && originX == destinyX;
             else return (destinyY == originY - 1 || destinyY == originY - 2) && originX == destinyX;
         case 2: // Asesino - a

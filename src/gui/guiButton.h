@@ -12,12 +12,11 @@ private:
     bool overlapsPoint(int x, int y);
 public:
     bool touched;
-    GuiButton();
+    GuiButton(int x, int y, int width, int height, const String& idleTex, const String& pressedTex);
     void setWidth(int widthNum);
     void setHeight(int heigthNum);
     void update() override;
     bool isClicked();
-    void load(int x, int y, int width, int height, const String& idleTex, const String& pressedTex);
     void draw(Batch *batch) override;
 };
 

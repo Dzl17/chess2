@@ -3,8 +3,9 @@
 
 #include "sprite.h"
 
-class PieceSprite : public Sprite{
+class PieceSprite : public Sprite {
 public:
+    PieceSprite(int x, int y, String& texturePath);
     void update() override;
     void draw(Batch *batch) override;
 };

@@ -1,10 +1,8 @@
 #include <blah.h>
+#include <list>
 #include <map>
+#include "content.h"
 #include "game/chess2.h"
-#include "gui/sprite.h"
-#include "gui/guiButton.h"
-#include "gui/pieceSprite.h"
-#include "gui/staticSprite.h"
 
 using namespace Blah;
 
@@ -13,21 +11,13 @@ bool fullscreen = false;
 Batch batch;
 
 Game game;
-std::map<String, StaticSprite> staticSprites;
-std::map<String, GuiButton> buttonSprites;
+std::list<StaticSprite> staticSprites;
+std::map<int, GuiButton> buttonSprites;
 std::map<int, PieceSprite> pieceSprites;
-
-StaticSprite background;
-GuiButton testButton;
 
 void startup()
 {
-    testButton.load(32, 16, 192, 64,
-                    "../data/img/testButtonIdle.png", "../data/img/testButtonPressed.png");
-    background.load(0, 0, "../data/img/background.png");
-    //Assets::loadStatics(&staticSprites);
-    //Assets::loadButtons(&buttonSprites);
-    //Assets::loadPieces(&pieceSprites);
+    Assets::load(&staticSprites, &buttonSprites, &pieceSprites);
 }
 
 void render()
@@ -39,9 +29,7 @@ void render()
     batch.push_matrix(transform);
 
     //batch.rect(Rect(-32, -32, 64, 64), Color::red);
-    background.draw(&batch);
-    testButton.draw(&batch);
-    //Sprites::render();
+    Assets::render(&staticSprites, &buttonSprites, &pieceSprites, &batch);
 
     batch.pop_matrix();
 
@@ -52,10 +40,7 @@ void render()
 void update()
 {
     if (Input::pressed(Key::F11)) App::fullscreen(fullscreen = !fullscreen);
-    if (testButton.isClicked()) App::exit();
-
-    testButton.update();
-    //Sprites::update();
+    if (buttonSprites.find(1)->second.isClicked()) App::exit();
 }
 
 void shutdown()

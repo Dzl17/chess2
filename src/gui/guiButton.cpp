@@ -1,9 +1,13 @@
 #include "guiButton.h"
 
-GuiButton::GuiButton() {
-    this->width = 0;
-    this->height = 0;
+GuiButton::GuiButton(int xNum, int yNum, int widthNum, int heightNum, const String& idleTexPath, const String& pressedTexPath) {
+    this->setX(xNum);
+    this->setY(yNum);
     this->touched = false;
+    this->width = widthNum;
+    this->height = heightNum;
+    this->idleTex = Texture::create(idleTexPath);
+    this->pressedTex = Texture::create(pressedTexPath);
 }
 
 void GuiButton::setWidth(int widthNum) {
@@ -12,15 +16,6 @@ void GuiButton::setWidth(int widthNum) {
 
 void GuiButton::setHeight(int heigthNum) {
     this->height = heigthNum;
-}
-
-void GuiButton::load(int xNum, int yNum, int widthNum, int heightNum, const String& idleTexPath, const String& pressedTexPath) {
-    this->setX(xNum);
-    this->setY(yNum);
-    this->width = widthNum;
-    this->height = heightNum;
-    this->idleTex = Texture::create(idleTexPath);
-    this->pressedTex = Texture::create(pressedTexPath);
 }
 
 void GuiButton::update() {
