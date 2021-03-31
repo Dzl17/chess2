@@ -1,4 +1,4 @@
-#include "GuiButton.h"
+#include "guiButton.h"
 
 GuiButton::GuiButton() {
     this->width = 0;
