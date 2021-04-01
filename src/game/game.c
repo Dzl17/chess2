@@ -150,6 +150,10 @@ int updatePiece(Game *game, const char *origin, const char *destiny)
                 if (attackPiece(piece)){
                     movePiece(enemypiece, game, originX, originY, destinyX, destinyY); // Contraataque
                 }
+            } else{
+                if (pieceType(enemypiece) == 1){
+                    attackPiece(piece);
+                }
             }
             printf("Ataque realizado.\n");
         } else if (attackResult == 1) {
