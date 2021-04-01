@@ -138,6 +138,10 @@ endif()
 include_directories(${PROJECT_SOURCE_DIR}/dependencies/blah/include)
 
 add_executable(chess2 ${SOURCE_FILES}
+        src/app.cpp
+        src/content.cpp
+        src/content.h
+
         src/game/filem.c
         src/game/filem.h
         src/game/main.c
@@ -145,12 +149,16 @@ add_executable(chess2 ${SOURCE_FILES}
         src/game/piece.h
         src/game/game.c
         src/game/game.h
-        src/app.cpp
+        src/game/chess2.h
 
         src/gui/sprite.cpp
         src/gui/sprite.h
-        src/gui/GuiButton.cpp
-        src/gui/GuiButton.h
+        src/gui/guiButton.cpp
+        src/gui/guiButton.h
+        src/gui/staticSprite.cpp
+        src/gui/staticSprite.h
+        src/gui/pieceSprite.cpp
+        src/gui/pieceSprite.h
 
         dependencies/blah/src/core/app.cpp
         dependencies/blah/src/core/filesystem.cpp
@@ -202,6 +210,6 @@ add_executable(chess2 ${SOURCE_FILES}
         dependencies/blah/src/internal/graphics_backend_dummy.cpp
         dependencies/blah/src/internal/platform_backend_sdl2.cpp
         dependencies/blah/src/internal/platform_backend_win32.cpp
-        src/gui/StaticSprite.cpp src/gui/StaticSprite.h)
+        )
 
 target_link_libraries(chess2 PUBLIC ${LIBS} SDL2)

@@ -5,8 +5,7 @@
 
 class StaticSprite : public Sprite{
 public:
-    StaticSprite();
-    void load(int x, int y, const String& texturePath);
+    StaticSprite(int x, int y, const String& texturePath);
     void update() override;
     void draw(Batch *batch) override;
 };
