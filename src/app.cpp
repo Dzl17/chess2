@@ -11,9 +11,9 @@ bool fullscreen = false;
 Batch batch;
 
 Game game;
-std::list<StaticSprite> staticSprites;
-std::map<int, GuiButton> buttonSprites;
-std::map<int, PieceSprite> pieceSprites;
+std::vector<StaticSprite> staticSprites;
+std::vector<GuiButton> buttonSprites;
+std::vector<PieceSprite> pieceSprites;
 
 void startup()
 {
@@ -40,7 +40,8 @@ void render()
 void update()
 {
     if (Input::pressed(Key::F11)) App::fullscreen(fullscreen = !fullscreen);
-    if (buttonSprites.find(1)->second.isClicked()) App::exit();
+    if (buttonSprites[0].isClicked()) staticSprites[1].swapActive();
+    if (buttonSprites[1].isClicked()) App::exit();
 }
 
 void shutdown()
@@ -48,7 +49,7 @@ void shutdown()
     batch.dispose();
 }
 
-int maian()
+int main()
 {
     Config config;
     config.name = "Chess 2";

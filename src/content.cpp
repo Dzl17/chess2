@@ -1,31 +1,33 @@
 #include "content.h"
 
-void Assets::load(std::list<StaticSprite> *statics, std::map<int, GuiButton> *buttons, std::map<int, PieceSprite> *pieces)
+void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces)
 {
-    statics->push_back(StaticSprite(0, 0, "../data/img/background.png"));
+    statics->push_back(StaticSprite(0, 0, "../data/img/background.png", true));
+    statics->push_back(StaticSprite(320, 64, "../data/img/helpmenu.png", false));
 
-    buttons->insert(std::pair<int, GuiButton>(
-            1, // Test Button
-            GuiButton(32, 16, 192, 64,"../data/img/testButtonIdle.png", "../data/img/testButtonPressed.png")));
+    buttons->push_back(GuiButton(16, 16, 224, 64,
+                                 "../data/img/testButtonIdle.png", "../data/img/testButtonPressed.png"));
+    buttons->push_back(GuiButton(16, 96, 224, 64,
+                                 "../data/img/exitButtonIdle.png", "../data/img/exitButtonPressed.png"));
 }
 
 
-void Assets::render(std::list<StaticSprite> *statics, std::map<int, GuiButton> *buttons, std::map<int, PieceSprite> *pieces, Batch *batch)
+void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, Batch *batch)
 {
-    std::list<StaticSprite>::iterator staticIt;
+    vector<StaticSprite>::iterator staticIt;
     for (staticIt = statics->begin(); staticIt != statics->end(); ++staticIt){
         staticIt->draw(batch);
     }
 
-    std::map<int, GuiButton>::iterator buttonIt;
+    vector<GuiButton>::iterator buttonIt;
     for (buttonIt = buttons->begin(); buttonIt != buttons->end(); buttonIt++) {
-        buttonIt->second.update();
-        buttonIt->second.draw(batch);
+        buttonIt->update();
+        buttonIt->draw(batch);
     }
 
-    std::map<int, PieceSprite>::iterator pieceIt;
+    std::vector<PieceSprite>::iterator pieceIt;
     for (pieceIt = pieces->begin(); pieceIt != pieces->end(); pieceIt++) {
-        pieceIt->second.update();
-        pieceIt->second.draw(batch);
+        pieceIt->update();
+        pieceIt->draw(batch);
     }
 }

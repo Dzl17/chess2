@@ -9,10 +9,11 @@
 #include "gui/pieceSprite.h"
 
 using namespace Blah;
+using std::vector;
 
 namespace Assets {
-    void load(std::list<StaticSprite> *statics, std::map<int, GuiButton> *buttons, std::map<int, PieceSprite> *pieces);
-    void render(std::list<StaticSprite> *statics, std::map<int, GuiButton> *buttons, std::map<int, PieceSprite> *pieces, Batch *batch);
+    void load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces);
+    void render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, Batch *batch);
 }
 
 #endif //CHESS2_CONTENT_H
