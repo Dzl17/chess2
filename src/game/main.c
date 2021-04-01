@@ -27,7 +27,7 @@ int main() {
         clearStdin();
         printf("\n");
         startGame(&game, form, 4);
-        system("cls"); // Para consola
+        //system("cls"); // Para consola
         printf("Juego iniciado.\n\n");
         printBoard(game);
         char c1[2];
@@ -39,20 +39,20 @@ int main() {
             if (c1[0] == 'm') break;
             else if (c1[0] == 'h' && c1[1] == 'p') {
                 clearStdin();
-                system("cls");
+                //system("cls");
                 printf("Vida de las piezas.\n\n");
                 printLifeBoard(game);
                 printf("Pulse 'enter' para salir. ");
                 scanf("%c");
                 clearStdin();
-                system("cls");
+                //system("cls");
                 printf("Elegir movimiento.\n\n");
                 printBoard(game);
                 printf("Casilla origen: ");
                 scanf("%c%c", &c1[0], &c1[1]);
             } else if (c1[0] == '?' && c1[1] == '?'){
                 clearStdin();
-                system("cls");
+                //system("cls");
                 printf("Movimiento y ataque de las piezas.\n\n");
                 printf("Lanceros (s): Se mueven 1 o 2 casillas para adelante y atacan en 3 casillas verticales al frente\n");
                 printf("Mago (w): Se mueven 1 casilla en todas las direcciones y atacan a distancia de 2 casillas\n");
@@ -61,7 +61,7 @@ int main() {
                 printf("Pulse 'enter' para salir. ");
                 scanf("%c");
                 clearStdin();
-                system("cls");
+                //system("cls");
                 printf("Elegir movimiento.\n\n");
                 printBoard(game);
                 printf("Casilla origen: ");
@@ -71,7 +71,7 @@ int main() {
             printf("Casilla destino: ");
             scanf("%c%c", &c2[0], &c2[1]);
             clearStdin();
-            system("cls"); // Para consola
+            //system("cls"); // Para consola
             int jugada = updatePiece(&game, c1, c2);
             if (jugada) {
                 game.turn++;

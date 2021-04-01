@@ -145,13 +145,21 @@ int updatePiece(Game *game, const char *origin, const char *destiny)
         }
 
         int attackResult = attackPiece(enemypiece);
-
         if (attackResult == 0) {
-            if (attackPiece(piece)) movePiece(enemypiece, game, originX, originY, destinyX, destinyY); // Contraataque
+            if (pieceType(piece) != 1){
+                if (attackPiece(piece)){
+                    movePiece(enemypiece, game, originX, originY, destinyX, destinyY); // Contraataque
+                }
+            }
             printf("Ataque realizado.\n");
         } else if (attackResult == 1) {
-            movePiece(piece, game, originX, originY, destinyX, destinyY);
+            if (pieceType(piece) != 1){
+                movePiece(piece, game, originX, originY, destinyX, destinyY);
+            }else{
+                game->data[destinyX][destinyY]=0;
+            }
             printf("Pieza eliminada.\n");
+
         } else if (attackResult == 2) {
             if (enemypiece->id == 25) game->nexus1hp -= 5;
             else if (enemypiece->id == 26) game->nexus2hp -= 5;
