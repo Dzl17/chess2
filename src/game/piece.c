@@ -82,8 +82,8 @@ int canAttack(Piece *piece, Piece *enemyPiece, int originX, int originY, int des
             return (abs(originX - destinyX) == 2 && abs(originY - destinyY) <= 2) ||
                     (abs(originY - destinyY) == 2 && abs(originX - destinyX) <= 2);
         case 2: // Asesino - a
-            return (abs(originX - destinyX) == 1 && abs(originY - destinyY) <= 1) ||
-                   (abs(originY - destinyY) == 1 && abs(originX - destinyX) <= 1);
+            return (abs(originX - destinyX) == 1 && abs(originY - destinyY) == 0) ||
+                   (abs(originY - destinyY) == 1 && abs(originX - destinyX) == 0);
         case 3: // Golem - g
             return canMove(piece, originX, originY, destinyX, destinyY);
         default:
