@@ -6,7 +6,7 @@ void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vec
     statics->push_back(StaticSprite(320, 64, "../data/img/helpmenu.png", false));
 
     buttons->push_back(GuiButton(16, 16, 224, 64,
-                                 "../data/img/testButtonIdle.png", "../data/img/testButtonPressed.png"));
+                                 "../data/img/helpButtonIdle.png", "../data/img/helpButtonPressed.png"));
     buttons->push_back(GuiButton(16, 96, 224, 64,
                                  "../data/img/exitButtonIdle.png", "../data/img/exitButtonPressed.png"));
 }
