@@ -10,10 +10,15 @@ void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vec
     buttons->push_back(GuiButton(16, 96, 224, 64,
                                  "../data/img/exitButtonIdle.png", "../data/img/exitButtonPressed.png"));
 
-    pieces->push_back(PieceSprite(416, 128, "../data/img/units/assassinR.png"));
-    pieces->push_back(PieceSprite(480, 128, "../data/img/units/wizardR.png"));
-    pieces->push_back(PieceSprite(416, 192, "../data/img/units/spearmanR.png"));
-    pieces->push_back(PieceSprite(480, 192, "../data/img/units/golemR.png"));
+    pieces->push_back(PieceSprite(416, 128, "../data/img/units/assassinL.png"));
+    pieces->push_back(PieceSprite(480, 128, "../data/img/units/wizardL.png"));
+    pieces->push_back(PieceSprite(416, 192, "../data/img/units/spearmanL.png"));
+    pieces->push_back(PieceSprite(480, 192, "../data/img/units/golemL.png"));
+
+    pieces->push_back(PieceSprite(992, 128, "../data/img/units/assassinR.png"));
+    pieces->push_back(PieceSprite(1056, 128, "../data/img/units/wizardR.png"));
+    pieces->push_back(PieceSprite(992, 192, "../data/img/units/spearmanR.png"));
+    pieces->push_back(PieceSprite(1056, 192, "../data/img/units/golemR.png"));
 }
 
 // TODO orden de renderizado
