@@ -9,9 +9,12 @@ void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vec
                                  "../data/img/helpButtonIdle.png", "../data/img/helpButtonPressed.png"));
     buttons->push_back(GuiButton(16, 96, 224, 64,
                                  "../data/img/exitButtonIdle.png", "../data/img/exitButtonPressed.png"));
+
+    pieces->push_back(PieceSprite(416, 128, "../data/img/golem.png"));
+    pieces->push_back(PieceSprite(480, 128, "../data/img/golem.png"));
 }
 
-
+// TODO orden de renderizado
 void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, Batch *batch)
 {
     vector<StaticSprite>::iterator staticIt;

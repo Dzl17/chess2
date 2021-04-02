@@ -5,7 +5,7 @@
 
 class PieceSprite : public Sprite {
 public:
-    PieceSprite(int x, int y, String& texturePath);
+    PieceSprite(int x, int y, const String& texturePath);
     void update() override;
     void draw(Batch *batch) override;
 };

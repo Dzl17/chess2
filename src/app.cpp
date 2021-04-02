@@ -1,6 +1,4 @@
 #include <blah.h>
-#include <list>
-#include <map>
 #include "content.h"
 #include "game/chess2.h"
 
@@ -40,8 +38,8 @@ void render()
 void update()
 {
     if (Input::pressed(Key::F11)) App::fullscreen(fullscreen = !fullscreen);
-    if (buttonSprites[0].isClicked()) staticSprites[1].swapActive();
-    if (buttonSprites[1].isClicked()) App::exit();
+    if (buttonSprites[0].isClicked() || Input::pressed(Key::H)) staticSprites[1].swapActive(); // TODO no funciona bien en pantalla completa
+    if (buttonSprites[1].isClicked() || Input::pressed(Key::Escape)) App::exit();
 }
 
 void shutdown()
