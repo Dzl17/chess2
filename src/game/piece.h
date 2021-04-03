@@ -13,6 +13,13 @@ typedef struct {
 int pieceType(Piece *piece);
 
 /**
+ * Devuelve el tipo de pieza.
+ * @param piece Pieza requerida
+ * @return ID 0-3 de la pieza
+ */
+int pieceCode(int piece);
+
+/**
  * Devuelve el caracter asignado a la pieza.
  * @param id Id de la pieza
  * @return Caracter
