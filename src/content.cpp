@@ -3,11 +3,11 @@ extern "C" {
     #include "game/piece.h"
 }
 
-#define MOVE false
-#define ATTACK true
+#define MOVE true
+#define ATTACK false
 
-vector<Vec2> getMovePositions(int id, int x, int y);
-vector<Vec2> getAttackPositions(int id, int x, int y);
+vector<Vec2> getMovePositions(int id, int x, int y, int data[B_ROWS][B_COLUMNS]);
+vector<Vec2> getAttackPositions(int id, int x, int y, int data[B_ROWS][B_COLUMNS]);
 
 void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces)
 {
@@ -41,10 +41,10 @@ void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
     for (auto & piece : *pieces) {
         piece.update();
         if (piece.state == PieceSprite::CHOOSING) {
-            for (auto & pos : getMovePositions(piece.id, piece.getX(), piece.getY())) {
+            for (auto & pos : getMovePositions(piece.id, piece.getX(), piece.getY(), game.data)) {
                 if (MOVE) batch->rect(Rect(pos.x, pos.y, 64, 64), Color::green);
             }
-            for (auto & pos : getAttackPositions(piece.id, piece.getX(), piece.getY())) {
+            for (auto & pos : getAttackPositions(piece.id, piece.getX(), piece.getY(), game.data)) {
                 if (ATTACK) batch->rect(Rect(pos.x, pos.y, 64, 64), Color::red);
             }
         }
@@ -75,7 +75,7 @@ void Assets::updateMenu(vector<StaticSprite> *statics, vector<GuiButton> *button
 }
 
 
-vector<Vec2> getMovePositions(int id, int x, int y)
+vector<Vec2> getMovePositions(int id, int x, int y, int data[B_ROWS][B_COLUMNS])
 {
     int relX = x/64 - 6;
     int relY = y/64 - 1;
@@ -107,14 +107,15 @@ vector<Vec2> getMovePositions(int id, int x, int y)
                 }
             }
             break;
-        default:
-            std::cout << "DEF MOV" << std::endl;
-            break;
+    }
+    for (auto it = positions.begin(); it != positions.end();) {
+        if (data[(int) (it->y/64 - 1)][(int) (it->x/64 - 6)] == 0) it++;
+        else positions.erase(it);
     }
     return positions;
 }
 
-vector<Vec2> getAttackPositions(int id, int x, int y)
+vector<Vec2> getAttackPositions(int id, int x, int y, int data[B_ROWS][B_COLUMNS])
 {
     int relX = x/64 - 6;
     int relY = y/64 - 1;
@@ -165,8 +166,17 @@ vector<Vec2> getAttackPositions(int id, int x, int y)
                 }
             }
             break;
-        default:
-            std::cout << "DEF ATT" << std::endl;
+    }
+    for (auto it = positions.begin(); it != positions.end();) {
+        int team = id <= 12 ? 0 : 1;
+        int posCode = data[(int) (it->y/64 - 1)][(int) (it->x/64 - 6)];
+        if (team == 0) {
+            if (posCode >= 13 && posCode != 25) positions.erase(it);
+            else it++;
+        } else if (team == 1) {
+            if (posCode <= 12 || posCode == 26) positions.erase(it);
+            else it++;
+        }
     }
     return positions;
 }
