@@ -1,15 +1,14 @@
 #include "content.h"
-extern "C" {
-    #include "game/piece.h"
-}
 
-#define MOVE true
-#define ATTACK false
+#define MOVE false
+#define ATTACK true
 
 vector<Vec2> getMovePositions(int id, int x, int y, int data[B_ROWS][B_COLUMNS]);
 vector<Vec2> getAttackPositions(int id, int x, int y, int data[B_ROWS][B_COLUMNS]);
+void loadPieces(vector<PieceSprite> *pieces, int data[B_ROWS][B_COLUMNS]); // TODO añadir parámetro data
+String getSpritePath(int id);
 
-void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces)
+void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, Game game)
 {
     statics->push_back(StaticSprite(0, 0, "../data/img/background.png", true));
     statics->push_back(StaticSprite(320, 64, "../data/img/helpmenu.png", false));
@@ -19,15 +18,7 @@ void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vec
     buttons->push_back(GuiButton(16, 96, 224, 64,
                                  "../data/img/exitButtonIdle.png", "../data/img/exitButtonPressed.png"));
 
-    pieces->push_back(PieceSprite(416, 192, 1, "../data/img/units/spearmanL.png"));
-    pieces->push_back(PieceSprite(480, 128, 5, "../data/img/units/wizardL.png"));
-    pieces->push_back(PieceSprite(416, 128, 8, "../data/img/units/assassinL.png"));
-    pieces->push_back(PieceSprite(416, 256, 11, "../data/img/units/golemL.png"));
-
-    pieces->push_back(PieceSprite(992, 192, 13, "../data/img/units/spearmanR.png"));
-    pieces->push_back(PieceSprite(1056, 128, 17, "../data/img/units/wizardR.png"));
-    pieces->push_back(PieceSprite(992, 128, 20, "../data/img/units/assassinR.png"));
-    pieces->push_back(PieceSprite(1056, 192 ,23, "../data/img/units/golemR.png"));
+    loadPieces(pieces, game.data);
 }
 
 void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, Batch *batch, Game game)
@@ -167,6 +158,7 @@ vector<Vec2> getAttackPositions(int id, int x, int y, int data[B_ROWS][B_COLUMNS
             }
             break;
     }
+    /*
     for (auto it = positions.begin(); it != positions.end();) {
         int team = id <= 12 ? 0 : 1;
         int posCode = data[(int) (it->y/64 - 1)][(int) (it->x/64 - 6)];
@@ -177,6 +169,60 @@ vector<Vec2> getAttackPositions(int id, int x, int y, int data[B_ROWS][B_COLUMNS
             if (posCode <= 12 || posCode == 26) positions.erase(it);
             else it++;
         }
-    }
+    }*/
     return positions;
+}
+
+void loadPieces(vector<PieceSprite> *pieces, int data[B_ROWS][B_COLUMNS])
+{
+    /*
+    pieces->push_back(PieceSprite(416, 192, 1, "../data/img/units/spearmanL.png"));
+    pieces->push_back(PieceSprite(480, 128, 5, "../data/img/units/wizardL.png"));
+    pieces->push_back(PieceSprite(416, 128, 8, "../data/img/units/assassinL.png"));
+    pieces->push_back(PieceSprite(416, 256, 11, "../data/img/units/golemL.png"));
+
+    pieces->push_back(PieceSprite(992, 192, 13, "../data/img/units/spearmanR.png"));
+    pieces->push_back(PieceSprite(1056, 128, 17, "../data/img/units/wizardR.png"));
+    pieces->push_back(PieceSprite(992, 128, 20, "../data/img/units/assassinR.png"));
+    pieces->push_back(PieceSprite(1056, 192 ,23, "../data/img/units/golemR.png"));
+*/
+
+    for (int i = 0; i < B_ROWS; i++) {
+        for (int j = 0; j < B_COLUMNS; j++) {
+            int dataCode = data[i][j];
+            if (dataCode >= 1 && dataCode <= 24) pieces->push_back(PieceSprite(
+                    (j + 6.5) * 64, // Wtf
+                    (i + 1) * 64,
+                    dataCode,
+                    getSpritePath(dataCode)));
+        }
+    }
+
+}
+
+String getSpritePath(int id)
+{
+    if (id >= 1 && id <= 4) {
+        return "../data/img/units/spearmanL.png";
+    } else if (id >= 5 && id <= 7) {
+        return "../data/img/units/wizardL.png";
+    } else if (id >= 8 && id <= 10) {
+        return "../data/img/units/assassinL.png";
+    } else if (id >= 11 && id <= 12) {
+        return "../data/img/units/golemL.png";
+    } else if (id >= 13 && id <= 16) {
+        return "../data/img/units/spearmanR.png";
+    } else if (id >= 17 && id <= 19) {
+        return "../data/img/units/wizardR.png";
+    } else if (id >= 20 && id <= 22) {
+        return "../data/img/units/assassinR.png";
+    } else if (id >= 23 && id <= 24) {
+        return "../data/img/units/golemR.png";
+    } else if (id == 25) {
+        return "../data/img/boredlion.png";
+    } else if (id == 26) {
+        return "../data/img/boredlion.png";
+    } else {
+        return "../data/img/boredlion.png";
+    }
 }

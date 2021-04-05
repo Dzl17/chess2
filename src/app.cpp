@@ -19,7 +19,8 @@ std::vector<PieceSprite> pieceSprites;
 
 void startup()
 {
-    Assets::load(&staticSprites, &buttonSprites, &pieceSprites);
+    startGame(&game, 1,1);
+    Assets::load(&staticSprites, &buttonSprites, &pieceSprites, game);
 }
 
 void render()
