@@ -16,19 +16,6 @@ int pieceType(Piece *piece)
     }
 }
 
-int pieceCode(int piece)
-{
-    if ((piece >= 1 && piece <= 4) || (piece >= 13 && piece <= 16)) {
-        return 0;
-    } else if ((piece >= 5 && piece <= 7) || (piece >= 17 && piece <= 19)) {
-        return 1;
-    } else if ((piece >= 8 && piece <= 10) || (piece >= 20 && piece <= 22)) {
-        return 2;
-    } else {
-        return 3;
-    }
-}
-
 char pieceLetter(int id)
 {
     if ((id >= 1 && id <= 4) || (id >= 13 && id <= 16)) {

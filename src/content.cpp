@@ -3,8 +3,6 @@
 #define MOVE true
 #define ATTACK false
 
-vector<Vec2> getMovePositions(int id, int x, int y, int data[B_ROWS][B_COLUMNS]);
-vector<Vec2> getAttackPositions(int id, int x, int y, int data[B_ROWS][B_COLUMNS]);
 void loadPieces(vector<PieceSprite> *pieces, int data[B_ROWS][B_COLUMNS]);
 String getSpritePath(int id);
 
@@ -32,10 +30,10 @@ void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
     for (auto & piece : *pieces) {
         piece.update();
         if (piece.state == PieceSprite::CHOOSING) {
-            for (auto & pos : getMovePositions(piece.id, piece.getX(), piece.getY(), game.data)) {
+            for (auto & pos : piece.getMovePositions(game.data)) {
                 if (MOVE) batch->rect(Rect(pos.x, pos.y, 64, 64), Color::green);
             }
-            for (auto & pos : getAttackPositions(piece.id, piece.getX(), piece.getY(), game.data)) {
+            for (auto & pos : piece.getAttackPositions(game.data)) {
                 if (ATTACK) batch->rect(Rect(pos.x, pos.y, 64, 64), Color::red);
             }
         }
@@ -63,114 +61,6 @@ void Assets::updateGame(vector<StaticSprite> *statics, vector<GuiButton> *button
 void Assets::updateMenu(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces)
 {
 
-}
-
-
-vector<Vec2> getMovePositions(int id, int x, int y, int data[B_ROWS][B_COLUMNS]) // TODO spearman no atraviesa
-{
-    int relX = x/64 - 6;
-    int relY = y/64 - 1;
-    vector<Vec2> positions;
-    switch (pieceCode(id)) {
-        case 0: // Lancero
-            if (id <= 12) {
-                if (relX + 1 <= 10) positions.emplace_back(Vec2(x + 64, y));
-                if (relX + 2 <= 10) positions.emplace_back(Vec2(x + 128, y));
-            } else {
-                if (relX - 1 >= 0)  positions.emplace_back(Vec2(x - 64, y));
-                if (relX - 2 >= 0)  positions.emplace_back(Vec2(x - 128, y));
-            }
-            break;
-        case 2: // Asesino
-            for (int i = -3; i <= 3; i++) {
-                if (i == 0) continue;
-                if (relX + i <= 10 && relX + i >= 0) positions.emplace_back(Vec2(x + i*64, y));
-                if (relY + i <= 6  && relY + i >= 0) positions.emplace_back(Vec2(x, y + i*64));
-            }
-            break;
-        case 1: // Mago
-        case 3: // Golem
-            for (int i = -1; i <= 1; i++) {
-                for (int j = -1; j <= 1; j++) {
-                    if (i == 0 && j == 0) continue;
-                    else if (relX + i <= 10 && relX + i >= 0 && relY + j <= 6 && relY + j >= 0)
-                        positions.emplace_back(x + i*64, y + j*64);
-                }
-            }
-            break;
-    }
-    for (auto it = positions.begin(); it != positions.end();) {
-        if (data[(int) (it->y/64 - 1)][(int) (it->x/64 - 6)] == 0) it++;
-        else positions.erase(it);
-    }
-    return positions;
-}
-
-vector<Vec2> getAttackPositions(int id, int x, int y, int data[B_ROWS][B_COLUMNS])
-{
-    int relX = x/64 - 6;
-    int relY = y/64 - 1;
-    vector<Vec2> positions;
-    switch (pieceCode(id)) {
-        case 0: // Lancero
-            if (id <= 12) {
-                if (relX + 1 <= 10) {
-                    if (relY     <= 6 && relY     >= 0) positions.emplace_back(Vec2(x + 64, y));
-                    if (relY + 1 <= 6 && relY + 1 >= 0) positions.emplace_back(Vec2(x + 64, y + 64));
-                    if (relY - 1 <= 6 && relY - 1 >= 0) positions.emplace_back(Vec2(x + 64, y - 64));
-                }
-            } else {
-                if (relX - 1 >= 0) {
-                    if (relY     <= 6 && relY     >= 0) positions.emplace_back(Vec2(x - 64, y));
-                    if (relY + 1 <= 6 && relY + 1 >= 0) positions.emplace_back(Vec2(x - 64, y + 64));
-                    if (relY - 1 <= 6 && relY - 1 >= 0) positions.emplace_back(Vec2(x - 64, y - 64));
-                }
-            }
-            break;
-        case 2: // Asesino
-            if (relX + 1 <= 10)  positions.emplace_back(Vec2(x + 64, y));
-            if (relX - 1 >= 0)  positions.emplace_back(Vec2(x - 64, y));
-            if (relY + 1 <= 6) positions.emplace_back(Vec2(x, y + 64));
-            if (relY - 1 >= 0)  positions.emplace_back(Vec2(x, y - 64));
-            break;
-        case 1: // Mago
-            // Arriba y abajo
-            for (int i = -2; i <= 2; i++) {
-                if (relX + i <= 10 && relX + i >= 0) {
-                    if (relY + 2 <= 6) positions.emplace_back(Vec2(x + i*64, y + 128));
-                    if (relY - 2 >= 0) positions.emplace_back(Vec2(x + i*64, y - 128));
-                }
-            }
-            // Lados
-            for (int i = -1; i <= 1; i++) {
-                if (relY + i <= 6 && relY + i >= 0) {
-                    if (relX + 2 <= 10) positions.emplace_back(Vec2(x + 128, y + i*64));
-                    if (relX - 2 >= 0) positions.emplace_back(Vec2(x - 128, y + i*64));
-                }
-            }
-            break;
-        case 3: // Golem
-            for (int i = -1; i <= 1; i++) {
-                for (int j = -1; j <= 1; j++) {
-                    if (i == 0 && j == 0) continue;
-                    else if (relX + i <= 10 && relX + i >= 0 && relY + j <= 6 && relY + j >= 0) positions.emplace_back(x + i*64, y + j*64);
-                }
-            }
-            break;
-    }
-
-    for (auto it = positions.begin(); it != positions.end();) {
-        int team = id <= 12 ? 0 : 1;
-        int posCode = data[(int)(it->y/64 - 1)][(int)(it->x/64 - 6)];
-        if (team == 0) {
-            if (posCode >= 13 && posCode != 25) it++;
-            else positions.erase(it);
-        } else if (team == 1) {
-            if ((posCode <= 12 && posCode >= 1) || posCode == 26) it++;
-            else positions.erase(it);
-        }
-    }
-    return positions;
 }
 
 void loadPieces(vector<PieceSprite> *pieces, int data[B_ROWS][B_COLUMNS])
