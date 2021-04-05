@@ -1,11 +1,11 @@
 #include "content.h"
 
-#define MOVE false
-#define ATTACK true
+#define MOVE true
+#define ATTACK false
 
 vector<Vec2> getMovePositions(int id, int x, int y, int data[B_ROWS][B_COLUMNS]);
 vector<Vec2> getAttackPositions(int id, int x, int y, int data[B_ROWS][B_COLUMNS]);
-void loadPieces(vector<PieceSprite> *pieces, int data[B_ROWS][B_COLUMNS]); // TODO añadir parámetro data
+void loadPieces(vector<PieceSprite> *pieces, int data[B_ROWS][B_COLUMNS]);
 String getSpritePath(int id);
 
 void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, Game game)
@@ -66,7 +66,7 @@ void Assets::updateMenu(vector<StaticSprite> *statics, vector<GuiButton> *button
 }
 
 
-vector<Vec2> getMovePositions(int id, int x, int y, int data[B_ROWS][B_COLUMNS])
+vector<Vec2> getMovePositions(int id, int x, int y, int data[B_ROWS][B_COLUMNS]) // TODO spearman no atraviesa
 {
     int relX = x/64 - 6;
     int relY = y/64 - 1;
@@ -158,18 +158,18 @@ vector<Vec2> getAttackPositions(int id, int x, int y, int data[B_ROWS][B_COLUMNS
             }
             break;
     }
-    /*
+
     for (auto it = positions.begin(); it != positions.end();) {
         int team = id <= 12 ? 0 : 1;
-        int posCode = data[(int) (it->y/64 - 1)][(int) (it->x/64 - 6)];
+        int posCode = data[(int)(it->y/64 - 1)][(int)(it->x/64 - 6)];
         if (team == 0) {
-            if (posCode >= 13 && posCode != 25) positions.erase(it);
-            else it++;
+            if (posCode >= 13 && posCode != 25) it++;
+            else positions.erase(it);
         } else if (team == 1) {
-            if (posCode <= 12 || posCode == 26) positions.erase(it);
-            else it++;
+            if ((posCode <= 12 && posCode >= 1) || posCode == 26) it++;
+            else positions.erase(it);
         }
-    }*/
+    }
     return positions;
 }
 
