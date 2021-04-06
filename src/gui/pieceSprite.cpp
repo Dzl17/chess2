@@ -12,9 +12,10 @@ PieceSprite::PieceSprite(int x, int y, int id, const String& texturePath) {
     this->active = true;
     this->texture = Texture::create(texturePath);
     this->touched = false;
+    this->focus=Vec2(0,0);
 }
 
-void PieceSprite::update() {
+void PieceSprite::update(Game *game) {
     if (this->touched && this->overlapsMouse() && Input::released(MouseButton::Left)) this->touched = false;
     if (this->hp <= 0) {
         this->active = false;
@@ -33,6 +34,25 @@ void PieceSprite::update() {
                 this->touched = true;
                 this->state = IDLE;
                 selectedPiece = 0;
+            }
+            for (auto & pos:this->getMovePositions(game->data)) {
+                if (mouseOverlapsPoint(pos.x,pos.y) && Input::pressed(MouseButton::Left) && !this->touched){
+                    int originY = this->getX()/64 - 6;
+                    int originX = this->getY()/64 - 1;
+                    int destinyY= pos.x/64 - 6;
+                    int destinyX = pos.y/64 - 1;
+                    if (updatePiece(game,originX,originY,destinyX,destinyY)){
+                        this->state=MOVING;
+                        this->focus=Vec2(pos.x,pos.y);
+                        printBoard(*game);
+                        game->turn++;
+                    } else{
+                        this->touched = true;
+                        this->state = IDLE;
+                        selectedPiece = 0;
+                    }
+
+                }
             }
             if (selectedPiece != this->id) this->state = IDLE;
             // Colorear espacios
@@ -65,6 +85,17 @@ bool PieceSprite::overlapsMouse() {
     int x = (int) mouse.x;
     int y = (int) mouse.y;
     return this->getX() <= x && this->getX() + 64 >= x && this->getY() <= y && this->getY() + 64 >= y;
+}
+
+bool PieceSprite::overlapsPoint(int x, int y){
+    return this->getX() <= x && this->getX() + 64 >= x && this->getY() <= y && this->getY() + 64 >= y;
+}
+
+bool PieceSprite::mouseOverlapsPoint(int x, int y) {
+    Vec2 mouse = Input::mouse_draw();
+    int mx = (int) mouse.x;
+    int my = (int) mouse.y;
+    return x <= mx && x + 64 >= mx && y <= my && y + 64 >= my;
 }
 
 void PieceSprite::setCoords(int x, int y) {

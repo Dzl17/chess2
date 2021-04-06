@@ -28,7 +28,6 @@ void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
     }
 
     for (auto & piece : *pieces) {
-
         if (piece.state == PieceSprite::CHOOSING) {
             for (auto & pos : piece.getMovePositions(game.data)) {
                 if (MOVE) batch->rect(Rect(pos.x, pos.y, 64, 64), Color::green);
@@ -49,8 +48,9 @@ void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
 void Assets::updateGame(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, Game *game)
 {
 
+
     for (auto & piece : *pieces) {
-        piece.update();
+        piece.update(game);
     }
 
     for (auto & button : *buttons) {

@@ -72,7 +72,12 @@ int maian() {
             scanf("%c%c", &c2[0], &c2[1]);
             clearStdin();
             //system("cls"); // Para consola
-            int jugada = updatePiece(&game, c1, c2);
+            // Extraer y evaluar posiciones
+            int originX = c1[1] - '0' - 1;
+            int originY = c1[0] - 'a';
+            int destinyX = c2[1] - '0' - 1;
+            int destinyY = c2[0] - 'a';
+            int jugada = updatePiece(&game, originX, originY, destinyX, destinyY);
             if (jugada) {
                 game.turn++;
             }

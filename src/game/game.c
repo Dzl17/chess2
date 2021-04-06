@@ -77,13 +77,8 @@ void startGame(Game *game, int f1, int f2)
     free(form2);
 }
 
-int updatePiece(Game *game, const char *origin, const char *destiny)
+int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY)
 {
-    // Extraer y evaluar posiciones
-    int originX = origin[1] - '0' - 1;
-    int originY = origin[0] - 'a';
-    int destinyX = destiny[1] - '0' - 1;
-    int destinyY = destiny[0] - 'a';
 
     if (invalidPositions(originX, originY, destinyX, destinyY)) {
         printf("Posicion no valida.\n");

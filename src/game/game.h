@@ -29,7 +29,7 @@ void startGame(Game *game, int f1, int f2);
  * @param destiny Coordenadas de destino
  * @return Fallo o éxito del movimiento (cambio de movimiento)
  */
-int updatePiece(Game *game, const char *origin, const char *destiny);
+int updatePiece(Game *game, int originX, int originY, int destinyX, int  destinyY);
 
 /**
  * Mueve la pieza a una casilla introducida, si es posible.
