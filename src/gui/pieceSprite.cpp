@@ -1,12 +1,14 @@
 #include "pieceSprite.h"
 
 static int selectedPiece = 0;
+int getPieceHp(int id);
 
 PieceSprite::PieceSprite(int x, int y, int id, const String& texturePath) {
     this->state = IDLE;
     this->setX(x);
     this->setY(y);
     this->id = id;
+    this->hp = getPieceHp(this->getPieceCode(this->id));
     this->active = true;
     this->texture = Texture::create(texturePath);
     this->touched = false;
@@ -14,6 +16,10 @@ PieceSprite::PieceSprite(int x, int y, int id, const String& texturePath) {
 
 void PieceSprite::update() {
     if (this->touched && this->overlapsMouse() && Input::released(MouseButton::Left)) this->touched = false;
+    if (this->hp <= 0) {
+        this->active = false;
+        return;
+    }
     switch (this->state) {
         case IDLE:
             if (this->overlapsMouse() && Input::pressed(MouseButton::Left) && !this->touched) {
@@ -79,7 +85,7 @@ int PieceSprite::getPieceCode(int piece)
     }
 }
 
-std::vector<Vec2> PieceSprite::getMovePositions(int data[7][11]) // TODO spearman no atraviesa
+std::vector<Vec2> PieceSprite::getMovePositions(int data[7][11])
 {
     int x = this->getX();
     int y = this->getY();
@@ -89,11 +95,11 @@ std::vector<Vec2> PieceSprite::getMovePositions(int data[7][11]) // TODO spearma
     switch (getPieceCode(id)) {
         case 0: // Lancero
             if (id <= 12) {
-                if (relX + 1 <= 10) positions.emplace_back(Vec2(x + 64, y));
-                if (relX + 2 <= 10) positions.emplace_back(Vec2(x + 128, y));
+                if (relX + 1 <= 10)                              positions.emplace_back(Vec2(x + 64, y));
+                if (relX + 2 <= 10 && data[relY][relX + 1] == 0) positions.emplace_back(Vec2(x + 128, y));
             } else {
-                if (relX - 1 >= 0)  positions.emplace_back(Vec2(x - 64, y));
-                if (relX - 2 >= 0)  positions.emplace_back(Vec2(x - 128, y));
+                if (relX - 1 >= 0)                               positions.emplace_back(Vec2(x - 64, y));
+                if (relX - 2 >= 0 && data[relY][relX - 1] == 0)  positions.emplace_back(Vec2(x - 128, y));
             }
             break;
         case 2: // Asesino
@@ -190,3 +196,18 @@ std::vector<Vec2> PieceSprite::getAttackPositions(int data[7][11])
     return positions;
 }
 
+int getPieceHp(int id)
+{
+    switch (id) {
+        case 0:
+            return 40;
+        case 1:
+            return 40;
+        case 2:
+            return 40;
+        case 3:
+            return 40;
+        default:
+            return 10;
+    }
+}

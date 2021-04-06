@@ -15,6 +15,7 @@ public:
     State state;
     bool active;
     int id;
+    int hp;
     PieceSprite(int x, int y, int id, const String& texturePath);
     void update() override;
     void draw(Batch *batch) override;
