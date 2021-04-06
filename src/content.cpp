@@ -17,6 +17,8 @@ void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vec
     statics->push_back(StaticSprite(480, 556, "../data/img/icons/assassinRIcon.png", true));
     statics->push_back(StaticSprite(480, 556, "../data/img/icons/golemLIcon.png", true));
     statics->push_back(StaticSprite(480, 556, "../data/img/icons/golemRIcon.png", true));
+    statics->push_back(StaticSprite(416, 256, "../data/img/nexusL.png", true));
+    statics->push_back(StaticSprite(1056, 256, "../data/img/nexusR.png", true));
 
     buttons->push_back(GuiButton(16, 16, 224, 64,
                                  "../data/img/helpButtonIdle.png", "../data/img/helpButtonPressed.png"));
@@ -51,6 +53,8 @@ void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
     for (auto & piece : *pieces) {
         piece.draw(batch);
     }
+    (*statics)[10].draw(batch);
+    (*statics)[11].draw(batch);
 
     (*statics)[1].draw(batch);
 }
