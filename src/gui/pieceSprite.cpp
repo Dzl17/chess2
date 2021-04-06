@@ -1,5 +1,5 @@
 #include "pieceSprite.h"
-#include "math.h"
+#include <cmath>
 
 static int selectedPiece = 0;
 int getPieceHp(int id);
@@ -9,7 +9,7 @@ PieceSprite::PieceSprite(int x, int y, int id, const String& texturePath) {
     this->setX(x);
     this->setY(y);
     this->id = id;
-    this->hp = getPieceHp(this->getPieceCode(this->id));
+    this->hp = getPieceHp(this->getPieceCode());
     this->active = true;
     this->texture = Texture::create(texturePath);
     this->touched = false;
@@ -46,8 +46,7 @@ void PieceSprite::update(Game *game) {
                         game->turn++;
                         this->focus = Vec2((int) pos.x, (int) pos.y);
                         this->state = MOVING;
-                    } else{
-                        this->touched = true;
+                    } else {
                         this->state = IDLE;
                         selectedPiece = 0;
                     }
@@ -55,11 +54,9 @@ void PieceSprite::update(Game *game) {
                 }
             }
             if (selectedPiece != this->id) this->state = IDLE;
-            // Colorear espacios
             break;
         case MOVING:
             // Animación de movimiento
-
             if (!(this->getX() == (int)this->focus.x && this->getY() == (int)this->focus.y)) {
                 int addX = (int) ceil(((int) this->focus.x - this->getX()) * 0.1);
                 int addY = (int) ceil(((int) this->focus.y - this->getY()) * 0.1);
@@ -99,8 +96,9 @@ bool PieceSprite::mouseOverlapsPoint(int x, int y) {
     return x <= mx && x + 64 >= mx && y <= my && y + 64 >= my;
 }
 
-int PieceSprite::getPieceCode(int piece)
+int PieceSprite::getPieceCode()
 {
+    int piece = this->id;
     if ((piece >= 1 && piece <= 4) || (piece >= 13 && piece <= 16)) {
         return 0;
     } else if ((piece >= 5 && piece <= 7) || (piece >= 17 && piece <= 19)) {
@@ -119,7 +117,7 @@ std::vector<Vec2> PieceSprite::getMovePositions(int data[7][11])
     int relX = x/64 - 6;
     int relY = y/64 - 1;
     std::vector<Vec2> positions;
-    switch (getPieceCode(id)) {
+    switch (this->getPieceCode()) {
         case 0: // Lancero
             if (id <= 12) {
                 if (relX + 1 <= 10)                              positions.emplace_back(Vec2(x + 64, y));
@@ -161,7 +159,7 @@ std::vector<Vec2> PieceSprite::getAttackPositions(int data[7][11])
     int relX = x/64 - 6;
     int relY = y/64 - 1;
     std::vector<Vec2> positions;
-    switch (getPieceCode(this->id)) {
+    switch (this->getPieceCode()) {
         case 0: // Lancero
             if (this->id <= 12) {
                 if (relX + 1 <= 10) {
@@ -223,7 +221,7 @@ std::vector<Vec2> PieceSprite::getAttackPositions(int data[7][11])
     return positions;
 }
 
-int getPieceHp(int id)
+int getPieceHp(int id) // TODO
 {
     switch (id) {
         case 0:
