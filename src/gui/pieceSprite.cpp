@@ -2,14 +2,16 @@
 #include <cmath>
 
 static int selectedPiece = 0;
-int getPieceHp(int id);
+int getPieceBaseHp(int id);
+int getPieceBaseDmg(int id);
 
 PieceSprite::PieceSprite(int x, int y, int id, const String& texturePath) {
     this->state = IDLE;
     this->setX(x);
     this->setY(y);
     this->id = id;
-    this->hp = getPieceHp(this->getPieceCode());
+    this->hp = getPieceBaseHp(this->getPieceCode());
+    this->dmg = getPieceBaseDmg(this->getPieceCode());
     this->active = true;
     this->texture = Texture::create(texturePath);
     this->touched = false;
@@ -221,18 +223,39 @@ std::vector<Vec2> PieceSprite::getAttackPositions(int data[7][11])
     return positions;
 }
 
-int getPieceHp(int id) // TODO
+
+int getPieceBaseHp(int id) // TODO valores iniciales de vida
 {
     switch (id) {
         case 0:
             return 40;
         case 1:
-            return 40;
+            return 50;
         case 2:
-            return 40;
+            return 60;
         case 3:
-            return 40;
+            return 70;
         default:
             return 10;
     }
+}
+
+int getPieceBaseDmg(int id) // TODO valores iniciales de daño
+{
+    switch (id) {
+        case 0:
+            return 10;
+        case 1:
+            return 10;
+        case 2:
+            return 20;
+        case 3:
+            return 30;
+        default:
+            return 5;
+    }
+}
+
+int PieceSprite::getDmg() {
+    return this->dmg;
 }

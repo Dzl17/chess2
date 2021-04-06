@@ -1,11 +1,18 @@
 #include "content.h"
 
-void loadPieces(vector<PieceSprite> *pieces, int data[B_ROWS][B_COLUMNS]);
 String getSpritePath(int id);
 int getIconIndex(int id);
+void loadPieces(vector<PieceSprite> *pieces, int data[B_ROWS][B_COLUMNS]);
+char * getPieceName(int id);
+void writePieceHp(Batch *batch, PieceSprite& piece);
+void writePieceDmg(Batch *batch, PieceSprite& piece);
+
+SpriteFont font;
 
 void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Game game)
 {
+    font = SpriteFont("../data/fonts/dogica.ttf", 32);
+
     statics->push_back(StaticSprite(0, 0, "../data/img/background.png", true));
     statics->push_back(StaticSprite(320, 64, "../data/img/helpmenu.png", false));
     statics->push_back(StaticSprite(480, 556, "../data/img/icons/spearmanLIcon.png", true));
@@ -48,6 +55,10 @@ void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
             for (auto & pos : piece.getAttackPositions(game.data)) { // Rectángulos de posiciones de ataque
                 batch->rect(Rect(pos.x + 4, pos.y + 4, 56, 56), Color::red);
             }
+
+            batch->str(font, getPieceName(piece.getPieceCode()), Vec2(620, 568), Color("#1ebc73"));
+            writePieceHp(batch, piece);
+            writePieceDmg(batch, piece);
         }
     }
     for (auto & piece : *pieces) {
@@ -61,7 +72,7 @@ void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
     (*statics)[1].draw(batch);
 }
 
-void Assets::updateGame(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Game *game)
+void Assets::updateGame(vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Game *game)
 {
     for (auto & piece : *pieces) {
         piece.update(game);
@@ -83,18 +94,6 @@ void Assets::updateMenu(vector<StaticSprite> *statics, vector<GuiButton> *button
 
 void loadPieces(vector<PieceSprite> *pieces, int data[B_ROWS][B_COLUMNS])
 {
-    /*
-    pieces->push_back(PieceSprite(416, 192, 1, "../data/img/units/spearmanL.png"));
-    pieces->push_back(PieceSprite(480, 128, 5, "../data/img/units/wizardL.png"));
-    pieces->push_back(PieceSprite(416, 128, 8, "../data/img/units/assassinL.png"));
-    pieces->push_back(PieceSprite(416, 256, 11, "../data/img/units/golemL.png"));
-
-    pieces->push_back(PieceSprite(992, 192, 13, "../data/img/units/spearmanR.png"));
-    pieces->push_back(PieceSprite(1056, 128, 17, "../data/img/units/wizardR.png"));
-    pieces->push_back(PieceSprite(992, 128, 20, "../data/img/units/assassinR.png"));
-    pieces->push_back(PieceSprite(1056, 192 ,23, "../data/img/units/golemR.png"));
-*/
-
     for (int i = 0; i < B_ROWS; i++) {
         for (int j = 0; j < B_COLUMNS; j++) {
             int dataCode = data[i][j];
@@ -156,4 +155,39 @@ int getIconIndex(int id)
     } else {
         return 0;
     }
+}
+
+char * getPieceName(int id) {
+    switch (id) {
+        case 0:
+            return (char*) "Spearman";
+        case 1:
+            return (char*) "Wizard";
+        case 2:
+            return (char*) "Assassin";
+        case 3:
+            return (char*) "Golem";
+        default:
+            return (char*) "";
+    }
+}
+
+void writePieceHp(Batch *batch, PieceSprite& piece)
+{
+    // Dibujar HP
+    char hp_int_str[4]; // n+1 de tamaño mínimo, siendo n los dígitos del int
+    sprintf(hp_int_str, "%d", piece.hp);
+    char hp_str[64] = "HP:"; // make sure you allocate enough space to append the other string
+    strcat(hp_str, hp_int_str); // other_string now contains "Integer: 1234"
+    batch->str(font, hp_str, Vec2(620, 604), Color::black);
+}
+
+void writePieceDmg(Batch *batch, PieceSprite& piece)
+{
+    // Dibujar HP
+    char dmg_int_str[4]; // n+1 de tamaño mínimo, siendo n los dígitos del int
+    sprintf(dmg_int_str, "%d", piece.getDmg());
+    char dmg_str[64] = "DMG:"; // make sure you allocate enough space to append the other string
+    strcat(dmg_str, dmg_int_str); // other_string now contains "Integer: 1234"
+    batch->str(font, dmg_str, Vec2(620, 640), Color::black);
 }

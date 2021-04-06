@@ -11,7 +11,6 @@ bool fullscreen = false;
 bool inMenu = false;
 
 Batch batch;
-SpriteFont font;
 
 Game game;
 std::vector<StaticSprite> staticSprites;
@@ -21,7 +20,6 @@ std::vector<NexusSprite> nexusSprites;
 
 void startup()
 {
-    font = SpriteFont("../data/dogica.ttf", 32);
     startGame(&game, 1,1);
     Assets::load(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, game);
 }
@@ -35,7 +33,6 @@ void render()
     batch.push_matrix(transform);
 
     Assets::render(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, &batch, game);
-    //batch.str(font, "", Vec2(0,0), Color::black);
 
     batch.pop_matrix();
     batch.render();
@@ -50,7 +47,7 @@ void update()
     if (buttonSprites[1].isClicked() || Input::pressed(Key::Escape)) App::exit();
 
     if (inMenu) Assets::updateMenu(&staticSprites, &buttonSprites, &pieceSprites);
-    else Assets::updateGame(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, &game);
+    else Assets::updateGame(&buttonSprites, &pieceSprites, &nexusSprites, &game);
 }
 
 void dispose()

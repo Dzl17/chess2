@@ -13,17 +13,18 @@ private:
     bool overlapsMouse();
     bool mouseOverlapsPoint(int x, int y);
     bool touched;
+    int dmg;
 public:
     enum State {
         IDLE, CHOOSING, MOVING, ATTACKING
     };
     State state;
     bool active;
-    int id;
-    int hp;
+    int id, hp;
     PieceSprite(int x, int y, int id, const String& texturePath);
     void update(Game *game);
     void draw(Batch *batch) override;
+    int getDmg();
     int getPieceCode();
     std::vector<Vec2> getMovePositions(int data[7][11]);
     std::vector<Vec2> getAttackPositions(int data[7][11]);

@@ -10,7 +10,7 @@ NexusSprite::NexusSprite(int x, int y, const String &texturePath) {
 
 void NexusSprite::update() {
     this->deltaCounter += Time::delta;
-    this->setY((int) (256 + std::sin(deltaCounter * 4) * 8));
+    this->setY((int) (256 + std::sin(deltaCounter * 4) * 5));
 }
 
 void NexusSprite::draw(Batch *batch) {
