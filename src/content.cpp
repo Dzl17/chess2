@@ -1,7 +1,7 @@
 #include "content.h"
 
 #define MOVE true
-#define ATTACK false
+#define ATTACK true
 
 void loadPieces(vector<PieceSprite> *pieces, int data[B_ROWS][B_COLUMNS]);
 String getSpritePath(int id);

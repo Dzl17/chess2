@@ -24,8 +24,6 @@ public:
     PieceSprite(int x, int y, int id, const String& texturePath);
     void update(Game *game);
     void draw(Batch *batch) override;
-    void setFocus(Vec2 focus);
-    void setCoords(int x, int y);
     int getPieceCode(int piece);
     std::vector<Vec2> getMovePositions(int data[7][11]);
     std::vector<Vec2> getAttackPositions(int data[7][11]);

@@ -1,4 +1,5 @@
 #include "pieceSprite.h"
+#include "math.h"
 
 static int selectedPiece = 0;
 int getPieceHp(int id);
@@ -12,7 +13,7 @@ PieceSprite::PieceSprite(int x, int y, int id, const String& texturePath) {
     this->active = true;
     this->texture = Texture::create(texturePath);
     this->touched = false;
-    this->focus=Vec2(0,0);
+    this->focus = Vec2(0,0);
 }
 
 void PieceSprite::update(Game *game) {
@@ -36,16 +37,15 @@ void PieceSprite::update(Game *game) {
                 selectedPiece = 0;
             }
             for (auto & pos:this->getMovePositions(game->data)) {
-                if (mouseOverlapsPoint(pos.x,pos.y) && Input::pressed(MouseButton::Left) && !this->touched){
+                if (mouseOverlapsPoint((int)pos.x, (int) pos.y) && Input::pressed(MouseButton::Left) && !this->touched){
                     int originY = this->getX()/64 - 6;
                     int originX = this->getY()/64 - 1;
-                    int destinyY= pos.x/64 - 6;
-                    int destinyX = pos.y/64 - 1;
+                    int destinyY = (int)pos.x/64 - 6;
+                    int destinyX = (int)pos.y/64 - 1;
                     if (updatePiece(game,originX,originY,destinyX,destinyY)){
-                        this->state=MOVING;
-                        this->focus=Vec2(pos.x,pos.y);
-                        printBoard(*game);
                         game->turn++;
+                        this->focus = Vec2((int) pos.x, (int) pos.y);
+                        this->state = MOVING;
                     } else{
                         this->touched = true;
                         this->state = IDLE;
@@ -59,9 +59,14 @@ void PieceSprite::update(Game *game) {
             break;
         case MOVING:
             // Animación de movimiento
+
             if (!(this->getX() == (int)this->focus.x && this->getY() == (int)this->focus.y)) {
-                this->setX(this->getX() + ((int) this->focus.x - this->getX()) * 0.1);
-                this->setY(this->getY() + ((int) this->focus.y - this->getY()) * 0.1);
+                int addX = (int) ceil(((int) this->focus.x - this->getX()) * 0.1);
+                int addY = (int) ceil(((int) this->focus.y - this->getY()) * 0.1);
+                this->setX(this->getX() + addX);
+                this->setY(this->getY() + addY);
+                if (addX == 0 && this->getX() != (int)this->focus.x) this->setX((int) this->focus.x);
+                if (addY == 0 && this->getY() != (int)this->focus.y) this->setY((int) this->focus.y);
             } else {
                 this->state = IDLE;
             }
@@ -74,10 +79,6 @@ void PieceSprite::update(Game *game) {
 
 void PieceSprite::draw(Batch *batch) {
     if (this->active) batch->tex(this->texture, Vec2(this->getX(), this->getY()));
-}
-
-void PieceSprite::setFocus(Vec2 focusVal) {
-    this->focus = focusVal;
 }
 
 bool PieceSprite::overlapsMouse() {
@@ -96,11 +97,6 @@ bool PieceSprite::mouseOverlapsPoint(int x, int y) {
     int mx = (int) mouse.x;
     int my = (int) mouse.y;
     return x <= mx && x + 64 >= mx && y <= my && y + 64 >= my;
-}
-
-void PieceSprite::setCoords(int x, int y) {
-    //this->setX();
-    //this->setY();
 }
 
 int PieceSprite::getPieceCode(int piece)
@@ -220,7 +216,7 @@ std::vector<Vec2> PieceSprite::getAttackPositions(int data[7][11])
             if (posCode >= 13 && posCode != 25) it++;
             else positions.erase(it);
         } else if (team == 1) {
-            if ((posCode <= 12 && posCode >= 1) || posCode == 26) it++;
+            if ((posCode <= 12 && posCode >= 1) || posCode == 25) it++;
             else positions.erase(it);
         }
     }
