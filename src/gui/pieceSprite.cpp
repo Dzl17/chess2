@@ -58,8 +58,8 @@ void PieceSprite::update(Game *game) {
         case MOVING:
             // Animación de movimiento
             if (!(this->getX() == (int)this->focus.x && this->getY() == (int)this->focus.y)) {
-                int addX = (int) ceil(((int) this->focus.x - this->getX()) * 0.1);
-                int addY = (int) ceil(((int) this->focus.y - this->getY()) * 0.1);
+                int addX = (int) std::ceil((float) ((int) this->focus.x - this->getX()) * Time::delta * 6);
+                int addY = (int) std::ceil((float) ((int) this->focus.y - this->getY()) * Time::delta * 6);
                 this->setX(this->getX() + addX);
                 this->setY(this->getY() + addY);
                 if (addX == 0 && this->getX() != (int)this->focus.x) this->setX((int) this->focus.x);

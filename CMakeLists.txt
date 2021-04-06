@@ -159,6 +159,8 @@ add_executable(chess2 ${SOURCE_FILES}
         src/gui/staticSprite.h
         src/gui/pieceSprite.cpp
         src/gui/pieceSprite.h
+        src/gui/nexusSprite.cpp
+        src/gui/nexusSprite.h
 
         dependencies/blah/src/core/app.cpp
         dependencies/blah/src/core/filesystem.cpp

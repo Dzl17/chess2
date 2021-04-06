@@ -11,16 +11,19 @@ bool fullscreen = false;
 bool inMenu = false;
 
 Batch batch;
+SpriteFont font;
 
 Game game;
 std::vector<StaticSprite> staticSprites;
 std::vector<GuiButton> buttonSprites;
 std::vector<PieceSprite> pieceSprites;
+std::vector<NexusSprite> nexusSprites;
 
 void startup()
 {
+    font = SpriteFont("../data/dogica.ttf", 32);
     startGame(&game, 1,1);
-    Assets::load(&staticSprites, &buttonSprites, &pieceSprites, game);
+    Assets::load(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, game);
 }
 
 void render()
@@ -31,11 +34,10 @@ void render()
     auto transform = Mat3x2::create_transform(Vec2::zero, Vec2::zero, scale, 0);
     batch.push_matrix(transform);
 
-    //batch.rect(Rect(-32, -32, 64, 64), Color::red);
-    Assets::render(&staticSprites, &buttonSprites, &pieceSprites, &batch, game);
+    Assets::render(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, &batch, game);
+    //batch.str(font, "", Vec2(0,0), Color::black);
 
     batch.pop_matrix();
-
     batch.render();
     batch.clear();
 }
@@ -48,7 +50,7 @@ void update()
     if (buttonSprites[1].isClicked() || Input::pressed(Key::Escape)) App::exit();
 
     if (inMenu) Assets::updateMenu(&staticSprites, &buttonSprites, &pieceSprites);
-    else Assets::updateGame(&staticSprites, &buttonSprites, &pieceSprites, &game);
+    else Assets::updateGame(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, &game);
 }
 
 void dispose()

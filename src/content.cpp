@@ -1,11 +1,10 @@
 #include "content.h"
 
-
 void loadPieces(vector<PieceSprite> *pieces, int data[B_ROWS][B_COLUMNS]);
 String getSpritePath(int id);
 int getIconIndex(int id);
 
-void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, Game game)
+void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Game game)
 {
     statics->push_back(StaticSprite(0, 0, "../data/img/background.png", true));
     statics->push_back(StaticSprite(320, 64, "../data/img/helpmenu.png", false));
@@ -17,8 +16,6 @@ void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vec
     statics->push_back(StaticSprite(480, 556, "../data/img/icons/assassinRIcon.png", true));
     statics->push_back(StaticSprite(480, 556, "../data/img/icons/golemLIcon.png", true));
     statics->push_back(StaticSprite(480, 556, "../data/img/icons/golemRIcon.png", true));
-    statics->push_back(StaticSprite(416, 256, "../data/img/nexusL.png", true));
-    statics->push_back(StaticSprite(1056, 256, "../data/img/nexusR.png", true));
 
     buttons->push_back(GuiButton(16, 16, 224, 64,
                                  "../data/img/helpButtonIdle.png", "../data/img/helpButtonPressed.png"));
@@ -26,9 +23,12 @@ void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vec
                                  "../data/img/exitButtonIdle.png", "../data/img/exitButtonPressed.png"));
 
     loadPieces(pieces, game.data);
+
+    nexuses->push_back(NexusSprite(416, 256, "../data/img/nexusL.png"));
+    nexuses->push_back(NexusSprite(1056, 256, "../data/img/nexusR.png"));
 }
 
-void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, Batch *batch, Game game)
+void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Batch *batch, Game game)
 {
     (*statics)[0].draw(batch); // Fondo
 
@@ -53,18 +53,22 @@ void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
     for (auto & piece : *pieces) {
         piece.draw(batch);
     }
-    (*statics)[10].draw(batch);
-    (*statics)[11].draw(batch);
+
+    for (auto & nexus : *nexuses) {
+        nexus.draw(batch);
+    }
 
     (*statics)[1].draw(batch);
 }
 
-void Assets::updateGame(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, Game *game)
+void Assets::updateGame(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Game *game)
 {
-
-
     for (auto & piece : *pieces) {
         piece.update(game);
+    }
+
+    for (auto & nexus : *nexuses) {
+        nexus.update();
     }
 
     for (auto & button : *buttons) {
