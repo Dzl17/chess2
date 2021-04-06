@@ -1,15 +1,22 @@
 #include "content.h"
 
-#define MOVE true
-#define ATTACK true
 
 void loadPieces(vector<PieceSprite> *pieces, int data[B_ROWS][B_COLUMNS]);
 String getSpritePath(int id);
+int getIconIndex(int id);
 
 void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, Game game)
 {
     statics->push_back(StaticSprite(0, 0, "../data/img/background.png", true));
     statics->push_back(StaticSprite(320, 64, "../data/img/helpmenu.png", false));
+    statics->push_back(StaticSprite(480, 556, "../data/img/icons/spearmanLIcon.png", true));
+    statics->push_back(StaticSprite(480, 556, "../data/img/icons/spearmanRIcon.png", true));
+    statics->push_back(StaticSprite(480, 556, "../data/img/icons/wizardLIcon.png", true));
+    statics->push_back(StaticSprite(480, 556, "../data/img/icons/wizardRIcon.png", true));
+    statics->push_back(StaticSprite(480, 556, "../data/img/icons/assassinLIcon.png", true));
+    statics->push_back(StaticSprite(480, 556, "../data/img/icons/assassinRIcon.png", true));
+    statics->push_back(StaticSprite(480, 556, "../data/img/icons/golemLIcon.png", true));
+    statics->push_back(StaticSprite(480, 556, "../data/img/icons/golemRIcon.png", true));
 
     buttons->push_back(GuiButton(16, 16, 224, 64,
                                  "../data/img/helpButtonIdle.png", "../data/img/helpButtonPressed.png"));
@@ -29,14 +36,17 @@ void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
 
     for (auto & piece : *pieces) {
         if (piece.state == PieceSprite::CHOOSING) {
-            for (auto & pos : piece.getMovePositions(game.data)) {
-                if (MOVE) batch->rect(Rect(pos.x, pos.y, 64, 64), Color::green);
+            batch->rect_line(Rect((float)piece.getX(), (float)piece.getY(), 64, 64), 2, Color::black);
+
+            (*statics)[getIconIndex(piece.id)].draw(batch); // Iconos de unidades seleccionadas
+
+            for (auto & pos : piece.getMovePositions(game.data)) { // Rectángulos de posiciones de movimiento
+                batch->rect_rounded(Rect(pos.x + 16, pos.y + 16, 32, 32), 32,10, Color::green);
             }
-            for (auto & pos : piece.getAttackPositions(game.data)) {
-                if (ATTACK) batch->rect(Rect(pos.x, pos.y, 64, 64), Color::red);
+            for (auto & pos : piece.getAttackPositions(game.data)) { // Rectángulos de posiciones de ataque
+                batch->rect(Rect(pos.x + 4, pos.y + 4, 56, 56), Color::red);
             }
         }
-
     }
     for (auto & piece : *pieces) {
         piece.draw(batch);
@@ -114,5 +124,28 @@ String getSpritePath(int id)
         return "../data/img/boredlion.png";
     } else {
         return "../data/img/boredlion.png";
+    }
+}
+
+int getIconIndex(int id)
+{
+    if (id >= 1 && id <= 4) {
+        return 2;
+    } else if (id >= 5 && id <= 7) {
+        return 4;
+    } else if (id >= 8 && id <= 10) {
+        return 6;
+    } else if (id >= 11 && id <= 12) {
+        return 8;
+    } else if (id >= 13 && id <= 16) {
+        return 3;
+    } else if (id >= 17 && id <= 19) {
+        return 5;
+    } else if (id >= 20 && id <= 22) {
+        return 7;
+    } else if (id >= 23 && id <= 24) {
+        return 9;
+    } else {
+        return 0;
     }
 }
