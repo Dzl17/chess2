@@ -1,5 +1,7 @@
 #include "pieceSprite.h"
 
+static int selectedPiece = 0;
+
 PieceSprite::PieceSprite(int x, int y, int id, const String& texturePath) {
     this->state = IDLE;
     this->setX(x);
@@ -17,13 +19,16 @@ void PieceSprite::update() {
             if (this->overlapsMouse() && Input::pressed(MouseButton::Left) && !this->touched) {
                 this->touched = true;
                 this->state = CHOOSING;
+                selectedPiece = this->id;
             }
             break;
         case CHOOSING:
             if (this->overlapsMouse() && Input::pressed(MouseButton::Left) && !this->touched) {
                 this->touched = true;
                 this->state = IDLE;
+                selectedPiece = 0;
             }
+            if (selectedPiece != this->id) this->state = IDLE;
             // Colorear espacios
             break;
         case MOVING:
@@ -141,9 +146,9 @@ std::vector<Vec2> PieceSprite::getAttackPositions(int data[7][11])
             break;
         case 2: // Asesino
             if (relX + 1 <= 10)  positions.emplace_back(Vec2(x + 64, y));
-            if (relX - 1 >= 0)  positions.emplace_back(Vec2(x - 64, y));
-            if (relY + 1 <= 6) positions.emplace_back(Vec2(x, y + 64));
-            if (relY - 1 >= 0)  positions.emplace_back(Vec2(x, y - 64));
+            if (relX - 1 >= 0)   positions.emplace_back(Vec2(x - 64, y));
+            if (relY + 1 <= 6)   positions.emplace_back(Vec2(x, y + 64));
+            if (relY - 1 >= 0)   positions.emplace_back(Vec2(x, y - 64));
             break;
         case 1: // Mago
             // Arriba y abajo
@@ -157,7 +162,7 @@ std::vector<Vec2> PieceSprite::getAttackPositions(int data[7][11])
             for (int i = -1; i <= 1; i++) {
                 if (relY + i <= 6 && relY + i >= 0) {
                     if (relX + 2 <= 10) positions.emplace_back(Vec2(x + 128, y + i*64));
-                    if (relX - 2 >= 0) positions.emplace_back(Vec2(x - 128, y + i*64));
+                    if (relX - 2 >= 0)  positions.emplace_back(Vec2(x - 128, y + i*64));
                 }
             }
             break;
