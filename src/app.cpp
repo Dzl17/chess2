@@ -1,5 +1,4 @@
 #include <blah.h>
-#include <windows.h>
 #include "content.h"
 extern "C" {
     #include "game/chess2.h"
@@ -8,7 +7,7 @@ extern "C" {
 using namespace Blah;
 
 bool fullscreen = false;
-bool inMenu = false;
+int currentMode = 0;
 
 Batch batch;
 
@@ -21,7 +20,7 @@ std::vector<NexusSprite> nexusSprites;
 void startup()
 {
     startGame(&game, 1,1);
-    Assets::load(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, game);
+    Assets::load(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, game, &currentMode);
 }
 
 void render()
@@ -32,7 +31,7 @@ void render()
     auto transform = Mat3x2::create_transform(Vec2::zero, Vec2::zero, scale, 0);
     batch.push_matrix(transform);
 
-    Assets::render(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, &batch, game);
+    Assets::render(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, &batch, game, &currentMode);
 
     batch.pop_matrix();
     batch.render();
@@ -41,13 +40,8 @@ void render()
 
 void update()
 {
-    if (Input::pressed(Key::P)) PlaySound(TEXT("../data/sound.wav"), nullptr, SND_FILENAME);
     if (Input::pressed(Key::F11)) App::fullscreen(fullscreen = !fullscreen);
-    if (buttonSprites[0].isClicked() || Input::pressed(Key::H)) staticSprites[1].swapActive(); // TODO no funciona bien en pantalla completa
-    if (buttonSprites[1].isClicked() || Input::pressed(Key::Escape)) App::exit();
-
-    if (inMenu) Assets::updateMenu(&staticSprites, &buttonSprites, &pieceSprites);
-    else Assets::updateGame(&buttonSprites, &pieceSprites, &nexusSprites, &game);
+    Assets::update(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, &batch, &game, &currentMode);
 }
 
 void dispose()

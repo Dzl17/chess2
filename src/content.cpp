@@ -9,9 +9,25 @@ void writePieceDmg(Batch *batch, PieceSprite& piece);
 
 SpriteFont font;
 
-void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Game game)
+void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Game game, int *mode)
 {
+    statics->clear();
+    buttons->clear();
+    pieces->clear();
+    nexuses->clear();
+
     font = SpriteFont("../data/fonts/dogica.ttf", 32);
+
+    buttons->push_back(GuiButton(512, 328, 256, 96, // Play (menu)
+                                 "../data/img/helpButtonIdle.png", "../data/img/helpButtonPressed.png"));
+    buttons->push_back(GuiButton(512, 440, 256, 96, // Forms (menu)
+                                 "../data/img/exitButtonIdle.png", "../data/img/exitButtonPressed.png"));
+    buttons->push_back(GuiButton(512, 552, 256, 96, // Exit (menu)
+                                 "../data/img/exitButtonIdle.png", "../data/img/exitButtonPressed.png"));
+    buttons->push_back(GuiButton(16, 16, 224, 64, // Help (game)
+                                 "../data/img/helpButtonIdle.png", "../data/img/helpButtonPressed.png"));
+    buttons->push_back(GuiButton(16, 96, 224, 64, // Exit (game)
+                                 "../data/img/exitButtonIdle.png", "../data/img/exitButtonPressed.png"));
 
     statics->push_back(StaticSprite(0, 0, "../data/img/background.png", true));
     statics->push_back(StaticSprite(320, 64, "../data/img/helpmenu.png", false));
@@ -24,10 +40,7 @@ void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vec
     statics->push_back(StaticSprite(480, 556, "../data/img/icons/golemLIcon.png", true));
     statics->push_back(StaticSprite(480, 556, "../data/img/icons/golemRIcon.png", true));
 
-    buttons->push_back(GuiButton(16, 16, 224, 64,
-                                 "../data/img/helpButtonIdle.png", "../data/img/helpButtonPressed.png"));
-    buttons->push_back(GuiButton(16, 96, 224, 64,
-                                 "../data/img/exitButtonIdle.png", "../data/img/exitButtonPressed.png"));
+    statics->push_back(StaticSprite(0, 0, "../data/img/mainMenu.png", true)); // Fondo (menu)
 
     loadPieces(pieces, game.data);
 
@@ -35,44 +48,54 @@ void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vec
     nexuses->push_back(NexusSprite(1056, 256, "../data/img/nexusR.png"));
 }
 
-void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Batch *batch, Game game)
+void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Batch *batch, Game game, int *mode)
 {
-    (*statics)[0].draw(batch); // Fondo
+    if (*mode == 0) (*statics)[10].draw(batch); // Fondo
+    if (*mode == 1) (*statics)[0].draw(batch); // Fondo
+    if (*mode == 2) (*statics)[0].draw(batch); // Fondo
 
-    for (auto & button : *buttons) {
-        button.draw(batch);
-    }
-
-    for (auto & piece : *pieces) {
-        if (piece.state == PieceSprite::CHOOSING) {
-            batch->rect_line(Rect((float)piece.getX(), (float)piece.getY(), 64, 64), 2, Color::black);
-
-            (*statics)[getIconIndex(piece.id)].draw(batch); // Iconos de unidades seleccionadas
-
-            for (auto & pos : piece.getMovePositions(game.data)) { // Rectángulos de posiciones de movimiento
-                batch->rect_rounded(Rect(pos.x + 16, pos.y + 16, 32, 32), 32,10, Color::green);
-            }
-            for (auto & pos : piece.getAttackPositions(game.data)) { // Rectángulos de posiciones de ataque
-                batch->rect(Rect(pos.x + 4, pos.y + 4, 56, 56), Color::red);
-            }
-
-            batch->str(font, getPieceName(piece.getPieceCode()), Vec2(620, 568), Color("#1ebc73"));
-            writePieceHp(batch, piece);
-            writePieceDmg(batch, piece);
+    if (*mode == 0) {
+        for (int i = 0; i <= 2; i++) {
+            (*buttons)[i].draw(batch);
         }
-    }
-    for (auto & piece : *pieces) {
-        piece.draw(batch);
-    }
+    } else if (*mode == 1) {
+        for (int i = 3; i <= 4; i++) {
+            (*buttons)[i].draw(batch);
+        }
 
-    for (auto & nexus : *nexuses) {
-        nexus.draw(batch);
-    }
+        for (auto & piece : *pieces) {
+            if (piece.state == PieceSprite::CHOOSING) {
+                batch->rect_line(Rect((float)piece.getX(), (float)piece.getY(), 64, 64), 2, Color::black);
 
-    (*statics)[1].draw(batch);
+                (*statics)[getIconIndex(piece.id)].draw(batch); // Iconos de unidades seleccionadas
+
+                for (auto & pos : piece.getMovePositions(game.data)) { // Rectángulos de posiciones de movimiento
+                    batch->rect_rounded(Rect(pos.x + 16, pos.y + 16, 32, 32), 32,10, Color::green);
+                }
+                for (auto & pos : piece.getAttackPositions(game.data)) { // Rectángulos de posiciones de ataque
+                    batch->rect(Rect(pos.x + 4, pos.y + 4, 56, 56), Color::red);
+                }
+
+                batch->str(font, getPieceName(piece.getPieceCode()), Vec2(620, 568), Color("#1ebc73"));
+                writePieceHp(batch, piece);
+                writePieceDmg(batch, piece);
+            }
+        }
+        for (auto & piece : *pieces) {
+            piece.draw(batch);
+        }
+
+        for (auto & nexus : *nexuses) {
+            nexus.draw(batch);
+        }
+
+        (*statics)[1].draw(batch);
+    } else if (*mode == 2) {
+
+    }
 }
 
-void Assets::updateGame(vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Game *game)
+void Assets::update(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Batch *batch, Game *game, int *mode)
 {
     for (auto & piece : *pieces) {
         piece.update(game);
@@ -85,11 +108,19 @@ void Assets::updateGame(vector<GuiButton> *buttons, vector<PieceSprite> *pieces,
     for (auto & button : *buttons) {
         button.update();
     }
-}
 
-void Assets::updateMenu(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces)
-{
+    if (*mode == 0) {
+        if ((*buttons)[0].isClicked() || Input::pressed(Key::P)) {
+            *mode = 1;
+        }; // Play
+        if ((*buttons)[1].isClicked() || Input::pressed(Key::F)) std::cout << "FORMACIONES" << std::endl; // Forms
+        if ((*buttons)[2].isClicked() || Input::pressed(Key::Escape)) App::exit(); // Exit
+    } else if (*mode == 1) {
+        if ((*buttons)[3].isClicked() || Input::pressed(Key::H)) (*statics)[1].swapActive();
+        if ((*buttons)[4].isClicked() || Input::pressed(Key::Escape)) *mode = 0;
+    } else if (*mode == 2) {
 
+    }
 }
 
 void loadPieces(vector<PieceSprite> *pieces, int data[B_ROWS][B_COLUMNS])
