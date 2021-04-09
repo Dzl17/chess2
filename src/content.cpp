@@ -177,17 +177,17 @@ void writePieceHp(Batch *batch, PieceSprite& piece)
     // Dibujar HP
     char hp_int_str[4]; // n+1 de tamaño mínimo, siendo n los dígitos del int
     sprintf(hp_int_str, "%d", piece.hp);
-    char hp_str[64] = "HP:"; // make sure you allocate enough space to append the other string
-    strcat(hp_str, hp_int_str); // other_string now contains "Integer: 1234"
+    char hp_str[64] = "HP:";
+    strcat(hp_str, hp_int_str);
     batch->str(font, hp_str, Vec2(620, 604), Color::black);
 }
 
 void writePieceDmg(Batch *batch, PieceSprite& piece)
 {
-    // Dibujar HP
+    // Dibujar DMG
     char dmg_int_str[4]; // n+1 de tamaño mínimo, siendo n los dígitos del int
     sprintf(dmg_int_str, "%d", piece.getDmg());
-    char dmg_str[64] = "DMG:"; // make sure you allocate enough space to append the other string
-    strcat(dmg_str, dmg_int_str); // other_string now contains "Integer: 1234"
+    char dmg_str[64] = "DMG:";
+    strcat(dmg_str, dmg_int_str);
     batch->str(font, dmg_str, Vec2(620, 640), Color::black);
 }

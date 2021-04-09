@@ -23,11 +23,10 @@ char * loadForm(int id); //TODO 4 IDs en total?
 
 /**
  * Guarda en un archivo el estado del juego.
- * @param time Tiempo de juego //TODO tiempo por cada lado?
  * @param turn Turno de juego
  * @param pieces Estado de las piezas (id,vida,x,y)
  */
-void saveGame(int time, int turn, int pieces[][4]);
+void saveGame(int turn, int nexus1hp, int nexus2hp, int pieces[24][4]);
 
 /**
  * Devuelve un array con el estado del juego.

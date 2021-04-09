@@ -137,7 +137,7 @@ endif()
 
 include_directories(${PROJECT_SOURCE_DIR}/dependencies/blah/include)
 
-add_executable(chess2 ${SOURCE_FILES}
+add_executable(chess2 ${SOURCE_FILES} # TODO compilar menos cosas para la parte de C
         src/app.cpp
         src/content.cpp
         src/content.h

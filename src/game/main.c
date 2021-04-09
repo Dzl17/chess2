@@ -8,7 +8,7 @@ void clearStdin();
 void halfBoard(char* espaces);
 void chooseForm(int f);
 
-int maian() {
+int main() {
     printf("MENU PRINCIPAL: \n");
     printf("1) Jugar en local: \n");
     printf("2) Crear una formacion: \n");
@@ -116,12 +116,6 @@ int maian() {
         saveForm(1, spaces);
 
     }
-
-    /*
-    Piece pi[24] = {{1, 10}, {2, 10}, {3, 10}, {4, 10}, {5, 10}, {6, 10}, {7, 10}, {8, 10}, {9, 10}, {10, 10}, {11, 10},
-                   {12, 10}, {13, 10}, {14, 10}, {15, 10}, {16, 10}, {17, 10}, {18, 10}, {19, 10}, {20, 10}, {21, 10},
-                   {22, 10}, {23, 10}, {24, 10}};
-                   */
     return 0;
 }
 
