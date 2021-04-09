@@ -137,14 +137,13 @@ endif()
 
 include_directories(${PROJECT_SOURCE_DIR}/dependencies/blah/include)
 
-add_executable(chess2 ${SOURCE_FILES} # TODO compilar menos cosas para la parte de C
+add_executable(chess2 ${SOURCE_FILES}
         src/app.cpp
         src/content.cpp
         src/content.h
 
         src/game/filem.c
         src/game/filem.h
-        src/game/main.c
         src/game/piece.c
         src/game/piece.h
         src/game/game.c
@@ -215,3 +214,14 @@ add_executable(chess2 ${SOURCE_FILES} # TODO compilar menos cosas para la parte 
         )
 
 target_link_libraries(chess2 PUBLIC ${LIBS} SDL2 winmm)
+
+add_executable(chess2cmd ${SOURCE_FILES}
+        src/game/filem.c
+        src/game/filem.h
+        src/game/main.c
+        src/game/piece.c
+        src/game/piece.h
+        src/game/game.c
+        src/game/game.h
+        src/game/chess2.h
+        )

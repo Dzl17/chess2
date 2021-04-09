@@ -55,7 +55,7 @@ void dispose()
     batch.dispose();
 }
 
-int maian()
+int main()
 {
     Config config;
     config.name = "Chess 2";
