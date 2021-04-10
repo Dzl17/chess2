@@ -23,7 +23,7 @@ void GuiButton::update() {
 }
 
 void GuiButton::draw(Batch *batch) {
-    if (!this->touched) batch->tex(this->pressedTex, Vec2(this->getX(), this->getY()), Color::white);
+    if (this->touched) batch->tex(this->pressedTex, Vec2(this->getX(), this->getY()), Color::white);
     else batch->tex(this->idleTex, Vec2(this->getX(), this->getY()), Color::white);
 }
 

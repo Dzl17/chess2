@@ -3,7 +3,6 @@
 
 #include <blah.h>
 #include <list>
-#include <map>
 #include "gui/staticSprite.h"
 #include "gui/guiButton.h"
 #include "gui/pieceSprite.h"

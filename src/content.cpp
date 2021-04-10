@@ -18,16 +18,16 @@ void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vec
 
     font = SpriteFont("../data/fonts/dogica.ttf", 32);
 
-    buttons->push_back(GuiButton(512, 328, 256, 96, // Play (menu)
-                                 "../data/img/helpButtonIdle.png", "../data/img/helpButtonPressed.png"));
-    buttons->push_back(GuiButton(512, 440, 256, 96, // Forms (menu)
-                                 "../data/img/exitButtonIdle.png", "../data/img/exitButtonPressed.png"));
-    buttons->push_back(GuiButton(512, 552, 256, 96, // Exit (menu)
-                                 "../data/img/exitButtonIdle.png", "../data/img/exitButtonPressed.png"));
+    buttons->push_back(GuiButton(512, 328, 256, 108, // Play (menu)
+                                 "../data/img/buttons/playMenuButtonIdle.png", "../data/img/buttons/playMenuButtonPressed.png"));
+    buttons->push_back(GuiButton(512, 444, 256, 108, // Forms (menu)
+                                 "../data/img/buttons/formsMenuButtonIdle.png", "../data/img/buttons/formsMenuButtonPressed.png"));
+    buttons->push_back(GuiButton(512, 560, 256, 108, // Exit (menu)
+                                 "../data/img/buttons/exitMenuButtonIdle.png", "../data/img/buttons/exitMenuButtonPressed.png"));
     buttons->push_back(GuiButton(16, 16, 224, 64, // Help (game)
-                                 "../data/img/helpButtonIdle.png", "../data/img/helpButtonPressed.png"));
+                                 "../data/img/buttons/helpButtonIdle.png", "../data/img/buttons/helpButtonPressed.png"));
     buttons->push_back(GuiButton(16, 96, 224, 64, // Exit (game)
-                                 "../data/img/exitButtonIdle.png", "../data/img/exitButtonPressed.png"));
+                                 "../data/img/buttons/exitButtonIdle.png", "../data/img/buttons/exitButtonPressed.png"));
 
     statics->push_back(StaticSprite(0, 0, "../data/img/background.png", true));
     statics->push_back(StaticSprite(320, 64, "../data/img/helpmenu.png", false));
@@ -129,13 +129,12 @@ void loadPieces(vector<PieceSprite> *pieces, int data[B_ROWS][B_COLUMNS])
         for (int j = 0; j < B_COLUMNS; j++) {
             int dataCode = data[i][j];
             if (dataCode >= 1 && dataCode <= 24) pieces->push_back(PieceSprite(
-                    (j + 6.5) * 64, // Wtf
-                    (i + 1) * 64,
+                    j * 64 + 416, // Wtf
+                    i * 64 + 64,
                     dataCode,
                     getSpritePath(dataCode)));
         }
     }
-
 }
 
 String getSpritePath(int id)
