@@ -229,9 +229,7 @@ void play(Game game,char c1[2],char c2[2])
         int destinyX = c2[1] - '0' - 1;
         int destinyY = c2[0] - 'a';
         int jugada = updatePiece(&game, originX, originY, destinyX, destinyY);
-        if (jugada) {
-            game.turn++;
-        }
+        if (jugada > 0) game.turn++;
         printf("\n");
         printBoard(game);
 

@@ -164,7 +164,7 @@ int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY
             else if (enemypiece->id == 26) game->nexus2hp -= 5;
             printf("Nexo atacado.\n");
         }
-        return 1;
+        return 2;
     }
     else { // Pieza propia
         printf("La casilla esta ocupada por una pieza propia.\n");
