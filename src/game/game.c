@@ -16,6 +16,7 @@ int invalidPositions(int x1, int y1, int x2, int y2);
  * @return Vida de la pieza
  */
 int getPieceHp(Game game, int id);
+int getBaseHp(int id);
 
 /**
  * Comprueba si hay una pieza entre medias para un movimiento largo de lancero.
@@ -31,7 +32,7 @@ void startGame(Game *game, int f1, int f2)
     char *form1 = loadForm(f1);
     char *form2 = loadForm(f2);
 
-    for (int i = 0; i < 24; i++) game->pieces[i] = (Piece) {i + 1, 10, getDamage(i + 1)};
+    for (int i = 0; i < 24; i++) game->pieces[i] = (Piece) {i + 1, getBaseHp(i+1), getBaseDmg(i + 1)};
     game->pieces[24]=(Piece) {25, NEXUS_HP};
     game->pieces[25]=(Piece) {26, NEXUS_HP};
     int s = 1;      // Lanceros
@@ -187,7 +188,7 @@ int movePiece(Piece *piece, Game *game, int originX, int originY, int destinyX, 
 
 int attackPiece(Piece *piece)
 {
-    piece->hp -= getDamage(piece->id);
+    piece->hp -= getBaseDmg(piece->id);
     if (piece->hp < 1 && piece->id <= 24) return 1; // Pieza eliminada
     else if (piece->id > 24) return 2; // Nexo golpeado
     else if (piece->hp < 1 && piece->id > 24) return 3; // Nexo eliminado

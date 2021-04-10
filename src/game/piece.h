@@ -24,7 +24,14 @@ char pieceLetter(int id);
  * @param id Id de la pieza
  * @return Daño de la pieza
  */
-int getDamage(int id);
+int getBaseDmg(int id);
+
+/**
+ * Devuelve la vida base de una pieza.
+ * @param id Id de la pieza
+ * @return Vida base de la pieza
+ */
+int getBaseHp(int id);
 
 /**
  * Devuelve si se puede mover una pieza a una posición objetivo

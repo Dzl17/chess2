@@ -74,7 +74,7 @@ int main() {
         game.nexus1hp=data[0][1];
         game.nexus2hp=data[0][2];
         for (int i = 1; i < 25; ++i) {
-            game.pieces[i-1] = (Piece) {data[i][0], data[i][1], getDamage(data[i][0])};
+            game.pieces[i-1] = (Piece) {data[i][0], data[i][1], getBaseDmg(data[i][0])};
         }
         game.pieces[24]=(Piece) {25, data[0][1]};
         game.pieces[25]=(Piece) {26, data[0][2]};

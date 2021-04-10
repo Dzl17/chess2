@@ -33,7 +33,7 @@ char pieceLetter(int id)
     }
 }
 
-int getDamage(int id)
+int getBaseDmg(int id) // TODO valores iniciales de daño
 {
     if ((id >= 1 && id <= 4) || (id >= 13 && id <= 16)) {
         return 5; // Daño lancero
@@ -43,6 +43,19 @@ int getDamage(int id)
         return 5; // Daño asesino
     } else {
         return 5; // Daño golem
+    }
+}
+
+int getBaseHp(int id) // TODO valores iniciales de vida
+{
+    if ((id >= 1 && id <= 4) || (id >= 13 && id <= 16)) {
+        return 40; // Daño lancero
+    } else if ((id >= 5 && id <= 7) || (id >= 17 && id <= 19)) {
+        return 40; // Daño mago
+    } else if ((id >= 8 && id <= 10) || (id >= 20 && id <= 22)) {
+        return 40; // Daño asesino
+    } else {
+        return 40; // Daño golem
     }
 }
 

@@ -3,6 +3,9 @@
 
 #include <blah.h>
 #include <iostream>
+extern "C" {
+    #include "../game/chess2.h"
+};
 
 using namespace Blah;
 
