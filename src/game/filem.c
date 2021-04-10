@@ -90,6 +90,7 @@ int** loadGame()
             for (int k = 0; k < 4; k++) intbuffer[k] = -1; // Resetear el buffer
         }
     }
+
     fclose (filer);
     return data;
 }

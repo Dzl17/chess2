@@ -67,12 +67,13 @@ int main() {
 
     } else if (option ==3){
         int **data=loadGame();
+
         Game game;
         game.time=0;
         game.turn=data[0][0];
         game.nexus1hp=data[0][1];
         game.nexus2hp=data[0][2];
-        for (int i = 1; i < 24; ++i) {
+        for (int i = 1; i < 25; ++i) {
             game.pieces[i-1] = (Piece) {data[i][0], data[i][1], getDamage(data[i][0])};
         }
         game.pieces[24]=(Piece) {25, data[0][1]};
@@ -189,7 +190,6 @@ void play(Game game,char c1[2],char c2[2])
                 sapieces[i][0]=game.pieces[i].id;
                 sapieces[i][1]=game.pieces[i].hp;
                 if (game.pieces[i].hp<1){
-                    printf("eo\n");
                     sapieces[i][2]=-2;
                     sapieces[i][3]=-2;
                 } else {
