@@ -223,5 +223,4 @@ add_executable(chess2cmd ${SOURCE_FILES}
         src/game/piece.h
         src/game/game.c
         src/game/game.h
-        src/game/chess2.h
         )
