@@ -151,20 +151,21 @@ int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY
                 }
             }
             printf("Ataque realizado.\n");
+            return 2;
         } else if (attackResult == 1) {
             if (pieceType(piece) != 1){
                 movePiece(piece, game, originX, originY, destinyX, destinyY);
-            }else{
+            } else {
                 game->data[destinyX][destinyY]=0;
             }
             printf("Pieza eliminada.\n");
-
+            return 3;
         } else if (attackResult == 2) {
             if (enemypiece->id == 25) game->nexus1hp -= 5;
             else if (enemypiece->id == 26) game->nexus2hp -= 5;
             printf("Nexo atacado.\n");
+            return 2;
         }
-        return 2;
     }
     else { // Pieza propia
         printf("La casilla esta ocupada por una pieza propia.\n");

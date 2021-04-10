@@ -67,7 +67,7 @@ void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
         else batch->rect(Rect(1056, 256, 64, 64), Color("#8a0da6"));
 
         for (auto & piece : *pieces) {
-            if (piece.state == PieceSprite::CHOOSING) {
+            if (piece.state == PieceSprite::CHOOSING && piece.active) {
                 batch->rect_line(Rect((float)piece.getX(), (float)piece.getY(), 64, 64), 2, Color::black);
 
                 (*statics)[getIconIndex(piece.id)].draw(batch); // Iconos de unidades seleccionadas
