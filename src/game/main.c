@@ -54,7 +54,7 @@ int main() {
             x = c1[1] - '0' - 1;
             y = c1[0] - 'a';
             int pos = y + (x * 3);
-            if (spaces[pos] == 'e' && (x >= 0 && x < 7) && (y >= 0 && y < 3)){
+            if (spaces[pos] == 'e' && (x >= 0 && x < 7) && (y >= 0 && y < 3) && pos!=9){
                 spaces[pos] = pieceArr[p];
                 p++;
             } else {
@@ -116,7 +116,8 @@ void halfBoard(char* espaces)
     for (int i = 0; i < 7; i++) {
         printf("%d > |", i + 1);
         for (int j = 0; j < 3; j++) {
-            if (espaces[seg] == 'e') printf(" |");
+            if (seg==9) printf("N|");
+            else if (espaces[seg] == 'e') printf(" |");
             else printf("%c|",espaces[seg]);
             seg++;
         }
