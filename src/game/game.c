@@ -262,6 +262,20 @@ int getPieceHp(Game game, int id)
     return 0;
 }
 
+int* getPiecePos(Game game, int id)
+{
+    int *ids;
+    for (int i = 0; i < B_ROWS; ++i) {
+        for (int j = 0; j < B_COLUMNS; ++j) {
+            if (game.data[i][j]==id){
+                ids[0]=i;
+                ids[1]=j;
+                return ids;
+            }
+        }
+    }
+}
+
 int spearBlock(int data[B_ROWS][B_COLUMNS], int team, int originX, int originY, int destinyY)
 {
     return (team == 0 && (destinyY - originY == 2 && data[originX][originY + 1] != 0)) ||

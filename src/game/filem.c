@@ -79,6 +79,11 @@ int** loadGame()
                 n++;
             }
         } else {
+            int digits = 0; // Comprobador de dígitos
+            for (int k = 0; k < 4; k++) if (intbuffer[k] != -1) digits++; // Número de dígitos del número
+            int tempNum = 0;
+            for (int k = 0; k < digits; k++) tempNum += intbuffer[k] * (int) pow(10, digits - k - 1); // Calcular el número
+            data[i][j] = tempNum; // Introducir el número
             i++;
             j = 0;
             n = 0;

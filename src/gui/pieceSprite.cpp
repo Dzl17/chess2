@@ -67,6 +67,7 @@ void PieceSprite::update(Game *game) {
                 if (addX == 0 && this->getX() != (int)this->focus.x) this->setX((int) this->focus.x);
                 if (addY == 0 && this->getY() != (int)this->focus.y) this->setY((int) this->focus.y);
             } else {
+                std::cout<<*this<<std::endl;
                 this->state = IDLE;
             }
             break;

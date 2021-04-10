@@ -7,11 +7,13 @@
 void clearStdin();
 void halfBoard(char* espaces);
 void chooseForm(int f);
+void play(Game game,char c1[2],char c2[2]);
 
 int main() {
     printf("MENU PRINCIPAL: \n");
     printf("1) Jugar en local: \n");
     printf("2) Crear una formacion: \n");
+    printf("3) Cargar partida: \n");
     int option;
     printf("Introduzca opcion: ");
     scanf("%d", &option);
@@ -32,59 +34,7 @@ int main() {
         printBoard(game);
         char c1[2];
         char c2[2];
-        while (game.nexus1hp > 0 && game.nexus2hp > 0) {
-            printf("%d:%d, T%d, %c\n", game.nexus1hp, game.nexus2hp, game.turn, game.turn % 2 ? 'D' : 'I');
-            printf("Casilla origen: ");
-            scanf("%c%c", &c1[0], &c1[1]);
-            if (c1[0] == 'm') break;
-            else if (c1[0] == 'h' && c1[1] == 'p') {
-                clearStdin();
-                //system("cls");
-                printf("Vida de las piezas.\n\n");
-                printLifeBoard(game);
-                printf("Pulse 'enter' para salir. ");
-                scanf("%c");
-                clearStdin();
-                //system("cls");
-                printf("Elegir movimiento.\n\n");
-                printBoard(game);
-                printf("Casilla origen: ");
-                scanf("%c%c", &c1[0], &c1[1]);
-            } else if (c1[0] == '?' && c1[1] == '?'){
-                clearStdin();
-                //system("cls");
-                printf("Movimiento y ataque de las piezas.\n\n");
-                printf("Lanceros (s): Se mueven 1 o 2 casillas para adelante y atacan en 3 casillas verticales al frente\n");
-                printf("Mago (w): Se mueven 1 casilla en todas las direcciones y atacan a distancia de 2 casillas\n");
-                printf("Golem (g): Se mueven y atacan a 1 casilla en todas las direcciones\n");
-                printf("Asesino (a): Se mueven y atacan a 3 casillas en vertical y horizontal. Ademas pueden atravesar piezas para moverse\n\n");
-                printf("Pulse 'enter' para salir. ");
-                scanf("%c");
-                clearStdin();
-                //system("cls");
-                printf("Elegir movimiento.\n\n");
-                printBoard(game);
-                printf("Casilla origen: ");
-                scanf("%c%c", &c1[0], &c1[1]);
-            }
-            clearStdin();
-            printf("Casilla destino: ");
-            scanf("%c%c", &c2[0], &c2[1]);
-            clearStdin();
-            //system("cls"); // Para consola
-            // Extraer y evaluar posiciones
-            int originX = c1[1] - '0' - 1;
-            int originY = c1[0] - 'a';
-            int destinyX = c2[1] - '0' - 1;
-            int destinyY = c2[0] - 'a';
-            int jugada = updatePiece(&game, originX, originY, destinyX, destinyY);
-            if (jugada) {
-                game.turn++;
-            }
-            printf("\n");
-            printBoard(game);
-
-        }
+        play(game,c1,c2);
         printf("Partida terminada\n");
         printf("Gana el equipo %d\n",game.turn%2);
     } else if (option == 2) {
@@ -114,6 +64,40 @@ int main() {
         halfBoard(spaces);
         printf("Formacion terminada\n");
         saveForm(1, spaces);
+
+    } else if (option ==3){
+        int **data=loadGame();
+        Game game;
+        game.time=0;
+        game.turn=data[0][0];
+        game.nexus1hp=data[0][1];
+        game.nexus2hp=data[0][2];
+        for (int i = 1; i < 24; ++i) {
+            game.pieces[i-1] = (Piece) {data[i][0], data[i][1], getDamage(data[i][0])};
+        }
+        game.pieces[24]=(Piece) {25, data[0][1]};
+        game.pieces[25]=(Piece) {26, data[0][2]};
+
+        for (int i = 0; i < B_ROWS; i++) {
+            for (int j = 0; j < B_COLUMNS; j++) {
+                game.data[i][j] = 0;
+            }
+        }
+        game.data[3][0]=25;
+        game.data[3][10]=26;
+        for (int i = 1; i <25; i++) {
+            if (game.pieces[i-1].hp>0){
+                game.data[data[i][2]][data[i][3]]=data[i][0];
+            }
+
+        }
+        printf("Juego iniciado.\n\n");
+        printBoard(game);
+        char c1[2];
+        char c2[2];
+        play(game,c1,c2);
+        printf("Partida terminada\n");
+        printf("Gana el equipo %d\n",game.turn%2);
 
     }
     return 0;
@@ -176,4 +160,83 @@ void chooseForm(int f)
         printf("%c ", 'a' + i);
     }
     printf("\n");
+}
+void play(Game game,char c1[2],char c2[2])
+{
+    while (game.nexus1hp > 0 && game.nexus2hp > 0) {
+
+        printf("%d:%d, T%d, %c\n", game.nexus1hp, game.nexus2hp, game.turn, game.turn % 2 ? 'D' : 'I');
+        printf("Casilla origen: ");
+        scanf("%c%c", &c1[0], &c1[1]);
+        if (c1[0] == 'm') break;
+        else if (c1[0] == 'h' && c1[1] == 'p') {
+            clearStdin();
+            //system("cls");
+            printf("Vida de las piezas.\n\n");
+            printLifeBoard(game);
+            printf("Pulse 'enter' para salir. ");
+            scanf("%c");
+            clearStdin();
+            //system("cls");
+            printf("Elegir movimiento.\n\n");
+            printBoard(game);
+            printf("Casilla origen: ");
+            scanf("%c%c", &c1[0], &c1[1]);
+        } else if (c1[0] == 's' && c1[1] == 'g'){
+
+            int sapieces[24][4];
+            for (int i = 0; i < 24; ++i) {
+
+                sapieces[i][0]=game.pieces[i].id;
+                sapieces[i][1]=game.pieces[i].hp;
+                if (game.pieces[i].hp<1){
+                    printf("eo\n");
+                    sapieces[i][2]=-2;
+                    sapieces[i][3]=-2;
+                }else{
+                    int *ids;
+                    ids=getPiecePos(game,game.pieces[i].id);
+                    sapieces[i][2]=ids[0];
+                    sapieces[i][3]=ids[1];
+                }
+            }
+            saveGame(game.turn,game.nexus1hp,game.nexus2hp,sapieces);
+            break;
+
+        }else if (c1[0] == '?' && c1[1] == '?'){
+            clearStdin();
+            //system("cls");
+            printf("Movimiento y ataque de las piezas.\n\n");
+            printf("Lanceros (s): Se mueven 1 o 2 casillas para adelante y atacan en 3 casillas verticales al frente\n");
+            printf("Mago (w): Se mueven 1 casilla en todas las direcciones y atacan a distancia de 2 casillas\n");
+            printf("Golem (g): Se mueven y atacan a 1 casilla en todas las direcciones\n");
+            printf("Asesino (a): Se mueven y atacan a 3 casillas en vertical y horizontal. Ademas pueden atravesar piezas para moverse\n\n");
+            printf("Pulse 'enter' para salir. ");
+            scanf("%c");
+            clearStdin();
+            //system("cls");
+            printf("Elegir movimiento.\n\n");
+            printBoard(game);
+            printf("Casilla origen: ");
+            scanf("%c%c", &c1[0], &c1[1]);
+        }
+        clearStdin();
+        printf("Casilla destino: ");
+        scanf("%c%c", &c2[0], &c2[1]);
+        clearStdin();
+        //system("cls"); // Para consola
+        // Extraer y evaluar posiciones
+        int originX = c1[1] - '0' - 1;
+        int originY = c1[0] - 'a';
+        int destinyX = c2[1] - '0' - 1;
+        int destinyY = c2[0] - 'a';
+        int jugada = updatePiece(&game, originX, originY, destinyX, destinyY);
+        if (jugada) {
+            game.turn++;
+        }
+        printf("\n");
+        printBoard(game);
+
+    }
+
 }

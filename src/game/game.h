@@ -70,4 +70,12 @@ void printLifeBoard(Game game);
  */
 int locateId(Game game, int x, int y);
 
+/**
+ * Devuelve un array con la x y la y de la id requerida
+ * @param board Tablero
+ * @param ID de la pieza
+ * @return x X de la pieza
+ * @return y Y de la pieza
+ */
+int* getPiecePos(Game game, int id);
 #endif //CHESS2_GAME_H
