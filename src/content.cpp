@@ -18,11 +18,11 @@ void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vec
 
     font = SpriteFont("../data/fonts/dogica.ttf", 32);
 
-    buttons->push_back(GuiButton(512, 328, 256, 108, // Play (menu)
+    buttons->push_back(GuiButton(512, 1128, 256, 108, // Play (menu)
                                  "../data/img/buttons/playMenuButtonIdle.png", "../data/img/buttons/playMenuButtonPressed.png"));
-    buttons->push_back(GuiButton(512, 444, 256, 108, // Forms (menu)
+    buttons->push_back(GuiButton(512, 1544, 256, 108, // Forms (menu)
                                  "../data/img/buttons/formsMenuButtonIdle.png", "../data/img/buttons/formsMenuButtonPressed.png"));
-    buttons->push_back(GuiButton(512, 560, 256, 108, // Exit (menu)
+    buttons->push_back(GuiButton(512, 1960, 256, 108, // Exit (menu)
                                  "../data/img/buttons/exitMenuButtonIdle.png", "../data/img/buttons/exitMenuButtonPressed.png"));
     buttons->push_back(GuiButton(16, 16, 224, 64, // Help (game)
                                  "../data/img/buttons/helpButtonIdle.png", "../data/img/buttons/helpButtonPressed.png"));
@@ -110,11 +110,13 @@ void Assets::update(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
     }
 
     if (*mode == 0) {
-        if ((*buttons)[0].isClicked() || Input::pressed(Key::P)) {
-            *mode = 1;
-        }; // Play
+        if ((*buttons)[0].isClicked() || Input::pressed(Key::P)) *mode = 1; // Play
         if ((*buttons)[1].isClicked() || Input::pressed(Key::F)) std::cout << "FORMACIONES" << std::endl; // Forms
         if ((*buttons)[2].isClicked() || Input::pressed(Key::Escape)) App::exit(); // Exit
+
+        (*buttons)[0].setY((int) ((*buttons)[0].getY() + (328 - (*buttons)[0].getY()) * 0.06));
+        (*buttons)[1].setY((int) ((*buttons)[1].getY() + (444 - (*buttons)[1].getY()) * 0.06));
+        (*buttons)[2].setY((int) ((*buttons)[2].getY() + (560 - (*buttons)[2].getY()) * 0.06));
     } else if (*mode == 1) {
         if ((*buttons)[3].isClicked() || Input::pressed(Key::H)) (*statics)[1].swapActive();
         if ((*buttons)[4].isClicked() || Input::pressed(Key::Escape)) *mode = 0;
