@@ -63,6 +63,9 @@ void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
             (*buttons)[i].draw(batch);
         }
 
+        if (game.turn % 2 == 0) batch->rect(Rect(416, 256, 64, 64), Color("#8a0da6"));
+        else batch->rect(Rect(1056, 256, 64, 64), Color("#8a0da6"));
+
         for (auto & piece : *pieces) {
             if (piece.state == PieceSprite::CHOOSING) {
                 batch->rect_line(Rect((float)piece.getX(), (float)piece.getY(), 64, 64), 2, Color::black);
@@ -70,10 +73,10 @@ void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
                 (*statics)[getIconIndex(piece.id)].draw(batch); // Iconos de unidades seleccionadas
 
                 for (auto & pos : piece.getMovePositions(game.data)) { // Rectángulos de posiciones de movimiento
-                    batch->rect_rounded(Rect(pos.x + 16, pos.y + 16, 32, 32), 32,10, Color::green);
+                    batch->rect_rounded(Rect(pos.x + 16, pos.y + 16, 32, 32), 32,10, Color("1ebc73"));
                 }
                 for (auto & pos : piece.getAttackPositions(game.data)) { // Rectángulos de posiciones de ataque
-                    batch->rect(Rect(pos.x + 4, pos.y + 4, 56, 56), Color::red);
+                    batch->rect(Rect(pos.x + 4, pos.y + 4, 56, 56), Color("#e83b3b"));
                 }
 
                 batch->str(font, getPieceName(piece.getPieceCode()), Vec2(620, 568), Color("#1ebc73"));
@@ -111,10 +114,10 @@ void Assets::update(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
 
     if (*mode == 0) {
         if ((*buttons)[0].isClicked() || Input::pressed(Key::P)) *mode = 1; // Play
-        if ((*buttons)[1].isClicked() || Input::pressed(Key::F)) std::cout << "FORMACIONES" << std::endl; // Forms
+        if ((*buttons)[1].isClicked() || Input::pressed(Key::F)) std::cout << "FORMACIONES" << std::endl; // Forms TODO
         if ((*buttons)[2].isClicked() || Input::pressed(Key::Escape)) App::exit(); // Exit
 
-        (*buttons)[0].setY((int) ((*buttons)[0].getY() + (328 - (*buttons)[0].getY()) * 0.06));
+        (*buttons)[0].setY((int) ((*buttons)[0].getY() + (328 - (*buttons)[0].getY()) * 0.06)); // Movimiento de los botones de inicio
         (*buttons)[1].setY((int) ((*buttons)[1].getY() + (444 - (*buttons)[1].getY()) * 0.06));
         (*buttons)[2].setY((int) ((*buttons)[2].getY() + (560 - (*buttons)[2].getY()) * 0.06));
     } else if (*mode == 1) {
@@ -131,7 +134,7 @@ void loadPieces(vector<PieceSprite> *pieces, int data[B_ROWS][B_COLUMNS])
         for (int j = 0; j < B_COLUMNS; j++) {
             int dataCode = data[i][j];
             if (dataCode >= 1 && dataCode <= 24) pieces->push_back(PieceSprite(
-                    j * 64 + 416, // Wtf
+                    j * 64 + 416,
                     i * 64 + 64,
                     dataCode,
                     getSpritePath(dataCode)));

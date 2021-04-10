@@ -52,7 +52,6 @@ void PieceSprite::update(Game *game) {
                         this->state = IDLE;
                         selectedPiece = 0;
                     }
-
                 }
             }
             if (selectedPiece != this->id) this->state = IDLE;
