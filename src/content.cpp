@@ -117,9 +117,9 @@ void Assets::update(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
         if ((*buttons)[1].isClicked() || Input::pressed(Key::F)) std::cout << "FORMACIONES" << std::endl; // Forms TODO
         if ((*buttons)[2].isClicked() || Input::pressed(Key::Escape)) App::exit(); // Exit
 
-        (*buttons)[0].setY((int) ((*buttons)[0].getY() + (328 - (*buttons)[0].getY()) * 0.06)); // Movimiento de los botones de inicio
-        (*buttons)[1].setY((int) ((*buttons)[1].getY() + (444 - (*buttons)[1].getY()) * 0.06));
-        (*buttons)[2].setY((int) ((*buttons)[2].getY() + (560 - (*buttons)[2].getY()) * 0.06));
+        (*buttons)[0].setY((int) ((*buttons)[0].getY() + (328 - (*buttons)[0].getY()) * (double) Time::delta * 4)); // Movimiento de los botones de inicio
+        (*buttons)[1].setY((int) ((*buttons)[1].getY() + (444 - (*buttons)[1].getY()) * (double) Time::delta * 4));
+        (*buttons)[2].setY((int) ((*buttons)[2].getY() + (560 - (*buttons)[2].getY()) * (double) Time::delta * 4));
     } else if (*mode == 1) {
         if ((*buttons)[3].isClicked() || Input::pressed(Key::H)) (*statics)[1].swapActive();
         if ((*buttons)[4].isClicked() || Input::pressed(Key::Escape)) *mode = 0;
