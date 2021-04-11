@@ -89,11 +89,11 @@ int canAttack(Piece *piece, Piece *enemyPiece, int originX, int originY, int des
     if (team == enemyTeam) return 0;
     switch (pieceType(piece)) {
         case 0: // Lancero - s
-            if (piece->id <= 12) return destinyY == originY + 1 && (abs(destinyX - originX) <= 1);
-            else return destinyY == originY - 1 && (abs(destinyX - originX) <= 1);
+            if (piece->id <= 12) return destinyY == originY + 1 && (abs(destinyX - originX) <= 1); // Lancero izquierdo
+            else return destinyY == originY - 1 && (abs(destinyX - originX) <= 1);                 // Lancero derecho
         case 1: // Mago - w
             return (abs(originX - destinyX) == 2 && abs(originY - destinyY) <= 2) ||
-                    (abs(originY - destinyY) == 2 && abs(originX - destinyX) <= 2);
+                   (abs(originY - destinyY) == 2 && abs(originX - destinyX) <= 2);
         case 2: // Asesino - a
             return (abs(originX - destinyX) == 1 && abs(originY - destinyY) == 0) ||
                    (abs(originY - destinyY) == 1 && abs(originX - destinyX) == 0);

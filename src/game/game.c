@@ -16,7 +16,6 @@ int invalidPositions(int x1, int y1, int x2, int y2);
  * @return Vida de la pieza
  */
 int getPieceHp(Game game, int id);
-int getBaseHp(int id);
 
 /**
  * Comprueba si hay una pieza entre medias para un movimiento largo de lancero.
@@ -25,6 +24,7 @@ int spearBlock(int data[B_ROWS][B_COLUMNS], int team, int originX, int originY, 
 
 void startGame(Game *game, int f1, int f2)
 {
+    // Inicializar datos base
     game->time = 0;
     game->turn = 0;
     game->nexus1hp = NEXUS_HP;
@@ -32,9 +32,10 @@ void startGame(Game *game, int f1, int f2)
     char *form1 = loadForm(f1);
     char *form2 = loadForm(f2);
 
+    // Inicializar datos de piezas
     for (int i = 0; i < 24; i++) game->pieces[i] = (Piece) {i + 1, getBaseHp(i+1), getBaseDmg(i + 1)};
-    game->pieces[24]=(Piece) {25, NEXUS_HP};
-    game->pieces[25]=(Piece) {26, NEXUS_HP};
+    game->pieces[24] = (Piece) {25, NEXUS_HP};
+    game->pieces[25] = (Piece) {26, NEXUS_HP};
     int s = 1;      // Lanceros
     int w = 5;      // Magos
     int a = 8;      // Asesinos
@@ -43,7 +44,7 @@ void startGame(Game *game, int f1, int f2)
     for (int i = 0; i < B_ROWS; i++) { // Lado izquierdo
         for (int j = 0; j < 3; j++) {
             char unit = form1[3 * i + j];
-            if (unit == 's')      game->data[i][j] = s++;
+            if      (unit == 's') game->data[i][j] = s++;
             else if (unit == 'w') game->data[i][j] = w++;
             else if (unit == 'a') game->data[i][j] = a++;
             else if (unit == 'g') game->data[i][j] = g++;
@@ -59,7 +60,7 @@ void startGame(Game *game, int f1, int f2)
     for (int i = 0; i < B_ROWS; i++) { // Lado derecho
         for (int j = 2; j >= 0; j--) {
             char unit = form2[3 * i + 2 - j];
-            if (unit == 's')      game->data[i][j+8] = s++;
+            if      (unit == 's') game->data[i][j+8] = s++;
             else if (unit == 'w') game->data[i][j+8] = w++;
             else if (unit == 'a') game->data[i][j+8] = a++;
             else if (unit == 'g') game->data[i][j+8] = g++;
@@ -68,7 +69,7 @@ void startGame(Game *game, int f1, int f2)
         }
     }
 
-    for (int i = 0; i < B_ROWS; i++) { // Lado central
+    for (int i = 0; i < B_ROWS; i++) { // Zona central
         for (int j = 3; j < 8; j++) {
             game->data[i][j] = 0;
         }
@@ -80,7 +81,7 @@ void startGame(Game *game, int f1, int f2)
 
 int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY)
 {
-
+    // Posiciones fuera del tablero
     if (invalidPositions(originX, originY, destinyX, destinyY)) {
         printf("Posicion no valida.\n");
         return 0;
@@ -146,8 +147,8 @@ int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY
                 if (attackPiece(piece)){
                     movePiece(enemypiece, game, originX, originY, destinyX, destinyY); // Contraataque
                 }
-            } else{
-                if (pieceType(enemypiece) == 1){
+            } else {
+                if (pieceType(enemypiece) == 1) {
                     attackPiece(piece);
                 }
             }
@@ -157,7 +158,7 @@ int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY
             if (pieceType(piece) != 1){
                 movePiece(piece, game, originX, originY, destinyX, destinyY);
             } else {
-                game->data[destinyX][destinyY]=0;
+                game->data[destinyX][destinyY] = 0;
             }
             printf("Pieza eliminada.\n");
             return 3;
@@ -166,6 +167,8 @@ int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY
             else if (enemypiece->id == 26) game->nexus2hp -= 5;
             printf("Nexo atacado.\n");
             return 2;
+        } else {
+            return 0;
         }
     }
     else { // Pieza propia
@@ -264,14 +267,14 @@ int getPieceHp(Game game, int id)
     return 0;
 }
 
-int* getPiecePos(Game game, int id)
+int *getPiecePos(Game game, int id)
 {
     int *ids;
     for (int i = 0; i < B_ROWS; ++i) {
         for (int j = 0; j < B_COLUMNS; ++j) {
-            if (game.data[i][j]==id){
-                ids[0]=i;
-                ids[1]=j;
+            if (game.data[i][j] == id){
+                ids[0] = i;
+                ids[1] = j;
                 return ids;
             }
         }

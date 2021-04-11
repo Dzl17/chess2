@@ -1,10 +1,9 @@
 #ifndef CHESS2_FILEM_H
 #define CHESS2_FILEM_H
 
-#define FORM_LENGTH 21 //Tamaño del string de formaciones
+#define FORM_LENGTH 21 // Tamaño del string de formaciones
 
-//IMPORTANTE: intentar "aislar" este módulo, no utilizar la estructura Board ni nada parecido
-//Probablemente haya que cambiar la forma de pasar arrays de loadGame()
+// IMPORTANTE: intentar "aislar" este módulo, no utilizar la estructura Board ni nada parecido
 
 /**
  * Guarda una formación en un archivo.
@@ -18,7 +17,7 @@ void saveForm(int id, char *code);
  * @param id Id del archivo
  * @return Puntero al array de la formación
  */
-char * loadForm(int id); //TODO 4 IDs en total?
+char *loadForm(int id); //TODO 4 IDs en total?
 
 
 /**
@@ -32,6 +31,6 @@ void saveGame(int turn, int nexus1hp, int nexus2hp, int pieces[24][4]);
  * Devuelve un array con el estado del juego.
  * @return Array de estado (entrada 0 -> datos, entradas 1+ -> piezas)
  */
-int** loadGame();
+int **loadGame();
 
 #endif //CHESS2_FILEM_H

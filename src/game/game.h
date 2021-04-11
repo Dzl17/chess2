@@ -27,7 +27,7 @@ void startGame(Game *game, int f1, int f2);
  * @param game Game base
  * @param origin Coordenadas de origen
  * @param destiny Coordenadas de destino
- * @return Fallo o éxito del movimiento (cambio de movimiento)
+ * @return Resultado del movimiento
  */
 int updatePiece(Game *game, int originX, int originY, int destinyX, int  destinyY);
 
