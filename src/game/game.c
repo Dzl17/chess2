@@ -141,29 +141,29 @@ int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY
             return 0;
         }
 
-        int attackResult = attackPiece(enemypiece);
-        if (attackResult == 0) {
-            if (pieceType(piece) != 1){
-                if (attackPiece(piece)){
-                    movePiece(enemypiece, game, originX, originY, destinyX, destinyY); // Contraataque
+        int attackResult = attackPiece(enemypiece); // Realizar ataque
+        if (attackResult == 0) {  // La pieza enemiga ha sobrevivido
+            if (pieceType(piece) != 1){  // No es un mago
+                if (attackPiece(piece)){    // Contraataque
+                    movePiece(enemypiece, game, originX, originY, destinyX, destinyY); // Tu pieza ha muerto y la enemiga toma su lugar
                 }
             } else {
-                if (pieceType(enemypiece) == 1) {
+                if (pieceType(enemypiece) == 1) {   // Contraataque si la pieza a la que has atacado tambien es un mago
                     attackPiece(piece);
                 }
             }
             printf("Ataque realizado.\n");
             return 2;
-        } else if (attackResult == 1) {
-            if (pieceType(piece) != 1){
+        } else if (attackResult == 1) { // Has eliminado la pieza enemiga
+            if (pieceType(piece) != 1){ // Si no eres un mago tomas tu posicion
                 movePiece(piece, game, originX, originY, destinyX, destinyY);
-            } else {
+            } else {    // Si eres un mago la pieza es simplemente eliminada
                 game->data[destinyX][destinyY] = 0;
             }
             printf("Pieza eliminada.\n");
             return 3;
-        } else if (attackResult == 2) {
-            if (enemypiece->id == 25) game->nexus1hp -= 5;
+        } else if (attackResult == 2) { // Has atacado a un nexo
+            if (enemypiece->id == 25) game->nexus1hp -= 5;  // Se le resta vida a la variable global de vida nexo
             else if (enemypiece->id == 26) game->nexus2hp -= 5;
             printf("Nexo atacado.\n");
             return 2;
@@ -180,8 +180,8 @@ int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY
 int movePiece(Piece *piece, Game *game, int originX, int originY, int destinyX, int destinyY)
 {
     if (canMove(piece, originX, originY, destinyX, destinyY)) {
-        game->data[originX][originY] = 0;
-        game->data[destinyX][destinyY] = piece->id;
+        game->data[originX][originY] = 0;   // Tu posicion actual del tablero se libra
+        game->data[destinyX][destinyY] = piece->id; // Ocupas la casilla libre
         return 1;
     } else {
         printf("Movimiento ilegal\n");
@@ -200,7 +200,7 @@ int attackPiece(Piece *piece)
 
 void printBoard(Game game)
 {
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 7; i++) {   // Dibujo de tablero
         printf("%d > |", i + 1);
         for (int j = 0; j < 11; j++) {
             int pieceCode = game.data[i][j];
@@ -226,7 +226,7 @@ void printBoard(Game game)
 void printLifeBoard(Game game)
 {
     for (int i = 0; i < 7; i++) {
-        printf("%d > |", i + 1);
+        printf("%d > |", i + 1);    // Dibujo de tablero
         for (int j = 0; j < 11; j++) {
             int hp = getPieceHp(game, game.data[i][j]);
             if (hp <= 0) printf("  |");
@@ -267,7 +267,7 @@ int getPieceHp(Game game, int id)
     return 0;
 }
 
-int *getPiecePos(Game game, int id)
+int *getPiecePos(Game game, int id) // Encontrar posicion en tablero de la pieza
 {
     int *ids;
     for (int i = 0; i < B_ROWS; ++i) {
