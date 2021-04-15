@@ -19,8 +19,7 @@ std::vector<NexusSprite> nexusSprites;
 
 void startup()
 {
-    startGame(&game, 1,1);
-    Assets::load(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, game, &currentMode);
+    Assets::load(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, &game, &currentMode);
 }
 
 void render()

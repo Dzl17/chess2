@@ -9,8 +9,10 @@ void writePieceDmg(Batch *batch, PieceSprite& piece);
 
 SpriteFont font;
 
-void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Game game, int *mode)
+void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Game *game, int *mode)
 {
+    startGame(game, 1,1);
+
     statics->clear();
     buttons->clear();
     pieces->clear();
@@ -42,7 +44,7 @@ void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vec
 
     statics->push_back(StaticSprite(0, 0, "../data/img/mainMenu.png", true)); // Fondo (menu)
 
-    loadPieces(pieces, game.data);
+    loadPieces(pieces, game->data);
 
     nexuses->push_back(NexusSprite(416, 256, "../data/img/nexusL.png"));
     nexuses->push_back(NexusSprite(1056, 256, "../data/img/nexusR.png"));
@@ -122,7 +124,10 @@ void Assets::update(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
         (*buttons)[2].setY((int) ((*buttons)[2].getY() + (560 - (*buttons)[2].getY()) * (double) Time::delta * 4));
     } else if (*mode == 1) {
         if ((*buttons)[3].isClicked() || Input::pressed(Key::H)) (*statics)[1].swapActive();
-        if ((*buttons)[4].isClicked() || Input::pressed(Key::Escape)) *mode = 0;
+        if ((*buttons)[4].isClicked() || Input::pressed(Key::Escape)) {
+            *mode = 0;
+            Assets::load(statics, buttons, pieces, nexuses, game, mode);
+        }
     } else if (*mode == 2) {
 
     }
