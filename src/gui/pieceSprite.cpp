@@ -1,7 +1,7 @@
 #include "pieceSprite.h"
 #include <cmath>
 
-static int selectedPiece = 0;
+static int selectedPiece = 0; // TODO pasar a variable estática de clase?
 
 PieceSprite::PieceSprite(int x, int y, int id, const String& texturePath) {
     this->state = IDLE;
@@ -56,27 +56,22 @@ void PieceSprite::update(Game *game) {
             }
             for (auto & pos:this->getAttackPositions(game->data)) {
                 if (mouseOverlapsPoint((int)pos.x, (int) pos.y) && Input::pressed(MouseButton::Left) && !this->touched){
-                    int originY = this->getX()/64 - 6;
+                    int originY = this->getX()/64 - 6; // Conversión a índices de array
                     int originX = this->getY()/64 - 1;
                     int destinyY = (int)pos.x/64 - 6;
                     int destinyX = (int)pos.y/64 - 1;
                     if (game->data[destinyX][destinyY] == 0) break;
-                    int result = updatePiece(game,originX,originY,destinyX,destinyY);
+                    int result = updatePiece(game,originX,originY,destinyX,destinyY); // Actualizar backend
                     if (result == 2) { // Ataque sin destruir
                         game->turn++;
                         this->state = ATTACKING;
-                        std::cout << "2" << std::endl;
                     } else if (result == 3) { // Ataque destruyendo
                         game->turn++;
                         this->focus = Vec2((int) pos.x, (int) pos.y);
                         this->state = MOVING;
-                        std::cout << "3" << std::endl;
-                        std::cout << this->id << std::endl;
-                        std::cout << this->focus.x << ":" << this->focus.y << std::endl;
                     } else if (result == 0 || result == 1) { // Ataque no realizado/pieza movida
                         this->state = IDLE;
                         selectedPiece = 0;
-                        std::cout << "0/1" << std::endl;
                     }
                 }
             }
