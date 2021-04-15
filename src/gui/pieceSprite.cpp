@@ -64,8 +64,7 @@ void PieceSprite::update(Game *game) {
                     int result = updatePiece(game,originX,originY,destinyX,destinyY);
                     if (result == 2) { // Ataque sin destruir
                         game->turn++;
-                        this->state = IDLE;
-                        selectedPiece = 0;
+                        this->state = ATTACKING;
                         std::cout << "2" << std::endl;
                     } else if (result == 3) { // Ataque destruyendo
                         game->turn++;
@@ -98,6 +97,8 @@ void PieceSprite::update(Game *game) {
             break;
         case ATTACKING:
             // Animación de ataque
+            selectedPiece = 0;
+            this->state = IDLE;
             break;
     }
 }
