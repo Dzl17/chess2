@@ -50,6 +50,8 @@ void dispose()
 
 int main()
 {
+    Login::runSetup(); // Inicio de sesión, base de datos
+
     Config config;
     config.name = "Chess 2";
     config.width = 1280;

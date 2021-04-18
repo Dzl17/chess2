@@ -20,4 +20,8 @@ namespace Assets {
     void update(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Batch *batch, Game *game, int *mode);
 }
 
+namespace Login {
+    void runSetup();
+}
+
 #endif //CHESS2_CONTENT_H

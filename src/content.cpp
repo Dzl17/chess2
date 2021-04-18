@@ -231,3 +231,8 @@ void writePieceDmg(Batch *batch, PieceSprite& piece)
     strcat(dmg_str, dmg_int_str);
     batch->str(font, dmg_str, Vec2(620, 640), Color::black);
 }
+
+void Login::runSetup()
+{
+
+}
