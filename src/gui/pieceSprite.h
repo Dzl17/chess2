@@ -9,7 +9,7 @@ extern "C"{
 class PieceSprite : public Sprite {
 private:
     Vec2 focus;
-    Game *gameRef;
+    Game *gameRef; // Referencia a game
     bool overlapsPoint(int x, int y);
     bool overlapsMouse();
     bool mouseOverlapsPoint(int x, int y);

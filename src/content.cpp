@@ -102,17 +102,11 @@ void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
 
 void Assets::update(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Batch *batch, Game *game, int *mode)
 {
-    for (auto & piece : *pieces) {
-        piece.update();
-    }
+    for (auto & piece : *pieces) piece.update();
 
-    for (auto & nexus : *nexuses) {
-        nexus.update();
-    }
+    for (auto & nexus : *nexuses) nexus.update();
 
-    for (auto & button : *buttons) {
-        button.update();
-    }
+    for (auto & button : *buttons) button.update();
 
     if (*mode == 0) {
         if ((*buttons)[0].isClicked() || Input::pressed(Key::P)) *mode = 1; // Play

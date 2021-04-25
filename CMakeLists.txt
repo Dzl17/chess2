@@ -5,6 +5,13 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+add_library(sqlite
+        dependencies/sqlite/shell.c
+        dependencies/sqlite/sqlite3.h
+        dependencies/sqlite/sqlite3.c
+        dependencies/sqlite/sqlite3ext.h
+        )
+
 add_library(blah
         dependencies/blah/src/core/app.cpp
         dependencies/blah/src/core/filesystem.cpp
@@ -160,6 +167,11 @@ add_executable(chess2 ${SOURCE_FILES}
         src/gui/pieceSprite.h
         src/gui/nexusSprite.cpp
         src/gui/nexusSprite.h
+
+        dependencies/sqlite/shell.c
+        dependencies/sqlite/sqlite3.h
+        dependencies/sqlite/sqlite3.c
+        dependencies/sqlite/sqlite3ext.h
 
         dependencies/blah/src/core/app.cpp
         dependencies/blah/src/core/filesystem.cpp
