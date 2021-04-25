@@ -4,11 +4,13 @@
 #include "sprite.h"
 
 class StaticSprite : public Sprite{
+private:
+    bool active;
 public:
     StaticSprite(int x, int y, const String& texturePath, bool active);
-    bool active;
     void swapActive();
-    void update();
+
+    void update() override;
     void draw(Batch *batch) override;
 };
 

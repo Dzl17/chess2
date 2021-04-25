@@ -3,7 +3,43 @@
 
 static int selectedPiece = 0; // TODO pasar a variable estática de clase?
 
-PieceSprite::PieceSprite(int x, int y, int id, const String& texturePath) {
+bool PieceSprite::overlapsPoint(int x, int y){
+    return this->getX() <= x && this->getX() + 64 >= x && this->getY() <= y && this->getY() + 64 >= y;
+}
+
+bool PieceSprite::overlapsMouse() {
+    Vec2 mouse = Input::mouse_draw();
+    int x = (int) mouse.x;
+    int y = (int) mouse.y;
+    return this->getX() <= x && this->getX() + 64 >= x && this->getY() <= y && this->getY() + 64 >= y;
+}
+
+int PieceSprite::getPieceCode()
+{
+    int piece = this->id;
+    if ((piece >= 1 && piece <= 4) || (piece >= 13 && piece <= 16)) {
+        return 0;
+    } else if ((piece >= 5 && piece <= 7) || (piece >= 17 && piece <= 19)) {
+        return 1;
+    } else if ((piece >= 8 && piece <= 10) || (piece >= 20 && piece <= 22)) {
+        return 2;
+    } else {
+        return 3;
+    }
+}
+
+int PieceSprite::getDmg() {
+    return this->dmg;
+}
+
+bool PieceSprite::mouseOverlapsPoint(int x, int y) {
+    Vec2 mouse = Input::mouse_draw();
+    int mx = (int) mouse.x;
+    int my = (int) mouse.y;
+    return x <= mx && x + 64 >= mx && y <= my && y + 64 >= my;
+}
+
+PieceSprite::PieceSprite(int x, int y, int id, const String& texturePath, Game *gameRef) {
     this->state = IDLE;
     this->setX(x);
     this->setY(y);
@@ -14,15 +50,16 @@ PieceSprite::PieceSprite(int x, int y, int id, const String& texturePath) {
     this->texture = Texture::create(texturePath);
     this->touched = false;
     this->focus = Vec2(0,0);
+    this->gameRef = gameRef;
 }
 
-void PieceSprite::update(Game *game) {
+void PieceSprite::update() {
     if (this->touched && this->overlapsMouse() && Input::released(MouseButton::Left)) this->touched = false;
     if (this->hp <= 0) {
         this->active = false;
         return;
     }
-    this->hp = game->pieces[this->id - 1].hp;
+    this->hp = this->gameRef->pieces[this->id - 1].hp;
     switch (this->state) {
         case IDLE:
             if (this->overlapsMouse() && Input::pressed(MouseButton::Left) && !this->touched) {
@@ -38,14 +75,14 @@ void PieceSprite::update(Game *game) {
                 selectedPiece = 0;
             }
             if (selectedPiece != this->id) this->state = IDLE;
-            for (auto & pos:this->getMovePositions(game->data)) {
+            for (auto & pos:this->getMovePositions(this->gameRef->data)) {
                 if (mouseOverlapsPoint((int)pos.x, (int) pos.y) && Input::pressed(MouseButton::Left) && !this->touched){
                     int originY = this->getX()/64 - 6;
                     int originX = this->getY()/64 - 1;
                     int destinyY = (int)pos.x/64 - 6;
                     int destinyX = (int)pos.y/64 - 1;
-                    if (updatePiece(game,originX,originY,destinyX,destinyY) == 1){
-                        game->turn++;
+                    if (updatePiece(this->gameRef,originX,originY,destinyX,destinyY) == 1){
+                        this->gameRef->turn++;
                         this->focus = Vec2((int) pos.x, (int) pos.y);
                         this->state = MOVING;
                     } else {
@@ -54,19 +91,19 @@ void PieceSprite::update(Game *game) {
                     }
                 }
             }
-            for (auto & pos:this->getAttackPositions(game->data)) {
+            for (auto & pos:this->getAttackPositions(this->gameRef->data)) {
                 if (mouseOverlapsPoint((int)pos.x, (int) pos.y) && Input::pressed(MouseButton::Left) && !this->touched){
                     int originY = this->getX()/64 - 6; // Conversión a índices de array
                     int originX = this->getY()/64 - 1;
                     int destinyY = (int)pos.x/64 - 6;
                     int destinyX = (int)pos.y/64 - 1;
-                    if (game->data[destinyX][destinyY] == 0) break;
-                    int result = updatePiece(game,originX,originY,destinyX,destinyY); // Actualizar backend
+                    if (this->gameRef->data[destinyX][destinyY] == 0) break;
+                    int result = updatePiece(this->gameRef,originX,originY,destinyX,destinyY); // Actualizar backend
                     if (result == 2) { // Ataque sin destruir
-                        game->turn++;
+                        this->gameRef->turn++;
                         this->state = ATTACKING;
                     } else if (result == 3) { // Ataque destruyendo
-                        game->turn++;
+                        this->gameRef->turn++;
                         this->focus = Vec2((int) pos.x, (int) pos.y);
                         this->state = MOVING;
                     } else if (result == 0 || result == 1) { // Ataque no realizado/pieza movida
@@ -100,38 +137,6 @@ void PieceSprite::update(Game *game) {
 
 void PieceSprite::draw(Batch *batch) {
     if (this->active) batch->tex(this->texture, Vec2(this->getX(), this->getY()));
-}
-
-bool PieceSprite::overlapsMouse() {
-    Vec2 mouse = Input::mouse_draw();
-    int x = (int) mouse.x;
-    int y = (int) mouse.y;
-    return this->getX() <= x && this->getX() + 64 >= x && this->getY() <= y && this->getY() + 64 >= y;
-}
-
-bool PieceSprite::overlapsPoint(int x, int y){
-    return this->getX() <= x && this->getX() + 64 >= x && this->getY() <= y && this->getY() + 64 >= y;
-}
-
-bool PieceSprite::mouseOverlapsPoint(int x, int y) {
-    Vec2 mouse = Input::mouse_draw();
-    int mx = (int) mouse.x;
-    int my = (int) mouse.y;
-    return x <= mx && x + 64 >= mx && y <= my && y + 64 >= my;
-}
-
-int PieceSprite::getPieceCode()
-{
-    int piece = this->id;
-    if ((piece >= 1 && piece <= 4) || (piece >= 13 && piece <= 16)) {
-        return 0;
-    } else if ((piece >= 5 && piece <= 7) || (piece >= 17 && piece <= 19)) {
-        return 1;
-    } else if ((piece >= 8 && piece <= 10) || (piece >= 20 && piece <= 22)) {
-        return 2;
-    } else {
-        return 3;
-    }
 }
 
 std::vector<Vec2> PieceSprite::getMovePositions(int data[7][11])
@@ -243,8 +248,4 @@ std::vector<Vec2> PieceSprite::getAttackPositions(int data[7][11])
         }
     }
     return positions;
-}
-
-int PieceSprite::getDmg() {
-    return this->dmg;
 }

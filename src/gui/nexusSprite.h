@@ -8,7 +8,7 @@ private:
     float deltaCounter;
 public:
     NexusSprite(int x, int y, const String& texturePath);
-    void update();
+    void update() override;
     void draw(Batch *batch) override;
 };
 

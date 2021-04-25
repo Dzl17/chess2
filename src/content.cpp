@@ -2,7 +2,7 @@
 
 String getSpritePath(int id);
 int getIconIndex(int id);
-void loadPieces(vector<PieceSprite> *pieces, int data[B_ROWS][B_COLUMNS]);
+void loadPieces(Game *gameRef, vector<PieceSprite> *pieces);
 char * getPieceName(int id);
 void writePieceHp(Batch *batch, PieceSprite& piece);
 void writePieceDmg(Batch *batch, PieceSprite& piece);
@@ -44,7 +44,7 @@ void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vec
 
     statics->push_back(StaticSprite(0, 0, "../data/img/mainMenu.png", true)); // Fondo (menu)
 
-    loadPieces(pieces, game->data);
+    loadPieces(game, pieces);
 
     nexuses->push_back(NexusSprite(416, 256, "../data/img/nexusL.png"));
     nexuses->push_back(NexusSprite(1056, 256, "../data/img/nexusR.png"));
@@ -103,7 +103,7 @@ void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
 void Assets::update(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Batch *batch, Game *game, int *mode)
 {
     for (auto & piece : *pieces) {
-        piece.update(game);
+        piece.update();
     }
 
     for (auto & nexus : *nexuses) {
@@ -133,16 +133,17 @@ void Assets::update(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
     }
 }
 
-void loadPieces(vector<PieceSprite> *pieces, int data[B_ROWS][B_COLUMNS])
+void loadPieces(Game *gameRef, vector<PieceSprite> *pieces)
 {
     for (int i = 0; i < B_ROWS; i++) {
         for (int j = 0; j < B_COLUMNS; j++) {
-            int dataCode = data[i][j];
+            int dataCode = gameRef->data[i][j];
             if (dataCode >= 1 && dataCode <= 24) pieces->push_back(PieceSprite(
                     j * 64 + 416,
                     i * 64 + 64,
                     dataCode,
-                    getSpritePath(dataCode)));
+                    getSpritePath(dataCode),
+                    gameRef));
         }
     }
 }

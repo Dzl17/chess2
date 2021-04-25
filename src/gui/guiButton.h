@@ -10,13 +10,14 @@ private:
     TextureRef idleTex, pressedTex;
     void updateTouched();
     bool overlapsPoint(int x, int y);
-public:
     bool touched;
+public:
     GuiButton(int x, int y, int width, int height, const String& idleTex, const String& pressedTex);
     void setWidth(int widthNum);
     void setHeight(int heigthNum);
-    void update();
     bool isClicked();
+
+    void update() override;
     void draw(Batch *batch) override;
 };
 

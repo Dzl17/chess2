@@ -14,13 +14,16 @@ private:
     int x, y;
     friend std::ostream& operator<<(std::ostream &strm, const Sprite &sprite);
 protected:
-    Sprite() = default;
+    Sprite() = default; // Para evitar instanciar la clase
 public:
     TextureRef texture;
+
     int getX();
-    void setX(int);
     int getY();
+    void setX(int);
     void setY(int);
+
+    virtual void update() = 0;
     virtual void draw(Batch *batch) = 0;
 };
 
