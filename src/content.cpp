@@ -26,9 +26,11 @@ void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vec
                                  "../data/img/buttons/formsMenuButtonIdle.png", "../data/img/buttons/formsMenuButtonPressed.png"));
     buttons->push_back(GuiButton(512, 1960, 256, 108, // Exit (menu)
                                  "../data/img/buttons/exitMenuButtonIdle.png", "../data/img/buttons/exitMenuButtonPressed.png"));
-    buttons->push_back(GuiButton(16, 16, 224, 64, // Help (game)
+    buttons->push_back(GuiButton(16, 16, 224, 80, // Help (game)
                                  "../data/img/buttons/helpButtonIdle.png", "../data/img/buttons/helpButtonPressed.png"));
-    buttons->push_back(GuiButton(16, 96, 224, 64, // Exit (game)
+    buttons->push_back(GuiButton(16, 112, 224, 80, // Menu (game)
+                                 "../data/img/buttons/menuButtonIdle.png", "../data/img/buttons/menuButtonPressed.png"));
+    buttons->push_back(GuiButton(16, 208, 224, 80, // Exit (game)
                                  "../data/img/buttons/exitButtonIdle.png", "../data/img/buttons/exitButtonPressed.png"));
 
     statics->push_back(StaticSprite(0, 0, "../data/img/backgroundG.png", true));
@@ -52,25 +54,21 @@ void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vec
 
 void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Batch *batch, Game game, int *mode)
 {
-    if (*mode == 0) (*statics)[10].draw(batch); // Fondo
-    if (*mode == 1) (*statics)[0].draw(batch); // Fondo
-    if (*mode == 2) (*statics)[0].draw(batch); // Fondo
-
     if (*mode == 0) {
-        for (int i = 0; i <= 2; i++) {
+        (*statics)[10].draw(batch); // Fondo
+        for (int i = 0; i <= 2; i++)
             (*buttons)[i].draw(batch);
-        }
     } else if (*mode == 1) {
-        for (int i = 3; i <= 4; i++) {
+        (*statics)[0].draw(batch); // Fondo
+        for (int i = 3; i <= 5; i++)
             (*buttons)[i].draw(batch);
-        }
 
         if (game.turn % 2 == 0) batch->rect(Rect(416, 256, 64, 64), Color("#8a0da6"));
         else batch->rect(Rect(1056, 256, 64, 64), Color("#8a0da6"));
 
         for (auto & piece : *pieces) {
             if (piece.state == PieceSprite::CHOOSING && piece.active) {
-                batch->rect_line(Rect((float)piece.getX(), (float)piece.getY(), 64, 64), 2, Color::black);
+                batch->rect_line(Rect((float)piece.getX(), (float)piece.getY(), 64, 64), 2, Color::black); // Pieza seleccionada
 
                 (*statics)[getIconIndex(piece.id)].draw(batch); // Iconos de unidades seleccionadas
 
@@ -96,7 +94,7 @@ void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
 
         (*statics)[1].draw(batch);
     } else if (*mode == 2) {
-
+        (*statics)[0].draw(batch); // Fondo
     }
 }
 
@@ -118,7 +116,12 @@ void Assets::update(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
         (*buttons)[2].setY((int) ((*buttons)[2].getY() + (560 - (*buttons)[2].getY()) * (double) Time::delta * 4));
     } else if (*mode == 1) {
         if ((*buttons)[3].isClicked() || Input::pressed(Key::H)) (*statics)[1].swapActive();
-        if ((*buttons)[4].isClicked() || Input::pressed(Key::Escape)) {
+        if ((*buttons)[4].isClicked()) {
+            *mode = 0;
+            Assets::load(statics, buttons, pieces, nexuses, game, mode);
+        }
+        if ((*buttons)[5].isClicked() || Input::pressed(Key::Escape)) App::exit();
+        if (game->nexus1hp <= 0 || game->nexus2hp <= 0) { // TODO
             *mode = 0;
             Assets::load(statics, buttons, pieces, nexuses, game, mode);
         }
