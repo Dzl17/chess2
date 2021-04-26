@@ -63,6 +63,10 @@ void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
         for (int i = 3; i <= 5; i++)
             (*buttons)[i].draw(batch);
 
+        // Vida de los nexos
+        batch->rect(Rect(404, 700, 8, (float)game.nexus1hp * (-112) / NEXUS_HP), Color("4d9be6")); // Vida azul
+        batch->rect(Rect(1124, 700, 8, (float)game.nexus2hp * (-112) / NEXUS_HP), Color("ea4f36")); // Vida roja
+
         if (game.turn % 2 == 0) batch->rect(Rect(416, 256, 64, 64), Color("#8a0da6"));
         else batch->rect(Rect(1056, 256, 64, 64), Color("#8a0da6"));
 
