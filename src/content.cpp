@@ -31,7 +31,7 @@ void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vec
     buttons->push_back(GuiButton(16, 96, 224, 64, // Exit (game)
                                  "../data/img/buttons/exitButtonIdle.png", "../data/img/buttons/exitButtonPressed.png"));
 
-    statics->push_back(StaticSprite(0, 0, "../data/img/background.png", true));
+    statics->push_back(StaticSprite(0, 0, "../data/img/backgroundG.png", true));
     statics->push_back(StaticSprite(320, 64, "../data/img/helpmenu.png", false));
     statics->push_back(StaticSprite(480, 556, "../data/img/icons/spearmanLIcon.png", true));
     statics->push_back(StaticSprite(480, 556, "../data/img/icons/spearmanRIcon.png", true));
