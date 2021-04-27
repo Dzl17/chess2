@@ -9,7 +9,7 @@ using namespace Blah;
 bool fullscreen = false;
 int currentMode = 0;
 
-Batch batch;
+Batch *batch;
 
 Game game;
 std::vector<StaticSprite> staticSprites;
@@ -19,6 +19,7 @@ std::vector<NexusSprite> nexusSprites;
 
 void startup()
 {
+    batch = new Batch;
     Assets::load(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, &game, &currentMode);
 }
 
@@ -28,24 +29,25 @@ void render()
 
     auto scale = Vec2((float) App::width()/1280, (float) App::height()/720);
     auto transform = Mat3x2::create_transform(Vec2::zero, Vec2::zero, scale, 0);
-    batch.push_matrix(transform);
+    batch->push_matrix(transform);
 
-    Assets::render(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, &batch, game, &currentMode);
+    Assets::render(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, batch, game, &currentMode);
 
-    batch.pop_matrix();
-    batch.render();
-    batch.clear();
+    batch->pop_matrix();
+    batch->render();
+    batch->clear();
 }
 
 void update()
 {
     if (Input::pressed(Key::F11)) App::fullscreen(fullscreen = !fullscreen);
-    Assets::update(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, &batch, &game, &currentMode);
+    Assets::update(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, batch, &game, &currentMode);
 }
 
 void dispose()
 {
-    batch.dispose();
+    batch->dispose();
+    delete batch;
 }
 
 int main()
