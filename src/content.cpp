@@ -1,15 +1,15 @@
 #include "content.h"
 
 String getSpritePath(int id);
-int getIconIndex(int id);
-void loadPieces(Game *gameRef, vector<PieceSprite> *pieces);
+std::string getIconKey(int id);
+void loadPieces(Game *gameRef, VcPieces *pieces);
 char * getPieceName(int id);
 void writePieceHp(Batch *batch, PieceSprite& piece);
 void writePieceDmg(Batch *batch, PieceSprite& piece);
 
 SpriteFont font;
 
-void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Game *game, int *mode)
+void Assets::load(UmStatics *statics, UmButtons *buttons, VcPieces *pieces, VcNexuses *nexuses, Game *game, int *mode)
 {
     startGame(game, 1,1);
 
@@ -20,48 +20,50 @@ void Assets::load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vec
 
     font = SpriteFont("../data/fonts/dogica.ttf", 32);
 
-    buttons->push_back(GuiButton(512, 1128, 256, 108, // Play (menu)
-                                 "../data/img/buttons/playMenuButtonIdle.png", "../data/img/buttons/playMenuButtonPressed.png"));
-    buttons->push_back(GuiButton(512, 1544, 256, 108, // Forms (menu)
-                                 "../data/img/buttons/formsMenuButtonIdle.png", "../data/img/buttons/formsMenuButtonPressed.png"));
-    buttons->push_back(GuiButton(512, 1960, 256, 108, // Exit (menu)
-                                 "../data/img/buttons/exitMenuButtonIdle.png", "../data/img/buttons/exitMenuButtonPressed.png"));
-    buttons->push_back(GuiButton(16, 16, 224, 80, // Help (game)
-                                 "../data/img/buttons/helpButtonIdle.png", "../data/img/buttons/helpButtonPressed.png"));
-    buttons->push_back(GuiButton(16, 112, 224, 80, // Menu (game)
-                                 "../data/img/buttons/menuButtonIdle.png", "../data/img/buttons/menuButtonPressed.png"));
-    buttons->push_back(GuiButton(16, 208, 224, 80, // Exit (game)
-                                 "../data/img/buttons/exitButtonIdle.png", "../data/img/buttons/exitButtonPressed.png"));
+    buttons->insert({"playMenuButton", new GuiButton(512, 1128, 256, 108, // Play (menu)
+                                 "../data/img/buttons/playMenuButtonIdle.png", "../data/img/buttons/playMenuButtonPressed.png")});
+    buttons->insert({"formsMenuButton", new GuiButton(512, 1544, 256, 108, // Forms (menu)
+                                 "../data/img/buttons/formsMenuButtonIdle.png", "../data/img/buttons/formsMenuButtonPressed.png")});
+    buttons->insert({"exitMenuButton", new GuiButton(512, 1960, 256, 108, // Exit (menu)
+                                 "../data/img/buttons/exitMenuButtonIdle.png", "../data/img/buttons/exitMenuButtonPressed.png")});
+    buttons->insert({"helpGameButton", new GuiButton(16, 16, 224, 80, // Help (game)
+                                 "../data/img/buttons/helpButtonIdle.png", "../data/img/buttons/helpButtonPressed.png")});
+    buttons->insert({"menuGameButton", new GuiButton(16, 112, 224, 80, // Menu (game)
+                                 "../data/img/buttons/menuButtonIdle.png", "../data/img/buttons/menuButtonPressed.png")});
+    buttons->insert({"exitGameButton", new GuiButton(16, 208, 224, 80, // Exit (game)
+                                 "../data/img/buttons/exitButtonIdle.png", "../data/img/buttons/exitButtonPressed.png")});
 
-    statics->push_back(StaticSprite(0, 0, "../data/img/backgroundG.png", true));
-    statics->push_back(StaticSprite(320, 64, "../data/img/helpmenu.png", false));
-    statics->push_back(StaticSprite(480, 556, "../data/img/icons/spearmanLIcon.png", true));
-    statics->push_back(StaticSprite(480, 556, "../data/img/icons/spearmanRIcon.png", true));
-    statics->push_back(StaticSprite(480, 556, "../data/img/icons/wizardLIcon.png", true));
-    statics->push_back(StaticSprite(480, 556, "../data/img/icons/wizardRIcon.png", true));
-    statics->push_back(StaticSprite(480, 556, "../data/img/icons/assassinLIcon.png", true));
-    statics->push_back(StaticSprite(480, 556, "../data/img/icons/assassinRIcon.png", true));
-    statics->push_back(StaticSprite(480, 556, "../data/img/icons/golemLIcon.png", true));
-    statics->push_back(StaticSprite(480, 556, "../data/img/icons/golemRIcon.png", true));
-
-    statics->push_back(StaticSprite(0, 0, "../data/img/mainMenu.png", true)); // Fondo (menu)
+    statics->insert({"backgroundG",   new StaticSprite(0,     0, "../data/img/backgroundG.png",         true)});
+    statics->insert({"backgroundB",   new StaticSprite(0,     0, "../data/img/backgroundB.png",         true)});
+    statics->insert({"helpMenu",      new StaticSprite(320,  64, "../data/img/helpmenu.png",            false)});
+    statics->insert({"spearmanLIcon", new StaticSprite(480, 556, "../data/img/icons/spearmanLIcon.png", true)});
+    statics->insert({"spearmanRIcon", new StaticSprite(480, 556, "../data/img/icons/spearmanRIcon.png", true)});
+    statics->insert({"wizardLIcon",   new StaticSprite(480, 556, "../data/img/icons/wizardLIcon.png",   true)});
+    statics->insert({"wizardRIcon",   new StaticSprite(480, 556, "../data/img/icons/wizardRIcon.png",   true)});
+    statics->insert({"assassinLIcon", new StaticSprite(480, 556, "../data/img/icons/assassinLIcon.png", true)});
+    statics->insert({"assassinRIcon", new StaticSprite(480, 556, "../data/img/icons/assassinRIcon.png", true)});
+    statics->insert({"golemLIcon",    new StaticSprite(480, 556, "../data/img/icons/golemLIcon.png",    true)});
+    statics->insert({"golemRIcon",    new StaticSprite(480, 556, "../data/img/icons/golemRIcon.png",    true)});
+    statics->insert({"mainMenu",      new StaticSprite(0,     0, "../data/img/mainMenu.png",            true)});
 
     loadPieces(game, pieces);
 
-    nexuses->push_back(NexusSprite(416, 256, "../data/img/nexusL.png"));
+    nexuses->push_back(NexusSprite( 416, 256, "../data/img/nexusL.png"));
     nexuses->push_back(NexusSprite(1056, 256, "../data/img/nexusR.png"));
 }
 
-void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Batch *batch, Game game, int *mode)
+void Assets::render(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNexuses *nexuses, Batch *batch, Game game, int *mode)
 {
     if (*mode == 0) {
-        (*statics)[10].draw(batch); // Fondo
-        for (int i = 0; i <= 2; i++)
-            (*buttons)[i].draw(batch);
+        statics["mainMenu"]->draw(batch); // Fondo
+        buttons["playMenuButton"]->draw(batch);
+        buttons["formsMenuButton"]->draw(batch);
+        buttons["exitMenuButton"]->draw(batch);
     } else if (*mode == 1) {
-        (*statics)[0].draw(batch); // Fondo
-        for (int i = 3; i <= 5; i++)
-            (*buttons)[i].draw(batch);
+        statics["backgroundG"]->draw(batch); // Fondo
+        buttons["helpGameButton"]->draw(batch);
+        buttons["menuGameButton"]->draw(batch);
+        buttons["exitGameButton"]->draw(batch);
 
         // Vida de los nexos
         batch->rect(Rect(404, 700, 8, (float)game.nexus1hp * (-112) / NEXUS_HP), Color("4d9be6")); // Vida azul
@@ -74,7 +76,7 @@ void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
             if (piece.state == PieceSprite::CHOOSING && piece.active) {
                 batch->rect_line(Rect((float)piece.getX(), (float)piece.getY(), 64, 64), 2, Color::black); // Pieza seleccionada
 
-                (*statics)[getIconIndex(piece.id)].draw(batch); // Iconos de unidades seleccionadas
+                statics[getIconKey(piece.id)]->draw(batch); // Iconos de unidades seleccionadas
 
                 for (auto & pos : piece.getMovePositions(game.data)) { // Rectángulos de posiciones de movimiento
                     batch->rect_rounded(Rect(pos.x + 16, pos.y + 16, 32, 32), 32,10, Color("1ebc73"));
@@ -96,45 +98,45 @@ void Assets::render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, v
             nexus.draw(batch);
         }
 
-        (*statics)[1].draw(batch);
+        statics["helpMenu"]->draw(batch);
     } else if (*mode == 2) {
-        (*statics)[0].draw(batch); // Fondo
+        statics["backgroundG"]->draw(batch); // Fondo
     }
 }
 
-void Assets::update(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Batch *batch, Game *game, int *mode)
+void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNexuses *nexuses, Batch *batch, Game *game, int *mode)
 {
     for (auto & piece : *pieces) piece.update();
 
     for (auto & nexus : *nexuses) nexus.update();
 
-    for (auto & button : *buttons) button.update();
+    for (auto & button : buttons) button.second->update();
 
     if (*mode == 0) {
-        if ((*buttons)[0].isClicked() || Input::pressed(Key::P)) *mode = 1; // Play
-        if ((*buttons)[1].isClicked() || Input::pressed(Key::F)) std::cout << "FORMACIONES" << std::endl; // Forms TODO
-        if ((*buttons)[2].isClicked() || Input::pressed(Key::Escape)) App::exit(); // Exit
+        if (buttons["playMenuButton"]->isClicked() || Input::pressed(Key::P)) *mode = 1; // Play
+        if (buttons["formsMenuButton"]->isClicked() || Input::pressed(Key::F)) std::cout << "FORMACIONES" << std::endl; // Forms TODO
+        if (buttons["exitMenuButton"]->isClicked() || Input::pressed(Key::Escape)) App::exit(); // Exit
 
-        (*buttons)[0].setY((int) ((*buttons)[0].getY() + (328 - (*buttons)[0].getY()) * (double) Time::delta * 4)); // Movimiento de los botones de inicio
-        (*buttons)[1].setY((int) ((*buttons)[1].getY() + (444 - (*buttons)[1].getY()) * (double) Time::delta * 4));
-        (*buttons)[2].setY((int) ((*buttons)[2].getY() + (560 - (*buttons)[2].getY()) * (double) Time::delta * 4));
+        buttons["playMenuButton"]->setY((int) (buttons["playMenuButton"]->getY() + (328 - buttons["playMenuButton"]->getY()) * (double) Time::delta * 4)); // Movimiento de los botones de inicio
+        buttons["formsMenuButton"]->setY((int) (buttons["formsMenuButton"]->getY() + (444 - buttons["formsMenuButton"]->getY()) * (double) Time::delta * 4));
+        buttons["exitMenuButton"]->setY((int) (buttons["exitMenuButton"]->getY() + (560 - buttons["exitMenuButton"]->getY()) * (double) Time::delta * 4));
     } else if (*mode == 1) {
-        if ((*buttons)[3].isClicked() || Input::pressed(Key::H)) (*statics)[1].swapActive();
-        if ((*buttons)[4].isClicked()) {
+        if (buttons["helpGameButton"]->isClicked() || Input::pressed(Key::H)) (statics)["helpMenu"]->swapActive();
+        if (buttons["menuGameButton"]->isClicked()) {
             *mode = 0;
-            Assets::load(statics, buttons, pieces, nexuses, game, mode);
+            Assets::load(&statics, &buttons, pieces, nexuses, game, mode);
         }
-        if ((*buttons)[5].isClicked() || Input::pressed(Key::Escape)) App::exit();
+        if (buttons["exitGameButton"]->isClicked() || Input::pressed(Key::Escape)) App::exit();
         if (game->nexus1hp <= 0 || game->nexus2hp <= 0) { // TODO
             *mode = 0;
-            Assets::load(statics, buttons, pieces, nexuses, game, mode);
+            Assets::load(&statics, &buttons, pieces, nexuses, game, mode);
         }
     } else if (*mode == 2) {
 
     }
 }
 
-void loadPieces(Game *gameRef, vector<PieceSprite> *pieces)
+void loadPieces(Game *gameRef, VcPieces *pieces)
 {
     for (int i = 0; i < B_ROWS; i++) {
         for (int j = 0; j < B_COLUMNS; j++) {
@@ -176,26 +178,26 @@ String getSpritePath(int id)
     }
 }
 
-int getIconIndex(int id)
+std::string getIconKey(int id)
 {
     if (id >= 1 && id <= 4) {
-        return 2;
+        return "spearmanLIcon";
     } else if (id >= 5 && id <= 7) {
-        return 4;
+        return "wizardLIcon";
     } else if (id >= 8 && id <= 10) {
-        return 6;
+        return "assassinLIcon";
     } else if (id >= 11 && id <= 12) {
-        return 8;
+        return "golemLIcon";
     } else if (id >= 13 && id <= 16) {
-        return 3;
+        return "spearmanRIcon";
     } else if (id >= 17 && id <= 19) {
-        return 5;
+        return "wizardRIcon";
     } else if (id >= 20 && id <= 22) {
-        return 7;
+        return "assassinRIcon";
     } else if (id >= 23 && id <= 24) {
-        return 9;
+        return "golemRIcon";
     } else {
-        return 0;
+        return "golemRIcon";
     }
 }
 

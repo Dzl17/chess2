@@ -12,12 +12,16 @@ extern "C" {
 };
 
 using namespace Blah;
-using std::vector;
+
+using UmStatics = std::unordered_map<std::string, StaticSprite*>;
+using UmButtons = std::unordered_map<std::string, GuiButton*>;
+using VcPieces = std::vector<PieceSprite>;
+using VcNexuses = std::vector<NexusSprite>;
 
 namespace Assets {
-    void load(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Game *game, int *mode);
-    void render(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Batch *batch, Game game, int *mode);
-    void update(vector<StaticSprite> *statics, vector<GuiButton> *buttons, vector<PieceSprite> *pieces, vector <NexusSprite> *nexuses, Batch *batch, Game *game, int *mode);
+    void load(UmStatics *statics, UmButtons *buttons, VcPieces *pieces, VcNexuses *nexuses, Game *game, int *mode);
+    void render(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNexuses *nexuses, Batch *batch, Game game, int *mode);
+    void update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNexuses *nexuses, Batch *batch, Game *game, int *mode);
 }
 
 namespace Login {

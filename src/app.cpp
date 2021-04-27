@@ -1,4 +1,5 @@
 #include <blah.h>
+#include <unordered_map>
 #include "content.h"
 extern "C" {
     #include "game/chess2.h"
@@ -12,10 +13,10 @@ int currentMode = 0;
 Batch *batch;
 
 Game game;
-std::vector<StaticSprite> staticSprites;
-std::vector<GuiButton> buttonSprites;
-std::vector<PieceSprite> pieceSprites;
-std::vector<NexusSprite> nexusSprites;
+UmStatics staticSprites;
+UmButtons buttonSprites;
+VcPieces pieceSprites;
+VcNexuses nexusSprites;
 
 void startup()
 {
@@ -31,7 +32,7 @@ void render()
     auto transform = Mat3x2::create_transform(Vec2::zero, Vec2::zero, scale, 0);
     batch->push_matrix(transform);
 
-    Assets::render(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, batch, game, &currentMode);
+    Assets::render(staticSprites, buttonSprites, &pieceSprites, &nexusSprites, batch, game, &currentMode);
 
     batch->pop_matrix();
     batch->render();
@@ -41,11 +42,13 @@ void render()
 void update()
 {
     if (Input::pressed(Key::F11)) App::fullscreen(fullscreen = !fullscreen);
-    Assets::update(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, batch, &game, &currentMode);
+    Assets::update(staticSprites, buttonSprites, &pieceSprites, &nexusSprites, batch, &game, &currentMode);
 }
 
 void dispose()
 {
+    for (auto & staticSprite:staticSprites) delete staticSprite.second;
+    for (auto & button:buttonSprites) delete button.second;
     batch->dispose();
     delete batch;
 }
