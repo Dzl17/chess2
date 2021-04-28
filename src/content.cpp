@@ -5,6 +5,7 @@ std::string getIconKey(int id);
 void loadPieces(Game *gameRef, VcPieces *pieces);
 char * getPieceName(int id);
 void renderFormation(Batch *batch, VcPieces *pieces, const char *formation, TextureRef blueNexusTex);
+TextureRef getPieceTexture(VcPieces *pieces, char pieceLetter);
 void writeFormSetPos(Batch *batch, FormationSet *formSet);
 void writePieceHp(Batch *batch, PieceSprite& piece);
 void writePieceDmg(Batch *batch, PieceSprite& piece);
@@ -29,10 +30,12 @@ void Assets::load(UmStatics *statics, UmButtons *buttons, VcPieces *pieces, VcNe
     buttons->insert({"exitMenuButton", new GuiButton(512, 1960, 256, 108, // Exit (menu)
                                  "../data/img/buttons/exitMenuButtonIdle.png", "../data/img/buttons/exitMenuButtonPressed.png")});
 
-    buttons->insert({"leftArrowButton", new GuiButton(352, 264, 128, 128, // Forms (menu)
+    buttons->insert({"leftArrowButton", new GuiButton(352, 264, 128, 128,
                                                       "../data/img/buttons/leftArrowIdle.png", "../data/img/buttons/leftArrowPressed.png")});
-    buttons->insert({"rightArrowButton", new GuiButton(800, 264, 128, 128, // Exit (menu)
+    buttons->insert({"rightArrowButton", new GuiButton(800, 264, 128, 128,
                                                      "../data/img/buttons/rightArrowIdle.png", "../data/img/buttons/rightArrowPressed.png")});
+    buttons->insert({"startButton", new GuiButton(512, 586, 256, 108,
+                                                     "../data/img/buttons/startButtonIdle.png", "../data/img/buttons/startButtonPressed.png")});
 
     buttons->insert({"helpGameButton", new GuiButton(16, 16, 224, 80, // Help (game)
                                  "../data/img/buttons/helpButtonIdle.png", "../data/img/buttons/helpButtonPressed.png")});
@@ -53,7 +56,7 @@ void Assets::load(UmStatics *statics, UmButtons *buttons, VcPieces *pieces, VcNe
     statics->insert({"golemLIcon",    new StaticSprite(480, 556, "../data/img/icons/golemLIcon.png",    true)});
     statics->insert({"golemRIcon",    new StaticSprite(480, 556, "../data/img/icons/golemRIcon.png",    true)});
     statics->insert({"mainMenu",      new StaticSprite(0,     0, "../data/img/mainMenu.png",            true)});
-    statics->insert({"leftSideTable", new StaticSprite(540, 96, "../data/img/leftSideTable.png",       true)});
+    statics->insert({"leftSideTable", new StaticSprite(536, 96, "../data/img/leftSideTable.png",       true)});
 
     loadPieces(game, pieces);
 
@@ -71,6 +74,7 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
     } else if (*mode == 1) { // Selección de formación
         buttons["leftArrowButton"]->draw(batch);
         buttons["rightArrowButton"]->draw(batch);
+        buttons["startButton"]->draw(batch);
         statics["leftSideTable"]->draw(batch);
         renderFormation(batch, pieces, formSet->forms[formSet->index], (*nexuses)[0].texture);
         writeFormSetPos(batch, formSet);
@@ -145,7 +149,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
             if (formSet->index == formSet->size - 1) formSet->index = 0;
             else formSet->index++;
         }
-        if (Input::pressed(Key::Enter)) {
+        if (buttons["startButton"]->isClicked()) {
             *mode = 2;
             Assets::load(&statics, &buttons, pieces, nexuses, game, mode, formSet); // TODO fix, reloadPieces()
         }
@@ -236,20 +240,13 @@ std::string getIconKey(int id)
 
 char * getPieceName(int id) {
     switch (id) {
-        case 0:
-            return (char*) "Spearman";
-        case 1:
-            return (char*) "Wizard";
-        case 2:
-            return (char*) "Assassin";
-        case 3:
-            return (char*) "Golem";
-        default:
-            return (char*) "";
+        case 0: return (char*) "Spearman";
+        case 1: return (char*) "Wizard";
+        case 2: return (char*) "Assassin";
+        case 3: return (char*) "Golem";
+        default: return (char*) "";
     }
 }
-
-TextureRef getPieceTexture(VcPieces *pieces, char pieceLetter);
 
 void renderFormation(Batch *batch, VcPieces *pieces, const char *formation, TextureRef blueNexusTex)
 {
@@ -294,7 +291,7 @@ void writeFormSetPos(Batch *batch, FormationSet *formSet)
     sprintf(size_str, "%d", formSet->size);
     strcat(index_str, "/");
     strcat(index_str, size_str);
-    batch->str(font, index_str, Vec2(620, 604), Color::white);
+    batch->str(font, index_str, Vec2(594, 50), Color::white);
 }
 
 void writePieceHp(Batch *batch, PieceSprite& piece)
