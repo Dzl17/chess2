@@ -5,6 +5,7 @@ std::string getIconKey(int id);
 void loadPieces(Game *gameRef, VcPieces *pieces);
 char * getPieceName(int id);
 void renderFormation(Batch *batch, VcPieces *pieces, const char *formation, TextureRef blueNexusTex);
+void writeFormSetPos(Batch *batch, FormationSet *formSet);
 void writePieceHp(Batch *batch, PieceSprite& piece);
 void writePieceDmg(Batch *batch, PieceSprite& piece);
 
@@ -71,7 +72,8 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
         buttons["leftArrowButton"]->draw(batch);
         buttons["rightArrowButton"]->draw(batch);
         statics["leftSideTable"]->draw(batch);
-        renderFormation(batch, pieces, "ssssggeeeNeeeeeaaawww", (*nexuses)[0].texture);
+        renderFormation(batch, pieces, formSet->forms[formSet->index], (*nexuses)[0].texture);
+        writeFormSetPos(batch, formSet);
     } else if (*mode == 2) {
         statics["backgroundG"]->draw(batch); // Fondo
         buttons["helpGameButton"]->draw(batch);
@@ -135,9 +137,17 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
         buttons["exitMenuButton"]->setY((int) (buttons["exitMenuButton"]->getY() +
                                                (560 - buttons["exitMenuButton"]->getY()) * (double) Time::delta * 4));
     } else if (*mode == 1) {
+        if (buttons["leftArrowButton"]->isClicked()) {
+            if (formSet->index == 0) formSet->index = formSet->size - 1;
+            else formSet->index--;
+        }
+        if (buttons["rightArrowButton"]->isClicked()) {
+            if (formSet->index == formSet->size - 1) formSet->index = 0;
+            else formSet->index++;
+        }
         if (Input::pressed(Key::Enter)) {
             *mode = 2;
-            Assets::load(&statics, &buttons, pieces, nexuses, game, mode, formSet);
+            Assets::load(&statics, &buttons, pieces, nexuses, game, mode, formSet); // TODO fix, reloadPieces()
         }
     } else if (*mode == 2) {
         for (auto & piece : *pieces) piece.update();
@@ -274,6 +284,17 @@ TextureRef getPieceTexture(VcPieces *pieces, char pieceLetter)
         if (piece.id == id) return piece.texture;
     }
     return (*pieces)[0].texture;
+}
+
+void writeFormSetPos(Batch *batch, FormationSet *formSet)
+{
+    char index_str[4];
+    sprintf(index_str, "%d", formSet->index + 1);
+    char size_str[4];
+    sprintf(size_str, "%d", formSet->size);
+    strcat(index_str, "/");
+    strcat(index_str, size_str);
+    batch->str(font, index_str, Vec2(620, 604), Color::white);
 }
 
 void writePieceHp(Batch *batch, PieceSprite& piece)

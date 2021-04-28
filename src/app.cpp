@@ -23,6 +23,16 @@ VcNexuses nexusSprites;
 
 void startup()
 {
+    /////////////////////////TEMP/////////////////////////
+    formSet.index = 0;
+    formSet.size = 4;
+    formSet.forms = new char*[formSet.size];
+    formSet.forms[0] = (char*) "ssssggeeeNeeeeeaaawww";
+    formSet.forms[1] = (char*) "esgesewweNeweaeasaseg";
+    formSet.forms[2] = (char*) "ewsseageeNaweegwsasee";
+    formSet.forms[3] = (char*) "ssgweewweNeeaaeaeessg";
+    /////////////////////////TEMP/////////////////////////
+
     batch = new Batch;
     Assets::load(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, &game, &currentMode, &formSet);
 }
