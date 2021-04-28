@@ -4,6 +4,7 @@ String getSpritePath(int id);
 std::string getIconKey(int id);
 void loadPieces(Game *gameRef, VcPieces *pieces);
 char * getPieceName(int id);
+void renderFormation(Batch *batch, VcPieces *pieces, const char *formation, TextureRef blueNexusTex);
 void writePieceHp(Batch *batch, PieceSprite& piece);
 void writePieceDmg(Batch *batch, PieceSprite& piece);
 
@@ -26,6 +27,12 @@ void Assets::load(UmStatics *statics, UmButtons *buttons, VcPieces *pieces, VcNe
                                  "../data/img/buttons/formsMenuButtonIdle.png", "../data/img/buttons/formsMenuButtonPressed.png")});
     buttons->insert({"exitMenuButton", new GuiButton(512, 1960, 256, 108, // Exit (menu)
                                  "../data/img/buttons/exitMenuButtonIdle.png", "../data/img/buttons/exitMenuButtonPressed.png")});
+
+    buttons->insert({"leftArrowButton", new GuiButton(352, 264, 128, 128, // Forms (menu)
+                                                      "../data/img/buttons/leftArrowIdle.png", "../data/img/buttons/leftArrowPressed.png")});
+    buttons->insert({"rightArrowButton", new GuiButton(800, 264, 128, 128, // Exit (menu)
+                                                     "../data/img/buttons/rightArrowIdle.png", "../data/img/buttons/rightArrowPressed.png")});
+
     buttons->insert({"helpGameButton", new GuiButton(16, 16, 224, 80, // Help (game)
                                  "../data/img/buttons/helpButtonIdle.png", "../data/img/buttons/helpButtonPressed.png")});
     buttons->insert({"menuGameButton", new GuiButton(16, 112, 224, 80, // Menu (game)
@@ -45,6 +52,7 @@ void Assets::load(UmStatics *statics, UmButtons *buttons, VcPieces *pieces, VcNe
     statics->insert({"golemLIcon",    new StaticSprite(480, 556, "../data/img/icons/golemLIcon.png",    true)});
     statics->insert({"golemRIcon",    new StaticSprite(480, 556, "../data/img/icons/golemRIcon.png",    true)});
     statics->insert({"mainMenu",      new StaticSprite(0,     0, "../data/img/mainMenu.png",            true)});
+    statics->insert({"leftSideTable", new StaticSprite(540, 96, "../data/img/leftSideTable.png",       true)});
 
     loadPieces(game, pieces);
 
@@ -54,12 +62,17 @@ void Assets::load(UmStatics *statics, UmButtons *buttons, VcPieces *pieces, VcNe
 
 void Assets::render(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNexuses *nexuses, Batch *batch, Game game, int *mode)
 {
-    if (*mode == 0) {
+    if (*mode == 0) { // Menú principal
         statics["mainMenu"]->draw(batch); // Fondo
         buttons["playMenuButton"]->draw(batch);
         buttons["formsMenuButton"]->draw(batch);
         buttons["exitMenuButton"]->draw(batch);
-    } else if (*mode == 1) {
+    } else if (*mode == 1) { // Selección de formación
+        buttons["leftArrowButton"]->draw(batch);
+        buttons["rightArrowButton"]->draw(batch);
+        statics["leftSideTable"]->draw(batch);
+        renderFormation(batch, pieces, "ssssggeeeNeeeeeaaawww", (*nexuses)[0].texture);
+    } else if (*mode == 2) {
         statics["backgroundG"]->draw(batch); // Fondo
         buttons["helpGameButton"]->draw(batch);
         buttons["menuGameButton"]->draw(batch);
@@ -99,28 +112,38 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
         }
 
         statics["helpMenu"]->draw(batch);
-    } else if (*mode == 2) {
+    } else if (*mode == 3) {
         statics["backgroundG"]->draw(batch); // Fondo
     }
 }
 
 void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNexuses *nexuses, Batch *batch, Game *game, int *mode)
 {
-    for (auto & piece : *pieces) piece.update();
-
-    for (auto & nexus : *nexuses) nexus.update();
-
     for (auto & button : buttons) button.second->update();
 
     if (*mode == 0) {
         if (buttons["playMenuButton"]->isClicked() || Input::pressed(Key::P)) *mode = 1; // Play
-        if (buttons["formsMenuButton"]->isClicked() || Input::pressed(Key::F)) std::cout << "FORMACIONES" << std::endl; // Forms TODO
+        if (buttons["formsMenuButton"]->isClicked() || Input::pressed(Key::F))
+            std::cout << "FORMACIONES" << std::endl; // Forms TODO
         if (buttons["exitMenuButton"]->isClicked() || Input::pressed(Key::Escape)) App::exit(); // Exit
 
-        buttons["playMenuButton"]->setY((int) (buttons["playMenuButton"]->getY() + (328 - buttons["playMenuButton"]->getY()) * (double) Time::delta * 4)); // Movimiento de los botones de inicio
-        buttons["formsMenuButton"]->setY((int) (buttons["formsMenuButton"]->getY() + (444 - buttons["formsMenuButton"]->getY()) * (double) Time::delta * 4));
-        buttons["exitMenuButton"]->setY((int) (buttons["exitMenuButton"]->getY() + (560 - buttons["exitMenuButton"]->getY()) * (double) Time::delta * 4));
+        buttons["playMenuButton"]->setY((int) (buttons["playMenuButton"]->getY() +
+                                               (328 - buttons["playMenuButton"]->getY()) * (double) Time::delta *
+                                               4)); // Movimiento de los botones de inicio
+        buttons["formsMenuButton"]->setY((int) (buttons["formsMenuButton"]->getY() +
+                                                (444 - buttons["formsMenuButton"]->getY()) * (double) Time::delta * 4));
+        buttons["exitMenuButton"]->setY((int) (buttons["exitMenuButton"]->getY() +
+                                               (560 - buttons["exitMenuButton"]->getY()) * (double) Time::delta * 4));
     } else if (*mode == 1) {
+        if (Input::pressed(Key::Enter)) {
+            *mode = 2;
+            Assets::load(&statics, &buttons, pieces, nexuses, game, mode);
+        }
+    } else if (*mode == 2) {
+        for (auto & piece : *pieces) piece.update();
+
+        for (auto & nexus : *nexuses) nexus.update();
+
         if (buttons["helpGameButton"]->isClicked() || Input::pressed(Key::H)) (statics)["helpMenu"]->swapActive();
         if (buttons["menuGameButton"]->isClicked()) {
             *mode = 0;
@@ -131,7 +154,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
             *mode = 0;
             Assets::load(&statics, &buttons, pieces, nexuses, game, mode);
         }
-    } else if (*mode == 2) {
+    } else if (*mode == 3) {
 
     }
 }
@@ -214,6 +237,43 @@ char * getPieceName(int id) {
         default:
             return (char*) "";
     }
+}
+
+TextureRef getPieceTexture(VcPieces *pieces, char pieceLetter);
+
+void renderFormation(Batch *batch, VcPieces *pieces, const char *formation, TextureRef blueNexusTex)
+{
+    int x = 548;
+    int y = 104;
+    for (int i = 0; i < FORM_LENGTH; i++) {
+        if (formation[i] != 'e' && formation[i] != 'N') batch->tex(getPieceTexture(pieces, formation[i]), Vec2(x, y));
+        else if (formation[i] == 'N') batch->tex(blueNexusTex, Vec2(x, y));
+
+        if ((i+1) % 3 == 0) {
+            y += 64;
+            x = 548;
+        }
+        else {
+            x += 64;
+        }
+    }
+}
+
+TextureRef getPieceTexture(VcPieces *pieces, char pieceLetter)
+{
+    int id;
+    switch (pieceLetter) {
+        case 's': id = 0; break;
+        case 'w': id = 4; break;
+        case 'a': id = 8; break;
+        case 'g': id = 11; break;
+        default: id = -1; break;
+    }
+
+    for (auto & piece:*pieces) {
+        if (piece.id == id) return piece.texture;
+    }
+    return (*pieces)[0].texture;
 }
 
 void writePieceHp(Batch *batch, PieceSprite& piece)

@@ -18,6 +18,14 @@ using UmButtons = std::unordered_map<std::string, GuiButton*>;
 using VcPieces = std::vector<PieceSprite>;
 using VcNexuses = std::vector<NexusSprite>;
 
+/*
+ * La variable 'mode' denota qué pantalla debe dibujarse:
+ * 0 -  Menú principal
+ * 1 -  Selección de formación
+ * 2 -  Juego principal
+ * 3+ - Formaciones
+ */
+
 namespace Assets {
     void load(UmStatics *statics, UmButtons *buttons, VcPieces *pieces, VcNexuses *nexuses, Game *game, int *mode);
     void render(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNexuses *nexuses, Batch *batch, Game game, int *mode);
