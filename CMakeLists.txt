@@ -147,6 +147,8 @@ add_executable(chess2 ${SOURCE_FILES}
         src/app.cpp
         src/content.cpp
         src/content.h
+        src/dbmanager.h
+        src/dbmanager.cpp
 
         src/game/filem.c
         src/game/filem.h

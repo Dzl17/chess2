@@ -1,6 +1,7 @@
 #include <blah.h>
 #include <unordered_map>
 #include "content.h"
+#include "dbmanager.h"
 extern "C" {
     #include "game/chess2.h"
 }
@@ -11,6 +12,7 @@ bool fullscreen = false;
 int currentMode = 0;
 
 Batch *batch;
+DBManager *dbManager;
 
 Game game;
 UmStatics staticSprites;
@@ -51,10 +53,12 @@ void dispose()
     for (auto & button:buttonSprites) delete button.second;
     batch->dispose();
     delete batch;
+    delete dbManager;
 }
 
 int main()
 {
+    dbManager = new DBManager((char*) "../data/database.db");
     Login::runSetup(); // Inicio de sesión, base de datos
 
     Config config;
