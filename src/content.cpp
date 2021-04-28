@@ -10,7 +10,7 @@ void writePieceDmg(Batch *batch, PieceSprite& piece);
 
 SpriteFont font;
 
-void Assets::load(UmStatics *statics, UmButtons *buttons, VcPieces *pieces, VcNexuses *nexuses, Game *game, int *mode)
+void Assets::load(UmStatics *statics, UmButtons *buttons, VcPieces *pieces, VcNexuses *nexuses, Game *game, int *mode, FormationSet *formSet)
 {
     startGame(game, 1,1);
 
@@ -60,7 +60,7 @@ void Assets::load(UmStatics *statics, UmButtons *buttons, VcPieces *pieces, VcNe
     nexuses->push_back(NexusSprite(1056, 256, "../data/img/nexusR.png"));
 }
 
-void Assets::render(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNexuses *nexuses, Batch *batch, Game game, int *mode)
+void Assets::render(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNexuses *nexuses, Batch *batch, Game game, int *mode, FormationSet *formSet)
 {
     if (*mode == 0) { // Menú principal
         statics["mainMenu"]->draw(batch); // Fondo
@@ -117,7 +117,7 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
     }
 }
 
-void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNexuses *nexuses, Batch *batch, Game *game, int *mode)
+void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNexuses *nexuses, Batch *batch, Game *game, int *mode, FormationSet *formSet)
 {
     for (auto & button : buttons) button.second->update();
 
@@ -137,7 +137,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
     } else if (*mode == 1) {
         if (Input::pressed(Key::Enter)) {
             *mode = 2;
-            Assets::load(&statics, &buttons, pieces, nexuses, game, mode);
+            Assets::load(&statics, &buttons, pieces, nexuses, game, mode, formSet);
         }
     } else if (*mode == 2) {
         for (auto & piece : *pieces) piece.update();
@@ -147,12 +147,12 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
         if (buttons["helpGameButton"]->isClicked() || Input::pressed(Key::H)) (statics)["helpMenu"]->swapActive();
         if (buttons["menuGameButton"]->isClicked()) {
             *mode = 0;
-            Assets::load(&statics, &buttons, pieces, nexuses, game, mode);
+            Assets::load(&statics, &buttons, pieces, nexuses, game, mode, formSet);
         }
         if (buttons["exitGameButton"]->isClicked() || Input::pressed(Key::Escape)) App::exit();
         if (game->nexus1hp <= 0 || game->nexus2hp <= 0) { // TODO
             *mode = 0;
-            Assets::load(&statics, &buttons, pieces, nexuses, game, mode);
+            Assets::load(&statics, &buttons, pieces, nexuses, game, mode, formSet);
         }
     } else if (*mode == 3) {
 

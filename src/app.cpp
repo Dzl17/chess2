@@ -13,6 +13,7 @@ int currentMode = 0;
 
 Batch *batch;
 DBManager *dbManager;
+FormationSet formSet;
 
 Game game;
 UmStatics staticSprites;
@@ -23,7 +24,7 @@ VcNexuses nexusSprites;
 void startup()
 {
     batch = new Batch;
-    Assets::load(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, &game, &currentMode);
+    Assets::load(&staticSprites, &buttonSprites, &pieceSprites, &nexusSprites, &game, &currentMode, &formSet);
 }
 
 void render()
@@ -34,7 +35,7 @@ void render()
     auto transform = Mat3x2::create_transform(Vec2::zero, Vec2::zero, scale, 0);
     batch->push_matrix(transform);
 
-    Assets::render(staticSprites, buttonSprites, &pieceSprites, &nexusSprites, batch, game, &currentMode);
+    Assets::render(staticSprites, buttonSprites, &pieceSprites, &nexusSprites, batch, game, &currentMode, &formSet);
 
     batch->pop_matrix();
     batch->render();
@@ -44,7 +45,7 @@ void render()
 void update()
 {
     if (Input::pressed(Key::F11)) App::fullscreen(fullscreen = !fullscreen);
-    Assets::update(staticSprites, buttonSprites, &pieceSprites, &nexusSprites, batch, &game, &currentMode);
+    Assets::update(staticSprites, buttonSprites, &pieceSprites, &nexusSprites, batch, &game, &currentMode, &formSet);
 }
 
 void dispose()
