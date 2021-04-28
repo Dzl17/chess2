@@ -74,9 +74,6 @@ void startGame(Game *game, char *form1, char *form2)
             game->data[i][j] = 0;
         }
     }
-
-    //free(form1); // TODO
-    //free(form2);
 }
 
 int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY)

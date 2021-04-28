@@ -165,10 +165,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
             loadPieceCoords(game, pieces);
         }
         if (buttons["exitGameButton"]->isClicked() || Input::pressed(Key::Escape)) App::exit();
-        if (game->nexus1hp <= 0 || game->nexus2hp <= 0) { // TODO
-            *mode = 0;
-            Assets::load(&statics, &buttons, pieces, nexuses, game, mode, formSet);
-        }
+        if (game->nexus1hp <= 0 || game->nexus2hp <= 0) *mode = 0;
     } else if (*mode == 3) {
 
     }
