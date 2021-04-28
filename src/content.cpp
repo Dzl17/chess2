@@ -2,7 +2,7 @@
 
 String getSpritePath(int id);
 std::string getIconKey(int id);
-void reloadPieces(Game *gameRef, VcPieces *pieces);
+void loadPieceCoords(Game *gameRef, VcPieces *pieces);
 char * getPieceName(int id);
 void renderFormation(Batch *batch, VcPieces *pieces, const char *formation, TextureRef blueNexusTex);
 TextureRef getPieceTexture(VcPieces *pieces, char pieceLetter);
@@ -152,7 +152,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
         if (buttons["startButton"]->isClicked()) {
             *mode = 2;
             startGame(game, formSet->forms[formSet->index], formSet->forms[0]);
-            reloadPieces(game, pieces);
+            loadPieceCoords(game, pieces);
         }
     } else if (*mode == 2) {
         for (auto & piece : *pieces) piece.update();
@@ -162,7 +162,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
         if (buttons["helpGameButton"]->isClicked() || Input::pressed(Key::H)) (statics)["helpMenu"]->swapActive();
         if (buttons["menuGameButton"]->isClicked()) {
             *mode = 0;
-            reloadPieces(game, pieces);
+            loadPieceCoords(game, pieces);
         }
         if (buttons["exitGameButton"]->isClicked() || Input::pressed(Key::Escape)) App::exit();
         if (game->nexus1hp <= 0 || game->nexus2hp <= 0) { // TODO
@@ -174,7 +174,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
     }
 }
 
-void reloadPieces(Game *gameRef, VcPieces *pieces)
+void loadPieceCoords(Game *gameRef, VcPieces *pieces)
 {
     for (int i = 0; i < B_ROWS; i++) {
         for (int j = 0; j < B_COLUMNS; j++) {
@@ -189,7 +189,6 @@ void reloadPieces(Game *gameRef, VcPieces *pieces)
             }
         }
     }
-    std::cout << "E" << std::endl;
 }
 
 String getSpritePath(int id)
