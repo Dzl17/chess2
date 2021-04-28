@@ -30,7 +30,11 @@ int main() {
             scanf("%d", &form);
             clearStdin();
             printf("\n");
-            startGame(&game, form, 4);  // Se inicia partida con las formacion seleccinada
+            char *f1 = loadForm(form);
+            char *f2 = loadForm(4);
+            startGame(&game, f1, f2);  // Se inicia partida con las formacion seleccinada
+            free(f1);
+            free(f2);
             //system("cls"); // Para consola
             printf("Juego iniciado.\n\n");
             printBoard(game);
