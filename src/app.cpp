@@ -45,7 +45,7 @@ void render()
     auto transform = Mat3x2::create_transform(Vec2::zero, Vec2::zero, scale, 0);
     batch->push_matrix(transform);
 
-    Assets::render(staticSprites, buttonSprites, &pieceSprites, &nexusSprites, batch, game, &currentMode, &formSet);
+    Assets::render(staticSprites, buttonSprites, &pieceSprites, &nexusSprites, game, &currentMode, &formSet, batch);
 
     batch->pop_matrix();
     batch->render();
@@ -55,7 +55,7 @@ void render()
 void update()
 {
     if (Input::pressed(Key::F11)) App::fullscreen(fullscreen = !fullscreen);
-    Assets::update(staticSprites, buttonSprites, &pieceSprites, &nexusSprites, batch, &game, &currentMode, &formSet);
+    Assets::update(staticSprites, buttonSprites, &pieceSprites, &nexusSprites, &game, &currentMode, &formSet);
 }
 
 void dispose()

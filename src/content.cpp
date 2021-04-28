@@ -2,7 +2,7 @@
 
 String getSpritePath(int id);
 std::string getIconKey(int id);
-void loadPieces(Game *gameRef, VcPieces *pieces);
+void reloadPieces(Game *gameRef, VcPieces *pieces);
 char * getPieceName(int id);
 void renderFormation(Batch *batch, VcPieces *pieces, const char *formation, TextureRef blueNexusTex);
 TextureRef getPieceTexture(VcPieces *pieces, char pieceLetter);
@@ -14,8 +14,6 @@ SpriteFont font;
 
 void Assets::load(UmStatics *statics, UmButtons *buttons, VcPieces *pieces, VcNexuses *nexuses, Game *game, int *mode, FormationSet *formSet)
 {
-    startGame(game, 1,1);
-
     statics->clear();
     buttons->clear();
     pieces->clear();
@@ -58,13 +56,15 @@ void Assets::load(UmStatics *statics, UmButtons *buttons, VcPieces *pieces, VcNe
     statics->insert({"mainMenu",      new StaticSprite(0,     0, "../data/img/mainMenu.png",            true)});
     statics->insert({"leftSideTable", new StaticSprite(536, 96, "../data/img/leftSideTable.png",       true)});
 
-    loadPieces(game, pieces);
+    for (int i = 1; i <= 24; i++) {
+        pieces->push_back(PieceSprite(0,0, i,getSpritePath(i), game));
+    }
 
     nexuses->push_back(NexusSprite( 416, 256, "../data/img/nexusL.png"));
     nexuses->push_back(NexusSprite(1056, 256, "../data/img/nexusR.png"));
 }
 
-void Assets::render(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNexuses *nexuses, Batch *batch, Game game, int *mode, FormationSet *formSet)
+void Assets::render(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNexuses *nexuses, Game game, int *mode, FormationSet *formSet, Batch *batch)
 {
     if (*mode == 0) { // Menú principal
         statics["mainMenu"]->draw(batch); // Fondo
@@ -101,7 +101,7 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
                     batch->rect_rounded(Rect(pos.x + 16, pos.y + 16, 32, 32), 32,10, Color("1ebc73"));
                 }
                 for (auto & pos : piece.getAttackPositions(game.data)) { // Rectángulos de posiciones de ataque
-                    batch->rect(Rect(pos.x + 4, pos.y + 4, 56, 56), Color("#e83b3b"));
+                    batch->rect(Rect(pos.x + 4, pos.y + 4, 56, 56), Color("#ea4f36"));
                 }
 
                 batch->str(font, getPieceName(piece.getPieceCode()), Vec2(620, 568), Color("#1ebc73"));
@@ -123,7 +123,7 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
     }
 }
 
-void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNexuses *nexuses, Batch *batch, Game *game, int *mode, FormationSet *formSet)
+void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNexuses *nexuses, Game *game, int *mode, FormationSet *formSet)
 {
     for (auto & button : buttons) button.second->update();
 
@@ -151,7 +151,8 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
         }
         if (buttons["startButton"]->isClicked()) {
             *mode = 2;
-            Assets::load(&statics, &buttons, pieces, nexuses, game, mode, formSet); // TODO fix, reloadPieces()
+            startGame(game, formSet->forms[formSet->index], formSet->forms[0]);
+            reloadPieces(game, pieces);
         }
     } else if (*mode == 2) {
         for (auto & piece : *pieces) piece.update();
@@ -161,7 +162,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
         if (buttons["helpGameButton"]->isClicked() || Input::pressed(Key::H)) (statics)["helpMenu"]->swapActive();
         if (buttons["menuGameButton"]->isClicked()) {
             *mode = 0;
-            Assets::load(&statics, &buttons, pieces, nexuses, game, mode, formSet);
+            reloadPieces(game, pieces);
         }
         if (buttons["exitGameButton"]->isClicked() || Input::pressed(Key::Escape)) App::exit();
         if (game->nexus1hp <= 0 || game->nexus2hp <= 0) { // TODO
@@ -173,19 +174,22 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
     }
 }
 
-void loadPieces(Game *gameRef, VcPieces *pieces)
+void reloadPieces(Game *gameRef, VcPieces *pieces)
 {
     for (int i = 0; i < B_ROWS; i++) {
         for (int j = 0; j < B_COLUMNS; j++) {
             int dataCode = gameRef->data[i][j];
-            if (dataCode >= 1 && dataCode <= 24) pieces->push_back(PieceSprite(
-                    j * 64 + 416,
-                    i * 64 + 64,
-                    dataCode,
-                    getSpritePath(dataCode),
-                    gameRef));
+            if (dataCode >= 1 && dataCode <= 24) {
+                for (auto & piece:*pieces) {
+                    if (piece.id == dataCode) {
+                        piece.setX(j * 64 + 416);
+                        piece.setY(i * 64 + 64);
+                    }
+                }
+            }
         }
     }
+    std::cout << "E" << std::endl;
 }
 
 String getSpritePath(int id)

@@ -20,7 +20,7 @@ typedef struct {
  * @param f1 ID de formación 1
  * @param f2 ID de formación 2
  */
-void startGame(Game *game, int f1, int f2);
+void startGame(Game *game, char *f1, char *f2);
 
 /**
  * Actualiza el estado de una pieza.

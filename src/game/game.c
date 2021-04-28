@@ -22,15 +22,15 @@ int getPieceHp(Game game, int id);
  */
 int spearBlock(int data[B_ROWS][B_COLUMNS], int team, int originX, int originY, int destinyY);
 
-void startGame(Game *game, int f1, int f2)
+void startGame(Game *game, char *form1, char *form2)
 {
     // Inicializar datos base
     game->time = 0;
     game->turn = 0;
     game->nexus1hp = NEXUS_HP;
     game->nexus2hp = NEXUS_HP;
-    char *form1 = loadForm(f1);
-    char *form2 = loadForm(f2);
+    //char *form1 = loadForm(f1);
+    //char *form2 = loadForm(f2);
 
     // Inicializar datos de piezas
     for (int i = 0; i < 24; i++) game->pieces[i] = (Piece) {i + 1, getBaseHp(i+1), getBaseDmg(i + 1)};
@@ -75,8 +75,8 @@ void startGame(Game *game, int f1, int f2)
         }
     }
 
-    free(form1);
-    free(form2);
+    //free(form1); // TODO
+    //free(form2);
 }
 
 int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY)
