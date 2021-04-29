@@ -2,13 +2,18 @@
 #include "content.h"
 #include "gui/draggablePieceSprite.h"
 
+void loadButtons(UmButtons& buttons);
+void loadStatics(UmStatics& statics);
+void loadPieceCoords(Game *gameRef, VcPieces& pieces);
+void loadDPSprites();
+
+void renderPieceData(Batch *batch, VcPieces& pieces, UmStatics& statics, Game game);
+void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, TextureRef blueNexusTex);
+
 String getSpritePath(int id);
 std::string getIconKey(int id);
 TextureRef getPieceTexture(VcPieces& pieces, char pieceLetter);
 char *getPieceName(int id);
-void loadPieceCoords(Game *gameRef, VcPieces& pieces);
-void loadDPSprites();
-void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, TextureRef blueNexusTex);
 void writeFormSetPos(Batch *batch, FormationSet& formSet);
 void writePieceHp(Batch *batch, PieceSprite& piece);
 void writePieceDmg(Batch *batch, PieceSprite& piece);
@@ -18,55 +23,11 @@ std::map<int, DraggablePieceSprite*> dpSprites;
 
 void Assets::load(UmStatics& statics, UmButtons& buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, int& mode, FormationSet& formSet)
 {
-    statics.clear(); // TODO necesario?
-    buttons.clear();
-    pieces.clear();
-    nexuses.clear();
-
     font = SpriteFont("../data/fonts/dogica.ttf", 32);
-
-    buttons.insert({"playMenuButton", new GuiButton(512, 1128, 256, 108, // Play (menu)
-                                 "../data/img/buttons/playMenuButtonIdle.png", "../data/img/buttons/playMenuButtonPressed.png")});
-    buttons.insert({"formsMenuButton", new GuiButton(512, 1544, 256, 108, // Forms (menu)
-                                 "../data/img/buttons/formsMenuButtonIdle.png", "../data/img/buttons/formsMenuButtonPressed.png")});
-    buttons.insert({"exitMenuButton", new GuiButton(512, 1960, 256, 108, // Exit (menu)
-                                 "../data/img/buttons/exitMenuButtonIdle.png", "../data/img/buttons/exitMenuButtonPressed.png")});
-
-    buttons.insert({"leftArrowButton", new GuiButton(352, 264, 128, 128,
-                                                      "../data/img/buttons/leftArrowIdle.png", "../data/img/buttons/leftArrowPressed.png")});
-    buttons.insert({"rightArrowButton", new GuiButton(800, 264, 128, 128,
-                                                     "../data/img/buttons/rightArrowIdle.png", "../data/img/buttons/rightArrowPressed.png")});
-    buttons.insert({"startButton", new GuiButton(512, 586, 256, 108,
-                                                     "../data/img/buttons/startButtonIdle.png", "../data/img/buttons/startButtonPressed.png")});
-
-    buttons.insert({"helpGameButton", new GuiButton(16, 16, 224, 80, // Help (game)
-                                 "../data/img/buttons/helpButtonIdle.png", "../data/img/buttons/helpButtonPressed.png")});
-    buttons.insert({"menuGameButton", new GuiButton(16, 112, 224, 80, // Menu (game)
-                                 "../data/img/buttons/menuButtonIdle.png", "../data/img/buttons/menuButtonPressed.png")});
-    buttons.insert({"exitGameButton", new GuiButton(16, 208, 224, 80, // Exit (game)
-                                 "../data/img/buttons/exitButtonIdle.png", "../data/img/buttons/exitButtonPressed.png")});
-
-    statics.insert({"backgroundG",   new StaticSprite(0,     0, "../data/img/backgroundG.png",         true)});
-    statics.insert({"backgroundB",   new StaticSprite(0,     0, "../data/img/backgroundB.png",         true)});
-    statics.insert({"helpMenu",      new StaticSprite(320,  64, "../data/img/helpmenu.png",            false)});
-    statics.insert({"spearmanLIcon", new StaticSprite(480, 556, "../data/img/icons/spearmanLIcon.png", true)});
-    statics.insert({"spearmanRIcon", new StaticSprite(480, 556, "../data/img/icons/spearmanRIcon.png", true)});
-    statics.insert({"wizardLIcon",   new StaticSprite(480, 556, "../data/img/icons/wizardLIcon.png",   true)});
-    statics.insert({"wizardRIcon",   new StaticSprite(480, 556, "../data/img/icons/wizardRIcon.png",   true)});
-    statics.insert({"assassinLIcon", new StaticSprite(480, 556, "../data/img/icons/assassinLIcon.png", true)});
-    statics.insert({"assassinRIcon", new StaticSprite(480, 556, "../data/img/icons/assassinRIcon.png", true)});
-    statics.insert({"golemLIcon",    new StaticSprite(480, 556, "../data/img/icons/golemLIcon.png",    true)});
-    statics.insert({"golemRIcon",    new StaticSprite(480, 556, "../data/img/icons/golemRIcon.png",    true)});
-    statics.insert({"mainMenu",      new StaticSprite(0,     0, "../data/img/mainMenu.png",            true)});
-    statics.insert({"leftSideTable1", new StaticSprite(536,  96, "../data/img/leftSideTable.png",       true)});
-    statics.insert({"leftSideTable2", new StaticSprite(536,  96, "../data/img/leftSideTable.png",       true)});
-
-    for (int i = 1; i <= 24; i++) {
-        pieces.push_back(PieceSprite(0,0, i,getSpritePath(i), game));
-    }
-
+    loadButtons(buttons);
+    loadStatics(statics);
     loadDPSprites();
-
+    for (int i = 1; i <= 24; i++) pieces.push_back(PieceSprite(0,0, i,getSpritePath(i), game));
     nexuses.push_back(NexusSprite( 416, 256, "../data/img/nexusL.png"));
     nexuses.push_back(NexusSprite(1056, 256, "../data/img/nexusR.png"));
 }
@@ -97,34 +58,14 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         batch->rect(Rect(404, 700, 8, (float)game.nexus1hp * (-112) / NEXUS_HP), Color("4d9be6")); // Vida azul
         batch->rect(Rect(1124, 700, 8, (float)game.nexus2hp * (-112) / NEXUS_HP), Color("ea4f36")); // Vida roja
 
+        // Turno de jugador TODO
         if (game.turn % 2 == 0) batch->rect(Rect(416, 256, 64, 64), Color("#8a0da6"));
         else batch->rect(Rect(1056, 256, 64, 64), Color("#8a0da6"));
 
-        for (auto & piece : pieces) {
-            if (piece.state == PieceSprite::CHOOSING && piece.active) {
-                batch->rect_line(Rect((float)piece.getX(), (float)piece.getY(), 64, 64), 2, Color::black); // Pieza seleccionada
+        renderPieceData(batch, pieces, statics, game);
 
-                statics[getIconKey(piece.id)]->draw(batch); // Iconos de unidades seleccionadas
-
-                for (auto & pos : piece.getMovePositions(game.data)) { // Rectángulos de posiciones de movimiento
-                    batch->rect_rounded(Rect(pos.x + 16, pos.y + 16, 32, 32), 32,10, Color("1ebc73"));
-                }
-                for (auto & pos : piece.getAttackPositions(game.data)) { // Rectángulos de posiciones de ataque
-                    batch->rect(Rect(pos.x + 4, pos.y + 4, 56, 56), Color("#ea4f36"));
-                }
-
-                batch->str(font, getPieceName(piece.getPieceCode()), Vec2(620, 568), Color("#1ebc73"));
-                writePieceHp(batch, piece);
-                writePieceDmg(batch, piece);
-            }
-        }
-        for (auto & piece : pieces) {
-            piece.draw(batch);
-        }
-
-        for (auto & nexus : nexuses) {
-            nexus.draw(batch);
-        }
+        for (auto & piece : pieces) piece.draw(batch);
+        for (auto & nexus : nexuses) nexus.draw(batch);
 
         statics["helpMenu"]->draw(batch);
     }
@@ -184,6 +125,50 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
         if (Input::pressed(Key::Enter)) mode = 0;
         if (Input::pressed(Key::Escape)) App::exit();
     }
+}
+
+void loadButtons(UmButtons& buttons)
+{
+    buttons.insert({"playMenuButton", new GuiButton(512, 1128, 256, 108, // Play (menu)
+                                                    "../data/img/buttons/playMenuButtonIdle.png", "../data/img/buttons/playMenuButtonPressed.png")});
+    buttons.insert({"formsMenuButton", new GuiButton(512, 1544, 256, 108, // Forms (menu)
+                                                     "../data/img/buttons/formsMenuButtonIdle.png", "../data/img/buttons/formsMenuButtonPressed.png")});
+    buttons.insert({"exitMenuButton", new GuiButton(512, 1960, 256, 108, // Exit (menu)
+                                                    "../data/img/buttons/exitMenuButtonIdle.png", "../data/img/buttons/exitMenuButtonPressed.png")});
+
+    buttons.insert({"leftArrowButton", new GuiButton(352, 264, 128, 128,
+                                                     "../data/img/buttons/leftArrowIdle.png", "../data/img/buttons/leftArrowPressed.png")});
+    buttons.insert({"rightArrowButton", new GuiButton(800, 264, 128, 128,
+                                                      "../data/img/buttons/rightArrowIdle.png", "../data/img/buttons/rightArrowPressed.png")});
+    buttons.insert({"startButton", new GuiButton(512, 586, 256, 108,
+                                                 "../data/img/buttons/startButtonIdle.png", "../data/img/buttons/startButtonPressed.png")});
+
+    buttons.insert({"helpGameButton", new GuiButton(16, 16, 224, 80, // Help (game)
+                                                    "../data/img/buttons/helpButtonIdle.png", "../data/img/buttons/helpButtonPressed.png")});
+    buttons.insert({"menuGameButton", new GuiButton(16, 112, 224, 80, // Menu (game)
+                                                    "../data/img/buttons/menuButtonIdle.png", "../data/img/buttons/menuButtonPressed.png")});
+    buttons.insert({"exitGameButton", new GuiButton(16, 208, 224, 80, // Exit (game)
+                                                    "../data/img/buttons/exitButtonIdle.png", "../data/img/buttons/exitButtonPressed.png")});
+
+}
+
+void loadStatics(UmStatics& statics)
+{
+    statics.insert({"backgroundG",   new StaticSprite(0,     0, "../data/img/backgroundG.png",         true)});
+    statics.insert({"backgroundB",   new StaticSprite(0,     0, "../data/img/backgroundB.png",         true)});
+    statics.insert({"helpMenu",      new StaticSprite(320,  64, "../data/img/helpmenu.png",            false)});
+    statics.insert({"spearmanLIcon", new StaticSprite(480, 556, "../data/img/icons/spearmanLIcon.png", true)});
+    statics.insert({"spearmanRIcon", new StaticSprite(480, 556, "../data/img/icons/spearmanRIcon.png", true)});
+    statics.insert({"wizardLIcon",   new StaticSprite(480, 556, "../data/img/icons/wizardLIcon.png",   true)});
+    statics.insert({"wizardRIcon",   new StaticSprite(480, 556, "../data/img/icons/wizardRIcon.png",   true)});
+    statics.insert({"assassinLIcon", new StaticSprite(480, 556, "../data/img/icons/assassinLIcon.png", true)});
+    statics.insert({"assassinRIcon", new StaticSprite(480, 556, "../data/img/icons/assassinRIcon.png", true)});
+    statics.insert({"golemLIcon",    new StaticSprite(480, 556, "../data/img/icons/golemLIcon.png",    true)});
+    statics.insert({"golemRIcon",    new StaticSprite(480, 556, "../data/img/icons/golemRIcon.png",    true)});
+    statics.insert({"mainMenu",      new StaticSprite(0,     0, "../data/img/mainMenu.png",            true)});
+    statics.insert({"leftSideTable1", new StaticSprite(536,  96, "../data/img/leftSideTable.png",       true)});
+    statics.insert({"leftSideTable2", new StaticSprite(536,  96, "../data/img/leftSideTable.png",       true)});
+
 }
 
 void loadPieceCoords(Game *gameRef, VcPieces& pieces)
@@ -289,6 +274,28 @@ char * getPieceName(int id) {
         case 2: return (char*) "Assassin";
         case 3: return (char*) "Golem";
         default: return (char*) "";
+    }
+}
+
+void renderPieceData(Batch *batch, VcPieces& pieces, UmStatics& statics, Game game)
+{
+    for (auto & piece : pieces) {
+        if (piece.state == PieceSprite::CHOOSING && piece.active) {
+            batch->rect_line(Rect((float)piece.getX(), (float)piece.getY(), 64, 64), 2, Color::black); // Pieza seleccionada
+
+            statics[getIconKey(piece.id)]->draw(batch); // Iconos de unidades seleccionadas
+
+            for (auto & pos : piece.getMovePositions(game.data)) { // Rectángulos de posiciones de movimiento
+                batch->rect_rounded(Rect(pos.x + 16, pos.y + 16, 32, 32), 32,10, Color("1ebc73"));
+            }
+            for (auto & pos : piece.getAttackPositions(game.data)) { // Rectángulos de posiciones de ataque
+                batch->rect(Rect(pos.x + 4, pos.y + 4, 56, 56), Color("#ea4f36"));
+            }
+
+            batch->str(font, getPieceName(piece.getPieceCode()), Vec2(620, 568), Color("#1ebc73"));
+            writePieceHp(batch, piece);
+            writePieceDmg(batch, piece);
+        }
     }
 }
 
