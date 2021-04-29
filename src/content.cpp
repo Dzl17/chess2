@@ -6,6 +6,7 @@ void loadButtons(UmButtons& buttons);
 void loadStatics(UmStatics& statics);
 void loadPieceCoords(Game *gameRef, VcPieces& pieces);
 void loadDPSprites();
+void resetDPSprites();
 
 void renderPieceData(Batch *batch, VcPieces& pieces, UmStatics& statics, Game game);
 void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, TextureRef blueNexusTex);
@@ -47,6 +48,7 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         buttons["leftArrowButton"]->draw(batch);
         buttons["rightArrowButton"]->draw(batch);
         buttons["startButton"]->draw(batch);
+        buttons["backButton"]->draw(batch);
         renderFormation(batch, pieces, formSet.forms[formSet.index], nexuses[0].texture);
         writeFormSetPos(batch, formSet);
     }
@@ -76,12 +78,15 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         buttons["leftArrowButton"]->draw(batch);
         buttons["rightArrowButton"]->draw(batch);
         buttons["editButton"]->draw(batch);
+        buttons["backButton"]->draw(batch);
         renderFormation(batch, pieces, formSet.forms[formSet.index], nexuses[0].texture);
         writeFormSetPos(batch, formSet);
     }
     else if (mode == 4) {
         statics["formsBackground"]->draw(batch);
         buttons["saveButton"]->draw(batch);
+        buttons["backButton"]->draw(batch);
+        buttons["resetButton"]->draw(batch);
         batch->tex(nexuses[0].texture, Vec2(544, 296));
         for (auto & piece:dpSprites) piece.second->draw(batch);
         writeFormSetPos(batch, formSet);
@@ -118,9 +123,16 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
             else formSet.index++;
         }
         if (buttons["startButton"]->isClicked()) {
-            mode = 2;
-            startGame(game, formSet.forms[formSet.index], formSet.forms[0]);
-            loadPieceCoords(game, pieces);
+            if (isFormValid(formSet.forms[formSet.index])) {
+                mode = 2;
+                startGame(game, formSet.forms[formSet.index], formSet.forms[0]);
+                loadPieceCoords(game, pieces);
+            } else {
+                std::cout << "Formacion invalida" << std::endl;
+            }
+        }
+        if (buttons["backButton"]->isClicked()) {
+            mode = 0;
         }
     }
     else if (mode == 2) {
@@ -150,6 +162,9 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
             startGame(game, formSet.forms[formSet.index], formSet.forms[0]);
             loadPieceCoords(game, pieces);
         }
+        if (buttons["backButton"]->isClicked()) {
+            mode = 0;
+        }
     }
     else if (mode == 4) {
         for (auto & piece:dpSprites) piece.second->update();
@@ -163,6 +178,13 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
                 for (int i = 0; i < FORM_LENGTH; i++) std::cout << DraggablePieceSprite::formBuffer[i];
                 std::cout << std::endl;
             }
+        }
+        if (buttons["resetButton"]->isClicked()) {
+            DraggablePieceSprite::resetFormBuffer();
+            resetDPSprites();
+        }
+        if (buttons["backButton"]->isClicked()) {
+            mode = 3;
         }
         if (Input::pressed(Key::Enter)) mode = 0;
         if (Input::pressed(Key::Escape)) App::exit();
@@ -188,6 +210,10 @@ void loadButtons(UmButtons& buttons)
                                                  "../data/img/buttons/editButtonIdle.png", "../data/img/buttons/editButtonPressed.png")});
     buttons.insert({"saveButton", new GuiButton(512, 586, 256, 108,
                                                 "../data/img/buttons/saveButtonIdle.png", "../data/img/buttons/saveButtonPressed.png")});
+    buttons.insert({"resetButton", new GuiButton(436, 602, 64, 76,
+                                                "../data/img/buttons/resetButtonIdle.png", "../data/img/buttons/resetButtonPressed.png")});
+    buttons.insert({"backButton", new GuiButton(780, 602, 64, 76,
+                                                "../data/img/buttons/backButtonIdle.png", "../data/img/buttons/backButtonPressed.png")});
 
     buttons.insert({"helpGameButton", new GuiButton(16, 16, 224, 80, // Help (game)
                                                     "../data/img/buttons/helpButtonIdle.png", "../data/img/buttons/helpButtonPressed.png")});
@@ -253,6 +279,39 @@ void loadDPSprites()
     y += 80;
     for (int i = 5; i <= 10; i++) {
         dpSprites.insert({i, new DraggablePieceSprite(x,y,i,getSpritePath(i))});
+        if (i == 7 || i == 10) {
+            x = 128;
+            y += 80;
+        } else {
+            x += 80;
+        }
+    }
+}
+
+void resetDPSprites()
+{
+    int x = 128;
+    int y = 176;
+    for (int i = 1; i <= 4; i++) {
+        dpSprites[i]->setX(x);
+        dpSprites[i]->setY(y);
+        if (i == 3) {
+            x = 128;
+            y += 80;
+        } else {
+            x += 80;
+        }
+    }
+    dpSprites[11]->setX(x);
+    dpSprites[11]->setY(y);
+    x += 80;
+    dpSprites[12]->setX(x);
+    dpSprites[12]->setY(y);
+    x = 128;
+    y += 80;
+    for (int i = 5; i <= 10; i++) {
+        dpSprites[i]->setX(x);
+        dpSprites[i]->setY(y);
         if (i == 7 || i == 10) {
             x = 128;
             y += 80;
