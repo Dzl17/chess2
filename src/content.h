@@ -32,9 +32,9 @@ typedef struct { // TODO sacar de BD
  */
 
 namespace Assets {
-    void load(UmStatics *statics, UmButtons *buttons, VcPieces *pieces, VcNexuses *nexuses, Game *game, int *mode, FormationSet *formSet);
-    void render(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNexuses *nexuses, Game  game, int *mode, FormationSet *formSet, Batch *batch);
-    void update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNexuses *nexuses, Game *game, int *mode, FormationSet *formSet);
+    void load(UmStatics& statics, UmButtons& buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, int& mode, FormationSet& formSet);
+    void render(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNexuses& nexuses, Game  game, int& mode, FormationSet& formSet, Batch *batch);
+    void update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, int& mode, FormationSet& formSet);
 }
 
 namespace Login {
