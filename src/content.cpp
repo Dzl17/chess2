@@ -92,7 +92,10 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
 
     if (mode == 0) {
         if (buttons["playMenuButton"]->isClicked() || Input::pressed(Key::P)) mode = 1; // Play
-        if (buttons["formsMenuButton"]->isClicked() || Input::pressed(Key::F)) mode = 3; // Forms
+        if (buttons["formsMenuButton"]->isClicked() || Input::pressed(Key::F)) {
+            mode = 3; // Forms
+            formSet.index = 4;
+        }
         if (buttons["exitMenuButton"]->isClicked() || Input::pressed(Key::Escape)) App::exit(); // Exit
 
         buttons["playMenuButton"]->setY((int) (buttons["playMenuButton"]->getY() +
@@ -132,7 +135,6 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
         if (game->nexus1hp <= 0 || game->nexus2hp <= 0) mode = 0;
     }
     else if (mode == 3) {
-        if (formSet.index < 4) formSet.index = 4;
         if (buttons["leftArrowButton"]->isClicked()) {
             if (formSet.index == 4) formSet.index = formSet.size - 1;
             else formSet.index--;
