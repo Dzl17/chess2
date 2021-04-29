@@ -41,10 +41,10 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         buttons["exitMenuButton"]->draw(batch);
     }
     else if (mode == 1) { // Selección de formación
+        statics["choosingBackground"]->draw(batch);
         buttons["leftArrowButton"]->draw(batch);
         buttons["rightArrowButton"]->draw(batch);
         buttons["startButton"]->draw(batch);
-        statics["leftSideTable1"]->draw(batch);
         renderFormation(batch, pieces, formSet.forms[formSet.index], nexuses[0].texture);
         writeFormSetPos(batch, formSet);
     }
@@ -70,8 +70,19 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         statics["helpMenu"]->draw(batch);
     }
     else if (mode == 3) {
-        batch->rect(Rect(0, 0,(float) App::width(), (float) App::height()), Color("#73172d"));
+        statics["choosingBackground"]->draw(batch);
+        buttons["leftArrowButton"]->draw(batch);
+        buttons["rightArrowButton"]->draw(batch);
+        buttons["editButton"]->draw(batch);
+        renderFormation(batch, pieces, formSet.forms[formSet.index], nexuses[0].texture);
+        writeFormSetPos(batch, formSet);
+    }
+    else if (mode == 4) {
+        statics["formsBackground"]->draw(batch);
+        buttons["saveButton"]->draw(batch);
+        batch->tex(nexuses[0].texture, Vec2(544, 296));
         for (auto & piece:dpSprites) piece.second->draw(batch);
+        writeFormSetPos(batch, formSet);
     }
 }
 
@@ -121,7 +132,28 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
         if (game->nexus1hp <= 0 || game->nexus2hp <= 0) mode = 0;
     }
     else if (mode == 3) {
+        if (formSet.index < 4) formSet.index = 4;
+        if (buttons["leftArrowButton"]->isClicked()) {
+            if (formSet.index == 4) formSet.index = formSet.size - 1;
+            else formSet.index--;
+        }
+        if (buttons["rightArrowButton"]->isClicked()) {
+            if (formSet.index == formSet.size - 1) formSet.index = 4;
+            else formSet.index++;
+        }
+        if (buttons["editButton"]->isClicked()) {
+            mode = 4;
+            startGame(game, formSet.forms[formSet.index], formSet.forms[0]);
+            loadPieceCoords(game, pieces);
+        }
+    }
+    else if (mode == 4) {
         for (auto & piece:dpSprites) piece.second->update();
+        if (buttons["saveButton"]->isClicked()) {
+            mode = 0;
+            std::cout << "Save" << std::endl;
+            // TODO: check si la formación está correcta, guardarla
+        }
         if (Input::pressed(Key::Enter)) mode = 0;
         if (Input::pressed(Key::Escape)) App::exit();
     }
@@ -142,6 +174,10 @@ void loadButtons(UmButtons& buttons)
                                                       "../data/img/buttons/rightArrowIdle.png", "../data/img/buttons/rightArrowPressed.png")});
     buttons.insert({"startButton", new GuiButton(512, 586, 256, 108,
                                                  "../data/img/buttons/startButtonIdle.png", "../data/img/buttons/startButtonPressed.png")});
+    buttons.insert({"editButton", new GuiButton(512, 586, 256, 108,
+                                                 "../data/img/buttons/editButtonIdle.png", "../data/img/buttons/editButtonPressed.png")});
+    buttons.insert({"saveButton", new GuiButton(512, 586, 256, 108,
+                                                "../data/img/buttons/saveButtonIdle.png", "../data/img/buttons/saveButtonPressed.png")});
 
     buttons.insert({"helpGameButton", new GuiButton(16, 16, 224, 80, // Help (game)
                                                     "../data/img/buttons/helpButtonIdle.png", "../data/img/buttons/helpButtonPressed.png")});
@@ -154,21 +190,20 @@ void loadButtons(UmButtons& buttons)
 
 void loadStatics(UmStatics& statics)
 {
-    statics.insert({"backgroundG",   new StaticSprite(0,     0, "../data/img/backgroundG.png",         true)});
-    statics.insert({"backgroundB",   new StaticSprite(0,     0, "../data/img/backgroundB.png",         true)});
-    statics.insert({"helpMenu",      new StaticSprite(320,  64, "../data/img/helpmenu.png",            false)});
-    statics.insert({"spearmanLIcon", new StaticSprite(480, 556, "../data/img/icons/spearmanLIcon.png", true)});
-    statics.insert({"spearmanRIcon", new StaticSprite(480, 556, "../data/img/icons/spearmanRIcon.png", true)});
-    statics.insert({"wizardLIcon",   new StaticSprite(480, 556, "../data/img/icons/wizardLIcon.png",   true)});
-    statics.insert({"wizardRIcon",   new StaticSprite(480, 556, "../data/img/icons/wizardRIcon.png",   true)});
-    statics.insert({"assassinLIcon", new StaticSprite(480, 556, "../data/img/icons/assassinLIcon.png", true)});
-    statics.insert({"assassinRIcon", new StaticSprite(480, 556, "../data/img/icons/assassinRIcon.png", true)});
-    statics.insert({"golemLIcon",    new StaticSprite(480, 556, "../data/img/icons/golemLIcon.png",    true)});
-    statics.insert({"golemRIcon",    new StaticSprite(480, 556, "../data/img/icons/golemRIcon.png",    true)});
-    statics.insert({"mainMenu",      new StaticSprite(0,     0, "../data/img/mainMenu.png",            true)});
-    statics.insert({"leftSideTable1", new StaticSprite(536,  96, "../data/img/leftSideTable.png",       true)});
-    statics.insert({"leftSideTable2", new StaticSprite(536,  96, "../data/img/leftSideTable.png",       true)});
-
+    statics.insert({"backgroundG",       new StaticSprite(0,     0, "../data/img/backgroundG.png",         true)});
+    statics.insert({"backgroundB",       new StaticSprite(0,     0, "../data/img/backgroundB.png",         true)});
+    statics.insert({"formsBackground",   new StaticSprite(0,     0, "../data/img/formsBackground.png",     true)});
+    statics.insert({"choosingBackground",new StaticSprite(0,     0, "../data/img/choosingBackground.png",  true)});
+    statics.insert({"helpMenu",          new StaticSprite(320,  64, "../data/img/helpmenu.png",            false)});
+    statics.insert({"spearmanLIcon",     new StaticSprite(480, 556, "../data/img/icons/spearmanLIcon.png", true)});
+    statics.insert({"spearmanRIcon",     new StaticSprite(480, 556, "../data/img/icons/spearmanRIcon.png", true)});
+    statics.insert({"wizardLIcon",       new StaticSprite(480, 556, "../data/img/icons/wizardLIcon.png",   true)});
+    statics.insert({"wizardRIcon",       new StaticSprite(480, 556, "../data/img/icons/wizardRIcon.png",   true)});
+    statics.insert({"assassinLIcon",     new StaticSprite(480, 556, "../data/img/icons/assassinLIcon.png", true)});
+    statics.insert({"assassinRIcon",     new StaticSprite(480, 556, "../data/img/icons/assassinRIcon.png", true)});
+    statics.insert({"golemLIcon",        new StaticSprite(480, 556, "../data/img/icons/golemLIcon.png",    true)});
+    statics.insert({"golemRIcon",        new StaticSprite(480, 556, "../data/img/icons/golemRIcon.png",    true)});
+    statics.insert({"mainMenu",          new StaticSprite(0,     0, "../data/img/mainMenu.png",            true)});
 }
 
 void loadPieceCoords(Game *gameRef, VcPieces& pieces)
@@ -190,12 +225,12 @@ void loadPieceCoords(Game *gameRef, VcPieces& pieces)
 
 void loadDPSprites()
 {
-    int x = 30;
-    int y = 208;
+    int x = 128;
+    int y = 176;
     for (int i = 1; i <= 4; i++) {
         dpSprites.insert({i, new DraggablePieceSprite(x,y,getSpritePath(i))});
         if (i == 3) {
-            x = 30;
+            x = 128;
             y += 80;
         } else {
             x += 80;
@@ -204,12 +239,12 @@ void loadDPSprites()
     dpSprites.insert({11, new DraggablePieceSprite(x,y,getSpritePath(11))});
     x += 80;
     dpSprites.insert({12, new DraggablePieceSprite(x,y,getSpritePath(12))});
-    x = 30;
+    x = 128;
     y += 80;
     for (int i = 5; i <= 10; i++) {
         dpSprites.insert({i, new DraggablePieceSprite(x,y,getSpritePath(i))});
         if (i == 7 || i == 10) {
-            x = 30;
+            x = 128;
             y += 80;
         } else {
             x += 80;
@@ -301,7 +336,7 @@ void renderPieceData(Batch *batch, VcPieces& pieces, UmStatics& statics, Game ga
 
 void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, TextureRef blueNexusTex)
 {
-    int x = 548;
+    int x = 544;
     int y = 104;
     for (int i = 0; i < FORM_LENGTH; i++) {
         if (formation[i] != 'e' && formation[i] != 'N') batch->tex(getPieceTexture(pieces, formation[i]), Vec2(x, y));
@@ -309,7 +344,7 @@ void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, Text
 
         if ((i+1) % 3 == 0) {
             y += 64;
-            x = 548;
+            x = 544;
         }
         else {
             x += 64;

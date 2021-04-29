@@ -4,6 +4,8 @@
 #include "sprite.h"
 
 class DraggablePieceSprite :  public Sprite{
+private:
+    int ogX, ogY;
 public:
     DraggablePieceSprite(int x, int y, const String& texturePath);
 

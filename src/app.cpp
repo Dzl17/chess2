@@ -25,12 +25,16 @@ void startup()
 {
     /////////////////////////TEMP/////////////////////////
     formSet.index = 0;
-    formSet.size = 4;
+    formSet.size = 8;
     formSet.forms = new char*[formSet.size];
     formSet.forms[0] = (char*) "ssssggeeeNeeeeeaaawww";
     formSet.forms[1] = (char*) "esgesewweNeweaeasaseg";
     formSet.forms[2] = (char*) "ewsseageeNaweegwsasee";
     formSet.forms[3] = (char*) "ssgweewweNeeaaeaeessg";
+    formSet.forms[4] = (char*) "eeeeeeeeeNeeeeeeeeeee";
+    formSet.forms[5] = (char*) "eeeeeeeeeNeeeeeeeeeee";
+    formSet.forms[6] = (char*) "eeeeeeeeeNeeeeeeeeeee";
+    formSet.forms[7] = (char*) "eeeeeeeeeNeeeeeeeeeee";
     /////////////////////////TEMP/////////////////////////
 
     batch = new Batch;

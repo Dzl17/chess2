@@ -25,10 +25,11 @@ typedef struct { // TODO sacar de BD
 
 /*
  * La variable 'mode' denota qué pantalla debe dibujarse:
- * 0 -  Menú principal
- * 1 -  Selección de formación
- * 2 -  Juego principal
- * 3+ - Formaciones
+ * 0 - Menú principal
+ * 1 - Selección de formación
+ * 2 - Juego principal
+ * 3 - Elegir formación de usuario a modificar
+ * 4 - Crear formación
  */
 
 namespace Assets {

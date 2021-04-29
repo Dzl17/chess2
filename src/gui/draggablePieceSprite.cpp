@@ -5,6 +5,8 @@ bool DraggablePieceSprite::grabFlag = false;
 DraggablePieceSprite::DraggablePieceSprite(int x, int y, const String& texturePath) {
     this->setX(x);
     this->setY(y);
+    this->ogX = x;
+    this->ogY = y;
     this->grabbed = false;
     this->texture = Texture::create(texturePath);
 }
@@ -24,7 +26,9 @@ void DraggablePieceSprite::update() {
     if (this->grabbed) {
         this->setX((int) m.x - 32);
         this->setY((int) m.y - 32);
-        if (Input::released(MouseButton::Left)) {
+        if (Input::released(MouseButton::Left)) { // TODO colocar en posición
+            this->setX(this->ogX);
+            this->setY(this->ogY);
             this->grabbed = false;
             grabFlag = false;
         }
