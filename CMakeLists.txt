@@ -168,6 +168,8 @@ add_executable(chess2 ${SOURCE_FILES}
         src/gui/pieceSprite.h
         src/gui/nexusSprite.cpp
         src/gui/nexusSprite.h
+        src/gui/draggablePieceSprite.cpp
+        src/gui/draggablePieceSprite.h
 
         dependencies/sqlite/sqlite3.h
         dependencies/sqlite/sqlite3.c

@@ -1,16 +1,20 @@
+#include <map>
 #include "content.h"
+#include "gui/draggablePieceSprite.h"
 
 String getSpritePath(int id);
 std::string getIconKey(int id);
-void loadPieceCoords(Game *gameRef, VcPieces *pieces);
-char * getPieceName(int id);
-void renderFormation(Batch *batch, VcPieces *pieces, const char *formation, TextureRef blueNexusTex);
 TextureRef getPieceTexture(VcPieces *pieces, char pieceLetter);
+char *getPieceName(int id);
+void loadPieceCoords(Game *gameRef, VcPieces *pieces);
+void loadDPSprites();
+void renderFormation(Batch *batch, VcPieces *pieces, const char *formation, TextureRef blueNexusTex);
 void writeFormSetPos(Batch *batch, FormationSet *formSet);
 void writePieceHp(Batch *batch, PieceSprite& piece);
 void writePieceDmg(Batch *batch, PieceSprite& piece);
 
 SpriteFont font;
+std::map<int, DraggablePieceSprite*> dpSprites;
 
 void Assets::load(UmStatics *statics, UmButtons *buttons, VcPieces *pieces, VcNexuses *nexuses, Game *game, int *mode, FormationSet *formSet)
 {
@@ -54,11 +58,14 @@ void Assets::load(UmStatics *statics, UmButtons *buttons, VcPieces *pieces, VcNe
     statics->insert({"golemLIcon",    new StaticSprite(480, 556, "../data/img/icons/golemLIcon.png",    true)});
     statics->insert({"golemRIcon",    new StaticSprite(480, 556, "../data/img/icons/golemRIcon.png",    true)});
     statics->insert({"mainMenu",      new StaticSprite(0,     0, "../data/img/mainMenu.png",            true)});
-    statics->insert({"leftSideTable", new StaticSprite(536, 96, "../data/img/leftSideTable.png",       true)});
+    statics->insert({"leftSideTable1", new StaticSprite(536,  96, "../data/img/leftSideTable.png",       true)});
+    statics->insert({"leftSideTable2", new StaticSprite(536,  96, "../data/img/leftSideTable.png",       true)});
 
     for (int i = 1; i <= 24; i++) {
         pieces->push_back(PieceSprite(0,0, i,getSpritePath(i), game));
     }
+
+    loadDPSprites();
 
     nexuses->push_back(NexusSprite( 416, 256, "../data/img/nexusL.png"));
     nexuses->push_back(NexusSprite(1056, 256, "../data/img/nexusR.png"));
@@ -71,14 +78,16 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
         buttons["playMenuButton"]->draw(batch);
         buttons["formsMenuButton"]->draw(batch);
         buttons["exitMenuButton"]->draw(batch);
-    } else if (*mode == 1) { // Selección de formación
+    }
+    else if (*mode == 1) { // Selección de formación
         buttons["leftArrowButton"]->draw(batch);
         buttons["rightArrowButton"]->draw(batch);
         buttons["startButton"]->draw(batch);
-        statics["leftSideTable"]->draw(batch);
+        statics["leftSideTable1"]->draw(batch);
         renderFormation(batch, pieces, formSet->forms[formSet->index], (*nexuses)[0].texture);
         writeFormSetPos(batch, formSet);
-    } else if (*mode == 2) {
+    }
+    else if (*mode == 2) {
         statics["backgroundG"]->draw(batch); // Fondo
         buttons["helpGameButton"]->draw(batch);
         buttons["menuGameButton"]->draw(batch);
@@ -118,8 +127,10 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
         }
 
         statics["helpMenu"]->draw(batch);
-    } else if (*mode == 3) {
-        statics["backgroundG"]->draw(batch); // Fondo
+    }
+    else if (*mode == 3) {
+        batch->rect(Rect(0, 0,(float) App::width(), (float) App::height()), Color("#73172d"));
+        for (auto & piece:dpSprites) piece.second->draw(batch);
     }
 }
 
@@ -129,8 +140,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
 
     if (*mode == 0) {
         if (buttons["playMenuButton"]->isClicked() || Input::pressed(Key::P)) *mode = 1; // Play
-        if (buttons["formsMenuButton"]->isClicked() || Input::pressed(Key::F))
-            std::cout << "FORMACIONES" << std::endl; // Forms TODO
+        if (buttons["formsMenuButton"]->isClicked() || Input::pressed(Key::F)) *mode = 3; // Forms TODO
         if (buttons["exitMenuButton"]->isClicked() || Input::pressed(Key::Escape)) App::exit(); // Exit
 
         buttons["playMenuButton"]->setY((int) (buttons["playMenuButton"]->getY() +
@@ -140,7 +150,8 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
                                                 (444 - buttons["formsMenuButton"]->getY()) * (double) Time::delta * 4));
         buttons["exitMenuButton"]->setY((int) (buttons["exitMenuButton"]->getY() +
                                                (560 - buttons["exitMenuButton"]->getY()) * (double) Time::delta * 4));
-    } else if (*mode == 1) {
+    }
+    else if (*mode == 1) {
         if (buttons["leftArrowButton"]->isClicked()) {
             if (formSet->index == 0) formSet->index = formSet->size - 1;
             else formSet->index--;
@@ -154,7 +165,8 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
             startGame(game, formSet->forms[formSet->index], formSet->forms[0]);
             loadPieceCoords(game, pieces);
         }
-    } else if (*mode == 2) {
+    }
+    else if (*mode == 2) {
         for (auto & piece : *pieces) piece.update();
 
         for (auto & nexus : *nexuses) nexus.update();
@@ -166,8 +178,11 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces *pieces, VcNe
         }
         if (buttons["exitGameButton"]->isClicked() || Input::pressed(Key::Escape)) App::exit();
         if (game->nexus1hp <= 0 || game->nexus2hp <= 0) *mode = 0;
-    } else if (*mode == 3) {
-
+    }
+    else if (*mode == 3) {
+        for (auto & piece:dpSprites) piece.second->update();
+        if (Input::pressed(Key::Enter)) *mode = 0;
+        if (Input::pressed(Key::Escape)) App::exit();
     }
 }
 
@@ -184,6 +199,35 @@ void loadPieceCoords(Game *gameRef, VcPieces *pieces)
                     }
                 }
             }
+        }
+    }
+}
+
+void loadDPSprites()
+{
+    int x = 30;
+    int y = 208;
+    for (int i = 1; i <= 4; i++) {
+        dpSprites.insert({i, new DraggablePieceSprite(x,y,getSpritePath(i))});
+        if (i == 3) {
+            x = 30;
+            y += 80;
+        } else {
+            x += 80;
+        }
+    }
+    dpSprites.insert({11, new DraggablePieceSprite(x,y,getSpritePath(11))});
+    x += 80;
+    dpSprites.insert({12, new DraggablePieceSprite(x,y,getSpritePath(12))});
+    x = 30;
+    y += 80;
+    for (int i = 5; i <= 10; i++) {
+        dpSprites.insert({i, new DraggablePieceSprite(x,y,getSpritePath(i))});
+        if (i == 7 || i == 10) {
+            x = 30;
+            y += 80;
+        } else {
+            x += 80;
         }
     }
 }
@@ -270,8 +314,8 @@ TextureRef getPieceTexture(VcPieces *pieces, char pieceLetter)
 {
     int id;
     switch (pieceLetter) {
-        case 's': id = 0; break;
-        case 'w': id = 4; break;
+        case 's': id = 1; break;
+        case 'w': id = 5; break;
         case 'a': id = 8; break;
         case 'g': id = 11; break;
         default: id = -1; break;
