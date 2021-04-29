@@ -14,6 +14,7 @@ String getSpritePath(int id);
 std::string getIconKey(int id);
 TextureRef getPieceTexture(VcPieces& pieces, char pieceLetter);
 char *getPieceName(int id);
+bool isFormValid(const char *form);
 void writeFormSetPos(Batch *batch, FormationSet& formSet);
 void writePieceHp(Batch *batch, PieceSprite& piece);
 void writePieceDmg(Batch *batch, PieceSprite& piece);
@@ -27,6 +28,7 @@ void Assets::load(UmStatics& statics, UmButtons& buttons, VcPieces& pieces, VcNe
     loadButtons(buttons);
     loadStatics(statics);
     loadDPSprites();
+    loadCollisionPositions();
     for (int i = 1; i <= 24; i++) pieces.push_back(PieceSprite(0,0, i,getSpritePath(i), game));
     nexuses.push_back(NexusSprite( 416, 256, "../data/img/nexusL.png"));
     nexuses.push_back(NexusSprite(1056, 256, "../data/img/nexusR.png"));
@@ -152,9 +154,15 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
     else if (mode == 4) {
         for (auto & piece:dpSprites) piece.second->update();
         if (buttons["saveButton"]->isClicked()) {
-            mode = 0;
-            std::cout << "Save" << std::endl;
-            // TODO: check si la formación está correcta, guardarla
+            if (isFormValid(DraggablePieceSprite::formBuffer)) {
+                formSet.forms[formSet.index] = DraggablePieceSprite::formBuffer;
+                mode = 0;
+            } else {
+                std::cout << "ERROR" << std::endl;
+
+                for (int i = 0; i < FORM_LENGTH; i++) std::cout << DraggablePieceSprite::formBuffer[i];
+                std::cout << std::endl;
+            }
         }
         if (Input::pressed(Key::Enter)) mode = 0;
         if (Input::pressed(Key::Escape)) App::exit();
@@ -230,7 +238,7 @@ void loadDPSprites()
     int x = 128;
     int y = 176;
     for (int i = 1; i <= 4; i++) {
-        dpSprites.insert({i, new DraggablePieceSprite(x,y,getSpritePath(i))});
+        dpSprites.insert({i, new DraggablePieceSprite(x,y,i,getSpritePath(i))});
         if (i == 3) {
             x = 128;
             y += 80;
@@ -238,13 +246,13 @@ void loadDPSprites()
             x += 80;
         }
     }
-    dpSprites.insert({11, new DraggablePieceSprite(x,y,getSpritePath(11))});
+    dpSprites.insert({11, new DraggablePieceSprite(x,y,11,getSpritePath(11))});
     x += 80;
-    dpSprites.insert({12, new DraggablePieceSprite(x,y,getSpritePath(12))});
+    dpSprites.insert({12, new DraggablePieceSprite(x,y,12,getSpritePath(12))});
     x = 128;
     y += 80;
     for (int i = 5; i <= 10; i++) {
-        dpSprites.insert({i, new DraggablePieceSprite(x,y,getSpritePath(i))});
+        dpSprites.insert({i, new DraggablePieceSprite(x,y,i,getSpritePath(i))});
         if (i == 7 || i == 10) {
             x = 128;
             y += 80;
@@ -312,6 +320,23 @@ char * getPieceName(int id) {
         case 3: return (char*) "Golem";
         default: return (char*) "";
     }
+}
+
+bool isFormValid(const char *form)
+{
+    int s = 0;
+    int a = 0;
+    int w = 0;
+    int g = 0;
+    for (int i = 0; i < FORM_LENGTH; i++) {
+        switch (form[i]) {
+            case 's': s++; break;
+            case 'a': a++; break;
+            case 'w': w++; break;
+            case 'g': g++; break;
+        }
+    }
+    return s == 4 && a == 3 && w == 3 && g == 2 && form[9] == 'N';
 }
 
 void renderPieceData(Batch *batch, VcPieces& pieces, UmStatics& statics, Game game)
