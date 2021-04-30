@@ -225,7 +225,7 @@ add_executable(chess2 ${SOURCE_FILES}
         dependencies/blah/src/internal/graphics_backend_dummy.cpp
         dependencies/blah/src/internal/platform_backend_sdl2.cpp
         dependencies/blah/src/internal/platform_backend_win32.cpp
-        )
+        src/user.cpp src/user.h)
 
 target_link_libraries(chess2 PUBLIC ${LIBS} SDL2 winmm)
 

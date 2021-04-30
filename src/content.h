@@ -7,6 +7,7 @@
 #include "gui/guiButton.h"
 #include "gui/pieceSprite.h"
 #include "gui/nexusSprite.h"
+#include "dbmanager.h"
 extern "C" {
     #include "game/game.h"
 };
@@ -39,7 +40,7 @@ namespace Assets {
 }
 
 namespace Login {
-    void runSetup();
+    int runSetup(DBManager& dbManager);
 }
 
 #endif //CHESS2_CONTENT_H

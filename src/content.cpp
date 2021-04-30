@@ -1,6 +1,7 @@
 #include <map>
 #include "content.h"
 #include "gui/draggablePieceSprite.h"
+#include "dbmanager.h"
 
 void loadButtons(UmButtons& buttons);
 void loadStatics(UmStatics& statics);
@@ -486,7 +487,33 @@ void writePieceDmg(Batch *batch, PieceSprite& piece)
     batch->str(font, dmg_str, Vec2(620, 640), Color::black);
 }
 
-void Login::runSetup()
+int Login::runSetup(DBManager& dbManager)
 {
-
+    int op=0;
+    std::cout <<"Escoja opcion:"<<std::endl;
+    std::cout <<"1) Iniciar sesion:"<<std::endl;
+    std::cout <<"2) Registrarse"<<std::endl;
+    std::cout <<"3) Salir"<<std::endl;
+    std::cin >>op;
+    char* name=new char[20];
+    char* password=new char[20];;
+    if (op==1){
+        std::cout <<"Introduzca nombre de usuario"<<std::endl;
+        std::cin >>name;
+        std::cout <<"Introduzca contraseña:"<<std::endl;
+        std::cin >>password;
+        User user=dbManager.validateUser(name, password);
+        std::cout <<user.getUsername()<<std::endl;
+        return 1;
+    } else if (op==2){
+        std::cout <<"Introduzca nombre de usuario"<<std::endl;
+        std::cin >>name;
+        std::cout <<"Introduzca contraseña:"<<std::endl;
+        std::cin >>password;
+        User user=User(name,password,0,0,0,NULL);
+        std::cout <<user.getUsername()<<std::endl;
+        return 1;
+    } else{
+        return 0;
+    }
 }

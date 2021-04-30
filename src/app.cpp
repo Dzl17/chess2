@@ -71,21 +71,20 @@ void dispose()
     delete dbManager;
 }
 
-int main()
-{
-    dbManager = new DBManager((char*) "../data/database.db");
-    Login::runSetup(); // Inicio de sesión, base de datos
-
-    Config config;
-    config.name = "Chess 2";
-    config.width = 1280;
-    config.height = 720;
-    config.on_startup = startup;
-    config.on_update = update;
-    config.on_render = render;
-    config.on_shutdown = dispose;
-    config.target_framerate = 60;
-
-    App::run(&config);
+int main() {
+    dbManager = new DBManager((char *) "../data/database.db");
+    int op = Login::runSetup(*dbManager); // Inicio de sesión, base de datos
+    if (op != 0) {
+        Config config;
+        config.name = "Chess 2";
+        config.width = 1280;
+        config.height = 720;
+        config.on_startup = startup;
+        config.on_update = update;
+        config.on_render = render;
+        config.on_shutdown = dispose;
+        config.target_framerate = 60;
+        App::run(&config);
+    }
     return 0;
 }
