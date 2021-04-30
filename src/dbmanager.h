@@ -14,12 +14,12 @@ public:
     explicit DBManager(char *database);
     ~DBManager();
 
-    User validateUser(char* username, char* password);
-
-    void addUser(User user);
-
+    User loadUser(char* username, char* password);
+    void addNewUser(char* username, char* password);
     void updateUserData(User user);
 
+    int getHighestUserId();
+    int getHighestFormId();
 };
 
 

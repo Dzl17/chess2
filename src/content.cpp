@@ -489,29 +489,27 @@ void writePieceDmg(Batch *batch, PieceSprite& piece)
 
 int Login::runSetup(DBManager& dbManager)
 {
-    int op=0;
-    std::cout <<"Escoja opcion:"<<std::endl;
-    std::cout <<"1) Iniciar sesion:"<<std::endl;
-    std::cout <<"2) Registrarse"<<std::endl;
-    std::cout <<"3) Salir"<<std::endl;
-    std::cin >>op;
-    char* name=new char[20];
-    char* password=new char[20];;
-    if (op==1){
-        std::cout <<"Introduzca nombre de usuario"<<std::endl;
-        std::cin >>name;
-        std::cout <<"Introduzca contraseña:"<<std::endl;
-        std::cin >>password;
-        User user=dbManager.validateUser(name, password);
-        std::cout <<user.getUsername()<<std::endl;
+    int op = 0;
+    std::cout << "Choose an option:" << std::endl;
+    std::cout << "1) Log in" << std::endl;
+    std::cout << "2) Register" << std::endl;
+    std::cout << "3) Exit" << std::endl;
+    std::cin >> op;
+    char *name = new char[20];
+    char *password = new char[20];;
+    if (op == 1) {
+        std::cout << "Username: ";
+        std::cin >> name;
+        std::cout << "Password: ";
+        std::cin >> password;
+        User user = dbManager.loadUser(name, password);
         return 1;
-    } else if (op==2){
-        std::cout <<"Introduzca nombre de usuario"<<std::endl;
-        std::cin >>name;
-        std::cout <<"Introduzca contraseña:"<<std::endl;
-        std::cin >>password;
-        User user=User(name,password,0,0,0,NULL);
-        std::cout <<user.getUsername()<<std::endl;
+    } else if (op == 2){
+        std::cout << "Username: ";
+        std::cin >> name;
+        std::cout << "Password: ";
+        std::cin >> password;
+        dbManager.addNewUser(name, password);
         return 1;
     } else{
         return 0;

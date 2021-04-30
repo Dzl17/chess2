@@ -3,72 +3,147 @@
 #include "dbmanager.h"
 
 DBManager::DBManager(char *database) {
-    sqlite3_open(database, &this->db);
+    int result = sqlite3_open(database, &this->db);
+    if (result != SQLITE_OK) {
+        std::cout << "DB ERROR" << std::endl;
+    }
 }
 
 DBManager::~DBManager() {
     sqlite3_close(this->db);
 }
 
-User DBManager::validateUser(char* username, char* password){
+User DBManager::loadUser(char* username, char* password){
     sqlite3_stmt *stmt;
-    char sql[]="select * from USER where username=? and password=?";
-    int result =sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
-    result= sqlite3_bind_text(stmt,1,username,strlen(username),SQLITE_STATIC);
-    result= sqlite3_bind_text(stmt,2,password,strlen(password),SQLITE_STATIC);
-    char **forms = (char**)malloc(4*sizeof(char*));
-    User user = User(nullptr, nullptr, 0, 0, 0, forms);
-    if (result == SQLITE_OK){
-        result = sqlite3_step(stmt) ;
-        user=User((char *) sqlite3_column_text(stmt, 1),(char *) sqlite3_column_text(stmt, 2),
-                  sqlite3_column_int(stmt, 3),sqlite3_column_int(stmt, 4),sqlite3_column_int(stmt, 5),
-                  nullptr);
-        user.setId(sqlite3_column_int(stmt, 0));
+    int rc;
+
+    char sql1[] = "SELECT username, elo, wins, losses, user_id FROM USER WHERE username=? AND password=?"; // Sentencia SQL
+
+    // Preparar y ejecutar consulta 1
+    rc = sqlite3_prepare_v2(db, sql1, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) std::cout << "PREPARE 1 ERROR" << std::endl;
+
+    rc = sqlite3_bind_text(stmt, 1, username, strlen(username), SQLITE_STATIC);
+    if (rc != SQLITE_OK) std::cout << "BIND 1 ERROR" << std::endl;
+    rc = sqlite3_bind_text(stmt, 2, password, strlen(password), SQLITE_STATIC);
+    if (rc != SQLITE_OK) std::cout << "BIND 2 ERROR" << std::endl;
+
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_ROW && rc != SQLITE_DONE) std::cout << "STEP 1 ERROR" << std::endl; // TODO comprobar si el usuario está vacío
+
+    // Sacar datos de la consulta 1
+    char *temp_username = (char *) sqlite3_column_text(stmt, 0);
+    int temp_elo = sqlite3_column_int(stmt, 1);
+    int temp_wins = sqlite3_column_int(stmt, 2);
+    int temp_losses = sqlite3_column_int(stmt, 3);
+    int temp_id = sqlite3_column_int(stmt, 4);
+
+
+    char sql2[] = "SELECT formation FROM FORMS WHERE user_id=?";
+
+    // Preparar y ejecutar consulta 2
+    rc = sqlite3_prepare_v2(db, sql2, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) std::cout << "PREPARE 2 ERROR" << std::endl;
+
+    rc = sqlite3_bind_int(stmt, 1, temp_id);
+    if (rc != SQLITE_OK) std::cout << "BIND 3 ERROR" << std::endl;
+
+    char **forms = new char*[4];
+    for (int i = 0; i < 4; i++) forms[i] = new char[21];
+    int i = 0;
+    do {
+        rc = sqlite3_step(stmt);
+        if (rc == SQLITE_DONE) break; // Si se acaba la consulta
+        strncpy(forms[i], (char*) sqlite3_column_text(stmt, 0), 21); // Copiar formación
+        i++;
+    } while (rc == SQLITE_ROW);
+    if (i < 4) { // Rellenar formaciones inexistentes (debe haber 4)
+        char emptyForm[21] = {'e','e','e','e','e','e','e','e','e','N','e','e','e','e','e','e','e','e','e','e','e'};
+        for (int j = i; j < 4; j++) strncpy(forms[i], emptyForm, 21);
     }
-    char sql1[]= "select * from FORMS where user_id=?";
-    result =sqlite3_prepare_v2(db, sql1, -1, &stmt, NULL);
-    result= sqlite3_bind_int(stmt,1,user.getId());
-    char*formaciones;
-    int i=0;
-    if (result == SQLITE_OK){
-        do  {
-            result=sqlite3_step(stmt);
-            if (result==SQLITE_ROW){
-                formaciones= (char *) sqlite3_column_text(stmt, 1);
-                forms[i]=formaciones;
-                std::cout <<forms[i]<<std::endl;
-                i++;
-            }
-        }while (result == SQLITE_ROW);
-        user.setForms(forms);
-    }
-    return user;
+    sqlite3_finalize(stmt);
+    return User(temp_username, temp_elo, temp_wins, temp_losses, forms);
 }
 
-void DBManager::addUser(User user){
+void DBManager::addNewUser(char* username, char* password){
     sqlite3_stmt *stmt;
-    char sql[]="insert into USERS values (?,?,?,?,?,?)";
-    int result =sqlite3_prepare_v2(db, sql, strlen(sql) + 1, &stmt, NULL);
-    result=sqlite3_bind_int(stmt,0,user.getId());
-    result= sqlite3_bind_text(stmt,1,user.getUsername(),strlen(user.getUsername()),SQLITE_STATIC);
-    result= sqlite3_bind_text(stmt,2,user.getPassword(),strlen(user.getUsername()),SQLITE_STATIC);
-    result= sqlite3_bind_int(stmt,3,user.getElo());
-    result= sqlite3_bind_int(stmt,4,user.getWins());
-    result= sqlite3_bind_int(stmt,5,user.getLoses());
-    result=sqlite3_step(stmt);
-    sqlite3_finalize(stmt);
-    /*
+    int rc;
+
+    // Usuario
+    char sql1[] = "insert into USER values (?,?,?,0,0,0)";
+    rc = sqlite3_prepare_v2(db, sql1, strlen(sql1) + 1, &stmt, NULL);
+    if (rc != SQLITE_OK) std::cout << "PREPARE 1 ERROR" << std::endl;
+
+    int newUserId = this->getHighestUserId() + 1;
+    rc = sqlite3_bind_int(stmt, 1, newUserId);
+    if (rc != SQLITE_OK) std::cout << "BIND 1 ERROR" << std::endl;
+    rc = sqlite3_bind_text(stmt,2,username,strlen(username),SQLITE_STATIC);
+    if (rc != SQLITE_OK) std::cout << "BIND 2 ERROR" << std::endl;
+    rc = sqlite3_bind_text(stmt,3,password,strlen(password),SQLITE_STATIC);
+    if (rc != SQLITE_OK) std::cout << "BIND 3 ERROR" << std::endl;
+
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_ROW && rc != SQLITE_DONE) std::cout << "STEP 1 ERROR" << std::endl;
+
+    // Formaciones
+    char emptyForm[21] = {'e','e','e','e','e','e','e','e','e','N','e','e','e','e','e','e','e','e','e','e','e'};
     for (int i = 0; i < 4; ++i) {
-    char sql1[]="insert into FORMS values (?,?,?)";
-        result= sqlite3_bind_int(stmt,0,i);
-        result= sqlite3_bind_text(stmt,1,user.getForms()[i],strlen(user.getForms()[i]),SQLITE_STATIC);
-        result= sqlite3_bind_int(stmt,2,user.getId());
-        result=sqlite3_step(stmt);
+        char sql2[] = "INSERT INTO FORMS VALUES (?,?,?)";
+
+        rc = sqlite3_prepare_v2(db, sql2, strlen(sql2) + 1, &stmt, NULL);
+        if (rc != SQLITE_OK) std::cout << "PREPARE 2 ERROR" << std::endl;
+
+        rc = sqlite3_bind_int(stmt, 1, getHighestFormId() + 1);
+        if (rc != SQLITE_OK) std::cout << "BIND 4 ERROR" << std::endl;
+        rc = sqlite3_bind_text(stmt, 2, emptyForm, strlen(emptyForm),SQLITE_STATIC);
+        if (rc != SQLITE_OK) std::cout << "BIND 5 ERROR" << std::endl;
+        rc = sqlite3_bind_int(stmt, 3, newUserId);
+        if (rc != SQLITE_OK) std::cout << "BIND 6 ERROR" << std::endl;
+
+        rc = sqlite3_step(stmt);
+        if (rc != SQLITE_ROW && rc != SQLITE_DONE) std::cout << "STEP 2 ERROR" << std::endl;
     }
     sqlite3_finalize(stmt);
-    */
 }
 
-void updateUserData(sqlite3 *db, User user){
+void DBManager::updateUserData(User user){
 
+}
+
+int DBManager::getHighestUserId()
+{
+    sqlite3_stmt *stmt;
+    int rc;
+
+    char sql[] = "SELECT user_id FROM USER WHERE user_id = (SELECT MAX(user_ID) FROM USER)"; // Sentencia SQL
+
+    // Preparar y ejecutar consulta
+    rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) std::cout << "PREPARE ERROR" << std::endl;
+
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_ROW && rc != SQLITE_DONE) std::cout << "STEP ERROR" << std::endl;
+
+    int value = sqlite3_column_int(stmt, 0);
+    sqlite3_finalize(stmt);
+    return value;
+}
+
+int DBManager::getHighestFormId()
+{
+    sqlite3_stmt *stmt;
+    int rc;
+
+    char sql[] = "SELECT form_id FROM FORMS WHERE form_id = (SELECT MAX(form_ID) FROM FORMS)";
+
+    // Preparar y ejecutar consulta
+    rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) std::cout << "PREPARE ERROR" << std::endl;
+
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_ROW && rc != SQLITE_DONE) std::cout << "STEP ERROR" << std::endl;
+
+    int value = sqlite3_column_int(stmt, 0);
+    sqlite3_finalize(stmt);
+    return value;
 }

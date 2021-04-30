@@ -1,12 +1,10 @@
-#include <iostream>
+#include <cstring>
 #include "user.h"
 
 char* User::getUsername(){
     return this->username;
 }
-char* User::getPassword(){
-    return this->password;
-}
+
 int User::getElo(){
     return this->elo;
 }
@@ -15,12 +13,6 @@ int User::getWins(){
 }
 int User::getLoses(){
     return this->loses;
-}
-int User::getId(){
-    return this->id;
-}
-void User::setId(int id){
-    this->id=id;
 }
 char** User::getForms(){
     return this->forms;
@@ -31,8 +23,10 @@ void User::addWin(){
 void User::addLose(){
     this->loses++;
 }
-void User::setForms(char** forms){
-    this->forms= forms;
+void User::setForms(char **formArr){
+    for (int i = 0; i < 4; i++) {
+        strncpy(this->forms[i], formArr[i], 21);
+    }
 }
 void User::calculateElo(int enemyRating,bool win){
     if (win){
@@ -42,4 +36,13 @@ void User::calculateElo(int enemyRating,bool win){
         this->elo-=400+enemyRating;
     }
     this->elo= this->elo/(wins+loses);
+}
+
+User::User(char *username, int elo, int wins, int loses, char **forms)
+{
+    this->username = username;
+    this->elo = elo;
+    this->wins = wins;
+    this->loses = loses;
+    this->forms = forms;
 }

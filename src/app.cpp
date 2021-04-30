@@ -1,10 +1,6 @@
 #include <blah.h>
 #include <unordered_map>
 #include "content.h"
-#include "dbmanager.h"
-extern "C" {
-    #include "game/chess2.h"
-}
 
 using namespace Blah;
 
