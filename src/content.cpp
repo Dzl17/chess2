@@ -6,6 +6,7 @@ void loadButtons(UmButtons& buttons);
 void loadStatics(UmStatics& statics);
 void loadPieceCoords(Game *gameRef, VcPieces& pieces);
 void loadDPSprites();
+void loadDPSPositions();
 void resetDPSprites();
 
 void renderPieceData(Batch *batch, VcPieces& pieces, UmStatics& statics, Game game);
@@ -19,6 +20,7 @@ bool isFormValid(const char *form);
 void writeFormSetPos(Batch *batch, FormationSet& formSet);
 void writePieceHp(Batch *batch, PieceSprite& piece);
 void writePieceDmg(Batch *batch, PieceSprite& piece);
+void writeUserData(Batch *batch, User user);
 
 SpriteFont font;
 std::map<int, DraggablePieceSprite*> dpSprites;
@@ -41,6 +43,8 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         statics["mainMenu"]->draw(batch); // Fondo
         buttons["playMenuButton"]->draw(batch);
         buttons["formsMenuButton"]->draw(batch);
+        buttons["skinButton"]->draw(batch);
+        buttons["userButton"]->draw(batch);
         buttons["exitMenuButton"]->draw(batch);
     }
     else if (screen == kFormSelectionMenu) { // Selección de formación
@@ -91,18 +95,25 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         for (auto & piece:dpSprites) piece.second->draw(batch);
         writeFormSetPos(batch, user.formationSet);
     }
+    else if (screen == kUserInfoMenu) {
+        statics["emptyBackground"]->draw(batch); // Fondo
+        buttons["backButton"]->draw(batch);
+        writeUserData(batch, user);
+    }
 }
 
 void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, Screen& screen, User& user)
 {
     for (auto & button : buttons) button.second->update();
 
-    if (screen == 0) {
+    if (screen == kMainMenu) {
         if (buttons["playMenuButton"]->isClicked() || Input::pressed(Key::P)) screen = kFormSelectionMenu; // Play
         if (buttons["formsMenuButton"]->isClicked() || Input::pressed(Key::F)) {
             screen = kFormEditionSelectionMenu; // Forms
             user.formationSet.index = 4;
         }
+        if (buttons["skinButton"]->isClicked() || Input::pressed(Key::S)) std::cout << "S" << std::endl; // TODO
+        if (buttons["userButton"]->isClicked() || Input::pressed(Key::U)) screen = kUserInfoMenu; // Exit
         if (buttons["exitMenuButton"]->isClicked() || Input::pressed(Key::Escape)) App::exit(); // Exit
 
         buttons["playMenuButton"]->setY((int) (buttons["playMenuButton"]->getY() +
@@ -110,10 +121,14 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
                                                4)); // Movimiento de los botones de inicio
         buttons["formsMenuButton"]->setY((int) (buttons["formsMenuButton"]->getY() +
                                                 (444 - buttons["formsMenuButton"]->getY()) * (double) Time::delta * 4));
+        buttons["skinButton"]->setY((int) (buttons["skinButton"]->getY() +
+                                               (560 - buttons["skinButton"]->getY()) * (double) Time::delta * 4));
+        buttons["userButton"]->setY((int) (buttons["userButton"]->getY() +
+                                               (560 - buttons["userButton"]->getY()) * (double) Time::delta * 4));
         buttons["exitMenuButton"]->setY((int) (buttons["exitMenuButton"]->getY() +
                                                (560 - buttons["exitMenuButton"]->getY()) * (double) Time::delta * 4));
     }
-    else if (screen == 1) {
+    else if (screen == kFormSelectionMenu) {
         if (buttons["leftArrowButton"]->isClicked()) {
             if (user.formationSet.index == 0) user.formationSet.index = user.formationSet.size - 1;
             else user.formationSet.index--;
@@ -135,7 +150,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
             screen = kMainMenu;
         }
     }
-    else if (screen == 2) {
+    else if (screen == kMainGame) {
         for (auto & piece : pieces) piece.update();
 
         for (auto & nexus : nexuses) nexus.update();
@@ -146,9 +161,14 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
             loadPieceCoords(game, pieces);
         }
         if (buttons["exitGameButton"]->isClicked() || Input::pressed(Key::Escape)) App::exit();
-        if (game->nexus1hp <= 0 || game->nexus2hp <= 0) screen = kMainMenu;
+        if (game->nexus1hp <= 0 || game->nexus2hp <= 0) {
+            if (game->nexus2hp <= 0) user.addWin();
+            else user.addLose();
+            user.calculateElo(1000, game->nexus2hp <= 0);
+            screen = kMainMenu;
+        }
     }
-    else if (screen == 3) {
+    else if (screen == kFormEditionSelectionMenu) {
         if (buttons["leftArrowButton"]->isClicked()) {
             if (user.formationSet.index == 4) user.formationSet.index = user.formationSet.size - 1;
             else user.formationSet.index--;
@@ -162,80 +182,13 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
 
             // TODO ajustar piezas a formBuffer y pasar a función aparte
             strncpy(DraggablePieceSprite::formBuffer, user.formationSet.forms[user.formationSet.index], 21);
-
-            Vec2 collBuffer[FORM_LENGTH];
-            int x = 544;
-            int y = 104;
-            for (int i = 0; i < FORM_LENGTH; i++) {
-                collBuffer[i] = Vec2(x, y);
-                if ((i+1)%3 == 0) {
-                    x = 544;
-                    y += 64;
-                } else {
-                    x += 64;
-                }
-            }
-
-            int s = 1;
-            int w = 5;
-            int a = 8;
-            int g = 11;
-            for (int i = 0; i < FORM_LENGTH; i++) {
-                switch(DraggablePieceSprite::formBuffer[i]) {
-                    case 's':
-                        for (auto & dps:dpSprites) {
-                            if (dps.second->getId() == s) {
-                                dps.second->setX((int) collBuffer[i].x);
-                                dps.second->setY((int) collBuffer[i].y);
-                                dps.second->setCurrIndex(i);
-                                s++;
-                                break;
-                            }
-                        }
-                        break;
-                    case 'w':
-                        for (auto & dps:dpSprites) {
-                            if (dps.second->getId() == w) {
-                                dps.second->setX((int) collBuffer[i].x);
-                                dps.second->setY((int) collBuffer[i].y);
-                                dps.second->setCurrIndex(i);
-                                w++;
-                                break;
-                            }
-                        }
-                        break;
-                    case 'a':
-                        for (auto & dps:dpSprites) {
-                            if (dps.second->getId() == a) {
-                                dps.second->setX((int) collBuffer[i].x);
-                                dps.second->setY((int) collBuffer[i].y);
-                                dps.second->setCurrIndex(i);
-                                a++;
-                                break;
-                            }
-                        }
-                        break;
-                    case 'g':
-                        for (auto & dps:dpSprites) {
-                            if (dps.second->getId() == g) {
-                                dps.second->setX((int) collBuffer[i].x);
-                                dps.second->setY((int) collBuffer[i].y);
-                                dps.second->setCurrIndex(i);
-                                g++;
-                                break;
-                            }
-                        }
-                        break;
-                    default:
-                        continue;
-                }
-            }
+            loadDPSPositions();
         }
         if (buttons["backButton"]->isClicked()) {
             screen = kMainMenu;
         }
     }
-    else if (screen == 4) {
+    else if (screen == kFormEditionMenu) {
         for (auto & piece:dpSprites) piece.second->update();
         if (buttons["saveButton"]->isClicked()) {
             user.formationSet.forms[user.formationSet.index] = DraggablePieceSprite::formBuffer;
@@ -251,37 +204,45 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
         if (Input::pressed(Key::Enter)) screen = kMainMenu;
         if (Input::pressed(Key::Escape)) App::exit();
     }
+    else if (screen == kUserInfoMenu) {
+        if (Input::pressed(Key::Escape)) App::exit();
+        if (buttons["backButton"]->isClicked() ||Input::pressed(Key::B)) screen = kMainMenu;
+    }
 }
 
 void loadButtons(UmButtons& buttons)
 {
-    buttons.insert({"playMenuButton", new GuiButton(512, 1128, 256, 108, // Play (menu)
+    buttons.insert({"playMenuButton",   new GuiButton(512, 1128, 256, 108, // Play (menu)
                                                     "data/img/buttons/playMenuButtonIdle.png", "data/img/buttons/playMenuButtonPressed.png")});
-    buttons.insert({"formsMenuButton", new GuiButton(512, 1544, 256, 108, // Forms (menu)
+    buttons.insert({"formsMenuButton",  new GuiButton(512, 1544, 256, 108, // Forms (menu)
                                                      "data/img/buttons/formsMenuButtonIdle.png", "data/img/buttons/formsMenuButtonPressed.png")});
-    buttons.insert({"exitMenuButton", new GuiButton(512, 1960, 256, 108, // Exit (menu)
-                                                    "data/img/buttons/exitMenuButtonIdle.png", "data/img/buttons/exitMenuButtonPressed.png")});
+    buttons.insert({"skinButton",       new GuiButton(512, 1960, 80, 108, // Exit (menu)
+                                                      "data/img/buttons/skinButtonIdle.png", "data/img/buttons/skinButtonPressed.png")});
+    buttons.insert({"userButton",       new GuiButton(600, 1960, 80, 108, // Exit (menu)
+                                                      "data/img/buttons/userButtonIdle.png", "data/img/buttons/userButtonPressed.png")});
+    buttons.insert({"exitMenuButton",   new GuiButton(688, 1960, 80, 108, // Exit (menu)
+                                                    "data/img/buttons/smallExitButtonIdle.png", "data/img/buttons/smallExitButtonPressed.png")});
 
-    buttons.insert({"leftArrowButton", new GuiButton(352, 264, 128, 128,
+    buttons.insert({"leftArrowButton",  new GuiButton(352, 264, 128, 128,
                                                      "data/img/buttons/leftArrowIdle.png", "data/img/buttons/leftArrowPressed.png")});
     buttons.insert({"rightArrowButton", new GuiButton(800, 264, 128, 128,
                                                       "data/img/buttons/rightArrowIdle.png", "data/img/buttons/rightArrowPressed.png")});
-    buttons.insert({"startButton", new GuiButton(512, 586, 256, 108,
+    buttons.insert({"startButton",      new GuiButton(512, 586, 256, 108,
                                                  "data/img/buttons/startButtonIdle.png", "data/img/buttons/startButtonPressed.png")});
-    buttons.insert({"editButton", new GuiButton(512, 586, 256, 108,
+    buttons.insert({"editButton",       new GuiButton(512, 586, 256, 108,
                                                  "data/img/buttons/editButtonIdle.png", "data/img/buttons/editButtonPressed.png")});
-    buttons.insert({"saveButton", new GuiButton(512, 586, 256, 108,
+    buttons.insert({"saveButton",       new GuiButton(512, 586, 256, 108,
                                                 "data/img/buttons/saveButtonIdle.png", "data/img/buttons/saveButtonPressed.png")});
-    buttons.insert({"resetButton", new GuiButton(436, 602, 64, 76,
+    buttons.insert({"resetButton",      new GuiButton(436, 602,  64,  76,
                                                 "data/img/buttons/resetButtonIdle.png", "data/img/buttons/resetButtonPressed.png")});
-    buttons.insert({"backButton", new GuiButton(780, 602, 64, 76,
+    buttons.insert({"backButton",       new GuiButton(780, 602,  64,  76,
                                                 "data/img/buttons/backButtonIdle.png", "data/img/buttons/backButtonPressed.png")});
 
-    buttons.insert({"helpGameButton", new GuiButton(16, 16, 224, 80, // Help (game)
+    buttons.insert({"helpGameButton",   new GuiButton( 16,  16, 224,  80, // Help (game)
                                                     "data/img/buttons/helpButtonIdle.png", "data/img/buttons/helpButtonPressed.png")});
-    buttons.insert({"menuGameButton", new GuiButton(16, 112, 224, 80, // Menu (game)
+    buttons.insert({"menuGameButton",   new GuiButton( 16, 112, 224,  80, // Menu (game)
                                                     "data/img/buttons/menuButtonIdle.png", "data/img/buttons/menuButtonPressed.png")});
-    buttons.insert({"exitGameButton", new GuiButton(16, 208, 224, 80, // Exit (game)
+    buttons.insert({"exitGameButton",   new GuiButton( 16, 208, 224,  80, // Exit (game)
                                                     "data/img/buttons/exitButtonIdle.png", "data/img/buttons/exitButtonPressed.png")});
 
 }
@@ -292,6 +253,7 @@ void loadStatics(UmStatics& statics)
     statics.insert({"backgroundB",       new StaticSprite(0,     0, "data/img/backgroundB.png",         true)});
     statics.insert({"formsBackground",   new StaticSprite(0,     0, "data/img/formsBackground.png",     true)});
     statics.insert({"choosingBackground",new StaticSprite(0,     0, "data/img/choosingBackground.png",  true)});
+    statics.insert({"emptyBackground",   new StaticSprite(0,     0, "data/img/emptyBackground.png",     true)});
     statics.insert({"helpMenu",          new StaticSprite(320,  64, "data/img/helpmenu.png",            false)});
     statics.insert({"spearmanLIcon",     new StaticSprite(480, 556, "data/img/icons/spearmanLIcon.png", true)});
     statics.insert({"spearmanRIcon",     new StaticSprite(480, 556, "data/img/icons/spearmanRIcon.png", true)});
@@ -346,6 +308,77 @@ void loadDPSprites()
             y += 80;
         } else {
             x += 80;
+        }
+    }
+}
+
+void loadDPSPositions()
+{
+    Vec2 collBuffer[FORM_LENGTH];
+    int x = 544;
+    int y = 104;
+    for (int i = 0; i < FORM_LENGTH; i++) {
+        collBuffer[i] = Vec2(x, y);
+        if ((i+1)%3 == 0) {
+            x = 544;
+            y += 64;
+        } else {
+            x += 64;
+        }
+    }
+
+    int s = 1;
+    int w = 5;
+    int a = 8;
+    int g = 11;
+    for (int i = 0; i < FORM_LENGTH; i++) {
+        switch(DraggablePieceSprite::formBuffer[i]) {
+            case 's':
+                for (auto & dps:dpSprites) {
+                    if (dps.second->getId() == s) {
+                        dps.second->setX((int) collBuffer[i].x);
+                        dps.second->setY((int) collBuffer[i].y);
+                        dps.second->setCurrIndex(i);
+                        s++;
+                        break;
+                    }
+                }
+                break;
+            case 'w':
+                for (auto & dps:dpSprites) {
+                    if (dps.second->getId() == w) {
+                        dps.second->setX((int) collBuffer[i].x);
+                        dps.second->setY((int) collBuffer[i].y);
+                        dps.second->setCurrIndex(i);
+                        w++;
+                        break;
+                    }
+                }
+                break;
+            case 'a':
+                for (auto & dps:dpSprites) {
+                    if (dps.second->getId() == a) {
+                        dps.second->setX((int) collBuffer[i].x);
+                        dps.second->setY((int) collBuffer[i].y);
+                        dps.second->setCurrIndex(i);
+                        a++;
+                        break;
+                    }
+                }
+                break;
+            case 'g':
+                for (auto & dps:dpSprites) {
+                    if (dps.second->getId() == g) {
+                        dps.second->setX((int) collBuffer[i].x);
+                        dps.second->setY((int) collBuffer[i].y);
+                        dps.second->setCurrIndex(i);
+                        g++;
+                        break;
+                    }
+                }
+                break;
+            default:
+                continue;
         }
     }
 }
@@ -540,6 +573,48 @@ void writePieceDmg(Batch *batch, PieceSprite& piece)
     char dmg_str[64] = "DMG:";
     strcat(dmg_str, dmg_int_str);
     batch->str(font, dmg_str, Vec2(620, 640), Color::black);
+}
+
+void writeUserData(Batch *batch, User user)
+{
+    int offset = 0;
+    if (strlen(user.getUsername()) <= 14) {
+        char usr_str[64] = "User: ";
+        strcat(usr_str, user.getUsername());
+        batch->str(font, usr_str, Vec2(450, 206), Color::white);
+    } else {
+        offset = 44;
+        char usr_str_1[64] = "User: ";
+        char usr_sub_1[8];
+        strncpy(usr_sub_1, user.getUsername(), 7);
+        strcat(usr_str_1, usr_sub_1);
+        strcat(usr_str_1, "-");
+        batch->str(font, usr_str_1, Vec2(450, 206), Color::white);
+
+        char usr_str_2[64] = "";
+        char usr_sub_2[14];
+        std::copy(user.getUsername() + 7, user.getUsername() + strlen(user.getUsername()), usr_sub_2);
+        strcat(usr_str_2, usr_sub_2);
+        batch->str(font, usr_str_2, Vec2(450, 206 + offset), Color::white);
+    }
+
+    char elo_str[64] = "Elo: ";
+    char elo_num[8];
+    sprintf(elo_num, "%d", user.getElo());
+    strcat(elo_str, elo_num);
+    batch->str(font, elo_str, Vec2(450, 250 + offset), Color::white);
+
+    char wins_str[64] = "Wins: ";
+    char wins_num[8];
+    sprintf(wins_num, "%d", user.getWins());
+    strcat(wins_str, wins_num);
+    batch->str(font, wins_str, Vec2(454, 294 + offset), Color::white);
+
+    char losses_str[64] = "Losses: ";
+    char losses_num[8];
+    sprintf(losses_num, "%d", user.getLosses());
+    strcat(losses_str, losses_num);
+    batch->str(font, losses_str, Vec2(446, 338 + offset), Color::white);
 }
 
 User* Login::runSetup(DBManager& dbManager)

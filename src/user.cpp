@@ -18,8 +18,8 @@ int User::getWins() const{
     return this->wins;
 }
 
-int User::getLoses() const{
-    return this->loses;
+int User::getLosses() const{
+    return this->losses;
 }
 
 char** User::getForms() const{
@@ -31,7 +31,7 @@ void User::addWin(){
 }
 
 void User::addLose(){
-    this->loses++;
+    this->losses++;
 }
 
 void User::setForms(char **formArr) const{
@@ -40,14 +40,14 @@ void User::setForms(char **formArr) const{
     }
 }
 
-void User::calculateElo(int enemyRating,bool win){
+void User::calculateElo(int enemyRating, bool win){
     if (win){
-        this->elo+=400+enemyRating;
+        this->elo += 400 + enemyRating;
     }
     else {
-        this->elo-=400+enemyRating;
+        this->elo -= 400 + enemyRating;
     }
-    this->elo= this->elo/(wins+loses);
+    this->elo = this->elo/(wins+losses);
 }
 
 User::User(char *username, int elo, int wins, int loses, char **forms)
@@ -55,7 +55,7 @@ User::User(char *username, int elo, int wins, int loses, char **forms)
     this->username = username;
     this->elo = elo;
     this->wins = wins;
-    this->loses = loses;
+    this->losses = loses;
     char** tempforms = new char*[8];
     for (int i = 0; i < 8; i++) tempforms[i] = new char[FORM_LENGTH];
     for (int i = 0; i < 4; i++) {

@@ -15,11 +15,12 @@ extern "C" {
 }
 
 enum Screen {
-    kMainMenu,
-    kFormSelectionMenu,
-    kMainGame,
-    kFormEditionSelectionMenu,
-    kFormEditionMenu
+    kMainMenu,                  // Menú principal
+    kFormSelectionMenu,         // Selección de formación para jugar
+    kMainGame,                  // Juego principal
+    kFormEditionSelectionMenu,  // Selección de formación para modificar
+    kFormEditionMenu,           // Edición de formación
+    kUserInfoMenu               // Información de usuario
 };
 
 using namespace Blah;
@@ -28,15 +29,6 @@ using UmStatics = std::unordered_map<std::string, StaticSprite*>;
 using UmButtons = std::unordered_map<std::string, GuiButton*>;
 using VcPieces = std::vector<PieceSprite>;
 using VcNexuses = std::vector<NexusSprite>;
-
-/*
- * La enum 'screen' denota qué pantalla debe dibujarse:
- * 0 - Menú principal
- * 1 - Selección de formación
- * 2 - Juego principal
- * 3 - Elegir formación de usuario a modificar
- * 4 - Crear formación
- */
 
 namespace Assets {
     void load(UmStatics& statics, UmButtons& buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, Screen& screen, User& user);
@@ -48,4 +40,4 @@ namespace Login {
     User *runSetup(DBManager& dbManager);
 }
 
-#endif //CHESS2_CONTENT_H
+#endif

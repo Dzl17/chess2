@@ -119,7 +119,7 @@ void DBManager::updateUserData(User user){
     if (rc != SQLITE_OK) std::cout << "BIND 1 ERROR" << std::endl;
     rc = sqlite3_bind_int(stmt, 2, user.getWins());
     if (rc != SQLITE_OK) std::cout << "BIND 2 ERROR" << std::endl;
-    rc = sqlite3_bind_int(stmt, 3, user.getLoses());
+    rc = sqlite3_bind_int(stmt, 3, user.getLosses());
     if (rc != SQLITE_OK) std::cout << "BIND 3 ERROR" << std::endl;
     rc = sqlite3_bind_text(stmt, 4, user.getUsername(), strlen(user.getUsername()),SQLITE_STATIC);
     if (rc != SQLITE_OK) std::cout << "BIND 4 ERROR" << std::endl;

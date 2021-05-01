@@ -9,13 +9,13 @@ typedef struct {
 class User {
 private:
     char* username;
-    int elo, wins, loses;
+    int elo, wins, losses;
 public:
     FormationSet formationSet = {};
     char* getUsername();
     int getElo() const;
     int getWins() const;
-    int getLoses() const;
+    int getLosses() const;
     char** getForms() const;
     void addWin();
     void addLose();
