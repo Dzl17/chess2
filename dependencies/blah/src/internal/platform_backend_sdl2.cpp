@@ -91,7 +91,7 @@ bool PlatformBackend::init(const Config* config)
 	// Get SDL version
 	SDL_version version;
 	SDL_GetVersion(&version);
-	Log::info("SDL v%i.%i.%i", version.major, version.minor, version.patch);
+	//Log::info("SDL v%i.%i.%i", version.major, version.minor, version.patch);
 
 	// initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER) != 0)

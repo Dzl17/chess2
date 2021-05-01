@@ -67,4 +67,5 @@ User::User(char *username, int elo, int wins, int loses, char **forms)
         strncpy(tempforms[i], forms[i-4], 21);
     }
     this->formationSet = {tempforms,8,0};
+    delete forms;
 }

@@ -1,7 +1,7 @@
 #include "draggablePieceSprite.h"
 
 bool DraggablePieceSprite::grabFlag = false;
-char *DraggablePieceSprite::formBuffer = new char(FORM_LENGTH);
+char *DraggablePieceSprite::formBuffer = new char[FORM_LENGTH];
 
 bool rectCollMouse(int x, int y, Vec2 m);
 int getCollidedIndex();

@@ -561,10 +561,14 @@ User* Login::runSetup(DBManager& dbManager)
             User *user;
             user = dbManager.loadUser(username, password);
             std::cout << "Welcome, " << user->getUsername() << "." << std::endl;
+            delete[] username;
+            delete[] password;
             return user;
         }
         else {
             std::cout << "User " << username << " not found." << std::endl;
+            delete[] username;
+            delete[] password;
             return nullptr;
         }
     } else if (op == 2){

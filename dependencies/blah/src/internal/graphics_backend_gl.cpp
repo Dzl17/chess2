@@ -1127,9 +1127,7 @@ namespace Blah
 		gl.GetIntegerv(0x0D33, &gl.max_texture_size);
 
 		// log
-		Log::info("OpenGL %s, %s",
-			gl.GetString(GL_VERSION),
-			gl.GetString(GL_RENDERER));
+		//Log::info("OpenGL %s, %s", gl.GetString(GL_VERSION), gl.GetString(GL_RENDERER));
 
 		// don't include row padding
 		gl.PixelStorei(GL_PACK_ALIGNMENT, 1);

@@ -50,6 +50,7 @@ void dispose()
     for (auto & staticSprite:staticSprites) delete staticSprite.second;
     for (auto & button:buttonSprites) delete button.second;
     batch->dispose();
+    for (int i = 0; i < 8; i++) delete user->formationSet.forms[i];
     delete user->formationSet.forms;
     delete user;
     delete batch;

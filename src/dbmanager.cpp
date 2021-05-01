@@ -161,6 +161,7 @@ void DBManager::updateUserData(User user){
         if (rc != SQLITE_ROW && rc != SQLITE_DONE) std::cout << "STEP 2 ERROR" << std::endl;
     }
     sqlite3_finalize(stmt);
+    delete idBuffer;
 }
 
 bool DBManager::userExists(char *username) {
