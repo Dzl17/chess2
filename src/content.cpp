@@ -25,14 +25,14 @@ std::map<int, DraggablePieceSprite*> dpSprites;
 
 void Assets::load(UmStatics& statics, UmButtons& buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, Screen& screen, User& user)
 {
-    font = SpriteFont("../data/fonts/dogica.ttf", 32);
+    font = SpriteFont("data/fonts/dogica.ttf", 32);
     loadButtons(buttons);
     loadStatics(statics);
     loadDPSprites();
     loadCollisionPositions();
     for (int i = 1; i <= 24; i++) pieces.push_back(PieceSprite(0,0, i,getSpritePath(i), game));
-    nexuses.push_back(NexusSprite( 416, 256, "../data/img/nexusL.png"));
-    nexuses.push_back(NexusSprite(1056, 256, "../data/img/nexusR.png"));
+    nexuses.push_back(NexusSprite( 416, 256, "data/img/nexusL.png"));
+    nexuses.push_back(NexusSprite(1056, 256, "data/img/nexusR.png"));
 }
 
 void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNexuses&nexuses, Game game, Screen& screen, User& user, Batch *batch)
@@ -256,52 +256,52 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
 void loadButtons(UmButtons& buttons)
 {
     buttons.insert({"playMenuButton", new GuiButton(512, 1128, 256, 108, // Play (menu)
-                                                    "../data/img/buttons/playMenuButtonIdle.png", "../data/img/buttons/playMenuButtonPressed.png")});
+                                                    "data/img/buttons/playMenuButtonIdle.png", "data/img/buttons/playMenuButtonPressed.png")});
     buttons.insert({"formsMenuButton", new GuiButton(512, 1544, 256, 108, // Forms (menu)
-                                                     "../data/img/buttons/formsMenuButtonIdle.png", "../data/img/buttons/formsMenuButtonPressed.png")});
+                                                     "data/img/buttons/formsMenuButtonIdle.png", "data/img/buttons/formsMenuButtonPressed.png")});
     buttons.insert({"exitMenuButton", new GuiButton(512, 1960, 256, 108, // Exit (menu)
-                                                    "../data/img/buttons/exitMenuButtonIdle.png", "../data/img/buttons/exitMenuButtonPressed.png")});
+                                                    "data/img/buttons/exitMenuButtonIdle.png", "data/img/buttons/exitMenuButtonPressed.png")});
 
     buttons.insert({"leftArrowButton", new GuiButton(352, 264, 128, 128,
-                                                     "../data/img/buttons/leftArrowIdle.png", "../data/img/buttons/leftArrowPressed.png")});
+                                                     "data/img/buttons/leftArrowIdle.png", "data/img/buttons/leftArrowPressed.png")});
     buttons.insert({"rightArrowButton", new GuiButton(800, 264, 128, 128,
-                                                      "../data/img/buttons/rightArrowIdle.png", "../data/img/buttons/rightArrowPressed.png")});
+                                                      "data/img/buttons/rightArrowIdle.png", "data/img/buttons/rightArrowPressed.png")});
     buttons.insert({"startButton", new GuiButton(512, 586, 256, 108,
-                                                 "../data/img/buttons/startButtonIdle.png", "../data/img/buttons/startButtonPressed.png")});
+                                                 "data/img/buttons/startButtonIdle.png", "data/img/buttons/startButtonPressed.png")});
     buttons.insert({"editButton", new GuiButton(512, 586, 256, 108,
-                                                 "../data/img/buttons/editButtonIdle.png", "../data/img/buttons/editButtonPressed.png")});
+                                                 "data/img/buttons/editButtonIdle.png", "data/img/buttons/editButtonPressed.png")});
     buttons.insert({"saveButton", new GuiButton(512, 586, 256, 108,
-                                                "../data/img/buttons/saveButtonIdle.png", "../data/img/buttons/saveButtonPressed.png")});
+                                                "data/img/buttons/saveButtonIdle.png", "data/img/buttons/saveButtonPressed.png")});
     buttons.insert({"resetButton", new GuiButton(436, 602, 64, 76,
-                                                "../data/img/buttons/resetButtonIdle.png", "../data/img/buttons/resetButtonPressed.png")});
+                                                "data/img/buttons/resetButtonIdle.png", "data/img/buttons/resetButtonPressed.png")});
     buttons.insert({"backButton", new GuiButton(780, 602, 64, 76,
-                                                "../data/img/buttons/backButtonIdle.png", "../data/img/buttons/backButtonPressed.png")});
+                                                "data/img/buttons/backButtonIdle.png", "data/img/buttons/backButtonPressed.png")});
 
     buttons.insert({"helpGameButton", new GuiButton(16, 16, 224, 80, // Help (game)
-                                                    "../data/img/buttons/helpButtonIdle.png", "../data/img/buttons/helpButtonPressed.png")});
+                                                    "data/img/buttons/helpButtonIdle.png", "data/img/buttons/helpButtonPressed.png")});
     buttons.insert({"menuGameButton", new GuiButton(16, 112, 224, 80, // Menu (game)
-                                                    "../data/img/buttons/menuButtonIdle.png", "../data/img/buttons/menuButtonPressed.png")});
+                                                    "data/img/buttons/menuButtonIdle.png", "data/img/buttons/menuButtonPressed.png")});
     buttons.insert({"exitGameButton", new GuiButton(16, 208, 224, 80, // Exit (game)
-                                                    "../data/img/buttons/exitButtonIdle.png", "../data/img/buttons/exitButtonPressed.png")});
+                                                    "data/img/buttons/exitButtonIdle.png", "data/img/buttons/exitButtonPressed.png")});
 
 }
 
 void loadStatics(UmStatics& statics)
 {
-    statics.insert({"backgroundG",       new StaticSprite(0,     0, "../data/img/backgroundG.png",         true)});
-    statics.insert({"backgroundB",       new StaticSprite(0,     0, "../data/img/backgroundB.png",         true)});
-    statics.insert({"formsBackground",   new StaticSprite(0,     0, "../data/img/formsBackground.png",     true)});
-    statics.insert({"choosingBackground",new StaticSprite(0,     0, "../data/img/choosingBackground.png",  true)});
-    statics.insert({"helpMenu",          new StaticSprite(320,  64, "../data/img/helpmenu.png",            false)});
-    statics.insert({"spearmanLIcon",     new StaticSprite(480, 556, "../data/img/icons/spearmanLIcon.png", true)});
-    statics.insert({"spearmanRIcon",     new StaticSprite(480, 556, "../data/img/icons/spearmanRIcon.png", true)});
-    statics.insert({"wizardLIcon",       new StaticSprite(480, 556, "../data/img/icons/wizardLIcon.png",   true)});
-    statics.insert({"wizardRIcon",       new StaticSprite(480, 556, "../data/img/icons/wizardRIcon.png",   true)});
-    statics.insert({"assassinLIcon",     new StaticSprite(480, 556, "../data/img/icons/assassinLIcon.png", true)});
-    statics.insert({"assassinRIcon",     new StaticSprite(480, 556, "../data/img/icons/assassinRIcon.png", true)});
-    statics.insert({"golemLIcon",        new StaticSprite(480, 556, "../data/img/icons/golemLIcon.png",    true)});
-    statics.insert({"golemRIcon",        new StaticSprite(480, 556, "../data/img/icons/golemRIcon.png",    true)});
-    statics.insert({"mainMenu",          new StaticSprite(0,     0, "../data/img/mainMenu.png",            true)});
+    statics.insert({"backgroundG",       new StaticSprite(0,     0, "data/img/backgroundG.png",         true)});
+    statics.insert({"backgroundB",       new StaticSprite(0,     0, "data/img/backgroundB.png",         true)});
+    statics.insert({"formsBackground",   new StaticSprite(0,     0, "data/img/formsBackground.png",     true)});
+    statics.insert({"choosingBackground",new StaticSprite(0,     0, "data/img/choosingBackground.png",  true)});
+    statics.insert({"helpMenu",          new StaticSprite(320,  64, "data/img/helpmenu.png",            false)});
+    statics.insert({"spearmanLIcon",     new StaticSprite(480, 556, "data/img/icons/spearmanLIcon.png", true)});
+    statics.insert({"spearmanRIcon",     new StaticSprite(480, 556, "data/img/icons/spearmanRIcon.png", true)});
+    statics.insert({"wizardLIcon",       new StaticSprite(480, 556, "data/img/icons/wizardLIcon.png",   true)});
+    statics.insert({"wizardRIcon",       new StaticSprite(480, 556, "data/img/icons/wizardRIcon.png",   true)});
+    statics.insert({"assassinLIcon",     new StaticSprite(480, 556, "data/img/icons/assassinLIcon.png", true)});
+    statics.insert({"assassinRIcon",     new StaticSprite(480, 556, "data/img/icons/assassinRIcon.png", true)});
+    statics.insert({"golemLIcon",        new StaticSprite(480, 556, "data/img/icons/golemLIcon.png",    true)});
+    statics.insert({"golemRIcon",        new StaticSprite(480, 556, "data/img/icons/golemRIcon.png",    true)});
+    statics.insert({"mainMenu",          new StaticSprite(0,     0, "data/img/mainMenu.png",            true)});
 }
 
 void loadPieceCoords(Game *gameRef, VcPieces& pieces)
@@ -386,23 +386,23 @@ void resetDPSprites()
 String getSpritePath(int id)
 {
     if (id >= 1 && id <= 4) {
-        return "../data/img/units/spearmanL.png";
+        return "data/img/units/spearmanL.png";
     } else if (id >= 5 && id <= 7) {
-        return "../data/img/units/wizardL.png";
+        return "data/img/units/wizardL.png";
     } else if (id >= 8 && id <= 10) {
-        return "../data/img/units/assassinL.png";
+        return "data/img/units/assassinL.png";
     } else if (id >= 11 && id <= 12) {
-        return "../data/img/units/golemL.png";
+        return "data/img/units/golemL.png";
     } else if (id >= 13 && id <= 16) {
-        return "../data/img/units/spearmanR.png";
+        return "data/img/units/spearmanR.png";
     } else if (id >= 17 && id <= 19) {
-        return "../data/img/units/wizardR.png";
+        return "data/img/units/wizardR.png";
     } else if (id >= 20 && id <= 22) {
-        return "../data/img/units/assassinR.png";
+        return "data/img/units/assassinR.png";
     } else if (id >= 23 && id <= 24) {
-        return "../data/img/units/golemR.png";
+        return "data/img/units/golemR.png";
     } else {
-        return "../data/img/boredlion.png";
+        return "data/img/boredlion.png";
     }
 }
 

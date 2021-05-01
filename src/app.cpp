@@ -58,7 +58,7 @@ void dispose()
 }
 
 int main() {
-    dbManager = new DBManager((char *) "../data/database.db");
+    dbManager = new DBManager((char *) "data/database.db");
     user = Login::runSetup(*dbManager); // Inicio de sesión, base de datos
     if (user != nullptr) {
         Config config;

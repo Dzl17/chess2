@@ -138,7 +138,7 @@ bool PlatformBackend::init(const Config* config)
 		Log::error("Failed to create a Window");
 		return false;
 	}
-    SDL_Surface *surface = IMG_Load((char*) "../data/img/boredlion.png");
+    SDL_Surface *surface = IMG_Load((char*) "data/img/boredlion.png");
     SDL_SetWindowIcon(window, surface);
     SDL_FreeSurface(surface);
 

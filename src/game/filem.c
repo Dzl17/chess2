@@ -17,7 +17,7 @@ void saveForm(int id, char *code)
     }
     char intBuffer[12]; // Pasa la ID a un string
     sprintf(intBuffer, "%d", id);
-    char *path = conc("..\\data\\form", intBuffer, ".txt");
+    char *path = conc("data\\form", intBuffer, ".txt");
     FILE *filew = fopen(path, "w"); // Si el archivo no existe, se crea
     for (int i = 0; i < FORM_LENGTH; i++) {
         fprintf(filew, "%c", code[i]);
@@ -34,7 +34,7 @@ char *loadForm(int id) //NECESARIO LIBERAR PUNTERO DEVUELTO -> free((char*) c)
     }
     char intBuffer[12]; //Pasa la ID a un string
     sprintf(intBuffer, "%d", id);
-    char *path = conc("..\\data\\form", intBuffer, ".txt");
+    char *path = conc("data\\form", intBuffer, ".txt");
     FILE *filer = fopen(path, "r");
     if (filer == NULL) return NULL;
     char *form = malloc(21);
@@ -50,7 +50,7 @@ char *loadForm(int id) //NECESARIO LIBERAR PUNTERO DEVUELTO -> free((char*) c)
 
 void saveGame(int turn, int nexus1hp, int nexus2hp, int pieces[24][4])
 {
-    FILE *filew = fopen("..\\data\\save.txt", "w"); // Si el archivo no existe, se crea
+    FILE *filew = fopen("data\\save.txt", "w"); // Si el archivo no existe, se crea
     fprintf(filew, "%d %d %d 0 \n", turn, nexus1hp, nexus2hp); // Turno actual y vidas de nexos. 0 para mantener tamaño constante, se puede añadir otro valor más adelante
     for (int i = 0; i < 24; i++) {
         fprintf(filew, "%d %d %d %d \n", pieces[i][0], pieces[i][1], pieces[i][2], pieces[i][3]);
@@ -60,7 +60,7 @@ void saveGame(int turn, int nexus1hp, int nexus2hp, int pieces[24][4])
 
 int **loadGame() //NECESARIO LIBERAR PUNTERO DEVUELTO -> for(int i = 0; i < 25; i++) free (data[i]); free(data);
 {
-    FILE *filer = fopen("..\\data\\save.txt", "r");
+    FILE *filer = fopen("data\\save.txt", "r");
     if (filer == NULL) return NULL;
     int **data = malloc(sizeof(int*) * 25);                             // Reserva de datos (array de punteros)
     for (int i = 0; i < 25; i++) data[i] = malloc(sizeof(int) * 4);     // Reserva de datos (sub-arrays de ints)
