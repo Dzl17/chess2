@@ -99,7 +99,7 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         writeFormSetPos(batch, user.formationSet);
     }
     else if (screen == kUserInfoMenu) {
-        statics["emptyBackground"]->draw(batch); // Fondo
+        statics["userBackground"]->draw(batch); // Fondo
         buttons["backButton"]->draw(batch);
         writeUserData(batch, user);
     }
@@ -265,6 +265,7 @@ void loadStatics(UmStatics& statics)
     statics.insert({"backgroundB",       new StaticSprite(0,     0, "data/img/backgroundB.png",         true)});
     statics.insert({"formsBackground",   new StaticSprite(0,     0, "data/img/formsBackground.png",     true)});
     statics.insert({"choosingBackground",new StaticSprite(0,     0, "data/img/choosingBackground.png",  true)});
+    statics.insert({"userBackground",    new StaticSprite(0,     0, "data/img/userBackground.png",      true)});
     statics.insert({"emptyBackground",   new StaticSprite(0,     0, "data/img/emptyBackground.png",     true)});
     statics.insert({"helpMenu",          new StaticSprite(320,  64, "data/img/helpmenu.png",            false)});
     statics.insert({"spearmanLIcon",     new StaticSprite(480, 556, "data/img/icons/spearmanLIcon.png", true)});
@@ -593,7 +594,7 @@ void writeUserData(Batch *batch, User user)
     if (strlen(user.getUsername()) <= 14) {
         char usr_str[64] = "User: ";
         strcat(usr_str, user.getUsername());
-        batch->str(font, usr_str, Vec2(450, 206), Color::white);
+        batch->str(font, usr_str, Vec2(416, 206), Color::white);
     } else {
         offset = 44;
         char usr_str_1[64] = "User: ";
@@ -601,32 +602,32 @@ void writeUserData(Batch *batch, User user)
         strncpy(usr_sub_1, user.getUsername(), 7);
         strcat(usr_str_1, usr_sub_1);
         strcat(usr_str_1, "-");
-        batch->str(font, usr_str_1, Vec2(450, 206), Color::white);
+        batch->str(font, usr_str_1, Vec2(416, 206), Color::white);
 
         char usr_str_2[64] = "";
         char usr_sub_2[14];
         std::copy(user.getUsername() + 7, user.getUsername() + strlen(user.getUsername()), usr_sub_2);
         strcat(usr_str_2, usr_sub_2);
-        batch->str(font, usr_str_2, Vec2(450, 206 + offset), Color::white);
+        batch->str(font, usr_str_2, Vec2(416, 206 + offset), Color::white);
     }
 
     char elo_str[64] = "Elo: ";
     char elo_num[8];
     sprintf(elo_num, "%d", user.getElo());
     strcat(elo_str, elo_num);
-    batch->str(font, elo_str, Vec2(450, 250 + offset), Color::white);
+    batch->str(font, elo_str, Vec2(416, 250 + offset), Color::white);
 
     char wins_str[64] = "Wins: ";
     char wins_num[8];
     sprintf(wins_num, "%d", user.getWins());
     strcat(wins_str, wins_num);
-    batch->str(font, wins_str, Vec2(454, 294 + offset), Color::white);
+    batch->str(font, wins_str, Vec2(420, 294 + offset), Color::white);
 
     char losses_str[64] = "Losses: ";
     char losses_num[8];
     sprintf(losses_num, "%d", user.getLosses());
     strcat(losses_str, losses_num);
-    batch->str(font, losses_str, Vec2(446, 338 + offset), Color::white);
+    batch->str(font, losses_str, Vec2(412, 338 + offset), Color::white);
 }
 
 User* Login::runSetup(DBManager& dbManager)
