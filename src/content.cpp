@@ -495,22 +495,38 @@ int Login::runSetup(DBManager& dbManager)
     std::cout << "2) Register" << std::endl;
     std::cout << "3) Exit" << std::endl;
     std::cin >> op;
-    char *name = new char[20];
+    char *username = new char[20];
     char *password = new char[20];;
     if (op == 1) {
         std::cout << "Username: ";
-        std::cin >> name;
+        std::cin >> username;
         std::cout << "Password: ";
         std::cin >> password;
-        User user = dbManager.loadUser(name, password);
-        return 1;
+        User *user;
+        if (dbManager.userExists(username) || strlen(username) > 0 || strlen(password) > 0) {
+            user = dbManager.loadUser(username, password);
+            std::cout << "Welcome, " << user->getUsername() << "." << std::endl;
+            return 1;
+        }
+        else {
+            user = nullptr;
+            std::cout << "User " << username << " not found." << std::endl;
+            return 0;
+        }
     } else if (op == 2){
         std::cout << "Username: ";
-        std::cin >> name;
+        std::cin >> username;
         std::cout << "Password: ";
         std::cin >> password;
-        dbManager.addNewUser(name, password);
-        return 1;
+        if (!dbManager.userExists(username)) {
+            dbManager.addNewUser(username, password);
+            std::cout << "User " << username << " registered." << std::endl;
+            return 1;
+        }
+        else {
+            std::cout << "Username " << username << " already exists." << std::endl;
+            return 0;
+        }
     } else{
         return 0;
     }

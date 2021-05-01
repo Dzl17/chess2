@@ -13,23 +13,23 @@ DBManager::~DBManager() {
     sqlite3_close(this->db);
 }
 
-User DBManager::loadUser(char* username, char* password){
+User* DBManager::loadUser(char* username, char* password){
     sqlite3_stmt *stmt;
     int rc;
 
     char sql1[] = "SELECT username, elo, wins, losses, user_id FROM USER WHERE username=? AND password=?"; // Sentencia SQL
 
     // Preparar y ejecutar consulta 1
-    rc = sqlite3_prepare_v2(db, sql1, -1, &stmt, NULL);
+    rc = sqlite3_prepare_v2(db, sql1, -1, &stmt, NULL); // TODO gestionar posibles errores
     if (rc != SQLITE_OK) std::cout << "PREPARE 1 ERROR" << std::endl;
 
-    rc = sqlite3_bind_text(stmt, 1, username, strlen(username), SQLITE_STATIC);
+    rc = sqlite3_bind_text(stmt, 1, username, strlen(username), SQLITE_STATIC); // Introducir username
     if (rc != SQLITE_OK) std::cout << "BIND 1 ERROR" << std::endl;
-    rc = sqlite3_bind_text(stmt, 2, password, strlen(password), SQLITE_STATIC);
+    rc = sqlite3_bind_text(stmt, 2, password, strlen(password), SQLITE_STATIC); // Introducir password
     if (rc != SQLITE_OK) std::cout << "BIND 2 ERROR" << std::endl;
 
-    rc = sqlite3_step(stmt);
-    if (rc != SQLITE_ROW && rc != SQLITE_DONE) std::cout << "STEP 1 ERROR" << std::endl; // TODO comprobar si el usuario está vacío
+    rc = sqlite3_step(stmt); // Ejecutar query
+    if (rc != SQLITE_ROW && rc != SQLITE_DONE) std::cout << "STEP 1 ERROR" << std::endl;
 
     // Sacar datos de la consulta 1
     char *temp_username = (char *) sqlite3_column_text(stmt, 0);
@@ -62,7 +62,7 @@ User DBManager::loadUser(char* username, char* password){
         for (int j = i; j < 4; j++) strncpy(forms[i], emptyForm, 21);
     }
     sqlite3_finalize(stmt);
-    return User(temp_username, temp_elo, temp_wins, temp_losses, forms);
+    return new User(temp_username, temp_elo, temp_wins, temp_losses, forms);
 }
 
 void DBManager::addNewUser(char* username, char* password){
@@ -108,6 +108,25 @@ void DBManager::addNewUser(char* username, char* password){
 
 void DBManager::updateUserData(User user){
 
+}
+
+bool DBManager::userExists(char *username) {
+    sqlite3_stmt *stmt;
+    int rc;
+
+    char sql[] = "SELECT user_id FROM USER WHERE username=?"; // Sentencia SQL
+
+    // Preparar y ejecutar consulta
+    rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) std::cout << "PREPARE ERROR" << std::endl;
+
+    rc = sqlite3_bind_text(stmt,1,username,strlen(username),SQLITE_STATIC);
+    if (rc != SQLITE_OK) std::cout << "BIND ERROR" << std::endl;
+
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_ROW && rc != SQLITE_DONE) std::cout << "STEP ERROR" << std::endl;
+    sqlite3_finalize(stmt);
+    return rc == SQLITE_ROW;
 }
 
 int DBManager::getHighestUserId()
