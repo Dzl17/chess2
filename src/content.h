@@ -12,6 +12,14 @@
 
 extern "C" {
     #include "game/game.h"
+}
+
+enum Screen {
+    kMainMenu,
+    kFormSelectionMenu,
+    kMainGame,
+    kFormEditionSelectionMenu,
+    kFormEditionMenu
 };
 
 using namespace Blah;
@@ -31,9 +39,9 @@ using VcNexuses = std::vector<NexusSprite>;
  */
 
 namespace Assets {
-    void load(UmStatics& statics, UmButtons& buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, int& mode, User& user);
-    void render(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNexuses& nexuses, Game  game, int& mode, User& user, Batch *batch);
-    void update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, int& mode, User& user);
+    void load(UmStatics& statics, UmButtons& buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, Screen& screen, User& user);
+    void render(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNexuses& nexuses, Game  game, Screen& screen, User& user, Batch *batch);
+    void update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, Screen& screen, User& user);
 }
 
 namespace Login {

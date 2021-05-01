@@ -5,11 +5,10 @@
 using namespace Blah;
 
 bool fullscreen = false;
-int currentMode = 0;
+Screen screen = kMainMenu;
 
 Batch *batch;
 DBManager *dbManager;
-FormationSet formSet;
 User *user;
 
 Game game;
@@ -20,22 +19,8 @@ VcNexuses nexusSprites;
 
 void startup()
 {
-    /////////////////////////TEMP/////////////////////////
-    formSet.index = 0;
-    formSet.size = 8;
-    formSet.forms = new char*[formSet.size];
-    formSet.forms[0] = (char*) "ssssggeeeNeeeeeaaawww";
-    formSet.forms[1] = (char*) "esgesewweNeweaeasaseg";
-    formSet.forms[2] = (char*) "ewsseageeNaweegwsasee";
-    formSet.forms[3] = (char*) "ssgweewweNeeaaeaeessg";
-    formSet.forms[4] = (char*) "eeeeeeeeeNeeeeeeeeeee";
-    formSet.forms[5] = (char*) "eeeeeeeeeNeeeeeeeeeee";
-    formSet.forms[6] = (char*) "eeeeeeeeeNeeeeeeeeeee";
-    formSet.forms[7] = (char*) "eeeeeeeeeNeeeeeeeeeee";
-    /////////////////////////TEMP/////////////////////////
-
     batch = new Batch;
-    Assets::load(staticSprites, buttonSprites, pieceSprites, nexusSprites, &game, currentMode, *user);
+    Assets::load(staticSprites, buttonSprites, pieceSprites, nexusSprites, &game, screen, *user);
 }
 
 void render()
@@ -46,7 +31,7 @@ void render()
     auto transform = Mat3x2::create_transform(Vec2::zero, Vec2::zero, scale, 0);
     batch->push_matrix(transform);
 
-    Assets::render(staticSprites, buttonSprites, pieceSprites, nexusSprites, game, currentMode, *user, batch);
+    Assets::render(staticSprites, buttonSprites, pieceSprites, nexusSprites, game, screen, *user, batch);
 
     batch->pop_matrix();
     batch->render();
@@ -56,7 +41,7 @@ void render()
 void update()
 {
     if (Input::pressed(Key::F11)) App::fullscreen(fullscreen = !fullscreen);
-    Assets::update(staticSprites, buttonSprites, pieceSprites, nexusSprites, &game, currentMode, *user);
+    Assets::update(staticSprites, buttonSprites, pieceSprites, nexusSprites, &game, screen, *user);
 }
 
 void dispose()

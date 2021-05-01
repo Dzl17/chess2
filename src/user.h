@@ -13,13 +13,13 @@ private:
 public:
     FormationSet formationSet = {};
     char* getUsername();
-    int getElo();
-    int getWins();
-    int getLoses();
-    char** getForms();
+    int getElo() const;
+    int getWins() const;
+    int getLoses() const;
+    char** getForms() const;
     void addWin();
     void addLose();
-    void setForms(char** forms);
+    void setForms(char** forms) const;
     void calculateElo(int enemyRating,bool win);
 
     User(char* username, int elo, int wins, int loses, char** forms);

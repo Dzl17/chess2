@@ -10,29 +10,36 @@ char* User::getUsername(){
     return this->username;
 }
 
-int User::getElo(){
+int User::getElo() const{
     return this->elo;
 }
-int User::getWins(){
+
+int User::getWins() const{
     return this->wins;
 }
-int User::getLoses(){
+
+int User::getLoses() const{
     return this->loses;
 }
-char** User::getForms(){
+
+char** User::getForms() const{
     return this->formationSet.forms;
 }
+
 void User::addWin(){
     this->wins++;
 }
+
 void User::addLose(){
     this->loses++;
 }
-void User::setForms(char **formArr){
+
+void User::setForms(char **formArr) const{
     for (int i = 0; i < 4; i++) {
         strncpy(this->formationSet.forms[i], formArr[i], 21);
     }
 }
+
 void User::calculateElo(int enemyRating,bool win){
     if (win){
         this->elo+=400+enemyRating;

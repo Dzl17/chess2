@@ -1,7 +1,6 @@
 #include <map>
 #include "content.h"
 #include "gui/draggablePieceSprite.h"
-#include "dbmanager.h"
 
 void loadButtons(UmButtons& buttons);
 void loadStatics(UmStatics& statics);
@@ -10,7 +9,7 @@ void loadDPSprites();
 void resetDPSprites();
 
 void renderPieceData(Batch *batch, VcPieces& pieces, UmStatics& statics, Game game);
-void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, TextureRef blueNexusTex);
+void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, const TextureRef& blueNexusTex);
 
 String getSpritePath(int id);
 std::string getIconKey(int id);
@@ -24,7 +23,7 @@ void writePieceDmg(Batch *batch, PieceSprite& piece);
 SpriteFont font;
 std::map<int, DraggablePieceSprite*> dpSprites;
 
-void Assets::load(UmStatics& statics, UmButtons& buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, int& mode, User& user)
+void Assets::load(UmStatics& statics, UmButtons& buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, Screen& screen, User& user)
 {
     font = SpriteFont("../data/fonts/dogica.ttf", 32);
     loadButtons(buttons);
@@ -36,15 +35,15 @@ void Assets::load(UmStatics& statics, UmButtons& buttons, VcPieces& pieces, VcNe
     nexuses.push_back(NexusSprite(1056, 256, "../data/img/nexusR.png"));
 }
 
-void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNexuses&nexuses, Game game, int& mode, User& user, Batch *batch)
+void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNexuses&nexuses, Game game, Screen& screen, User& user, Batch *batch)
 {
-    if (mode == 0) { // Menú principal
+    if (screen == kMainMenu) { // Menú principal
         statics["mainMenu"]->draw(batch); // Fondo
         buttons["playMenuButton"]->draw(batch);
         buttons["formsMenuButton"]->draw(batch);
         buttons["exitMenuButton"]->draw(batch);
     }
-    else if (mode == 1) { // Selección de formación
+    else if (screen == kFormSelectionMenu) { // Selección de formación
         statics["choosingBackground"]->draw(batch);
         buttons["leftArrowButton"]->draw(batch);
         buttons["rightArrowButton"]->draw(batch);
@@ -53,7 +52,7 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         renderFormation(batch, pieces, user.formationSet.forms[user.formationSet.index], nexuses[0].texture);
         writeFormSetPos(batch, user.formationSet);
     }
-    else if (mode == 2) {
+    else if (screen == kMainGame) {
         statics["backgroundG"]->draw(batch); // Fondo
         buttons["helpGameButton"]->draw(batch);
         buttons["menuGameButton"]->draw(batch);
@@ -74,7 +73,7 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
 
         statics["helpMenu"]->draw(batch);
     }
-    else if (mode == 3) {
+    else if (screen == kFormEditionSelectionMenu) {
         statics["choosingBackground"]->draw(batch);
         buttons["leftArrowButton"]->draw(batch);
         buttons["rightArrowButton"]->draw(batch);
@@ -83,7 +82,7 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         renderFormation(batch, pieces, user.formationSet.forms[user.formationSet.index], nexuses[0].texture);
         writeFormSetPos(batch, user.formationSet);
     }
-    else if (mode == 4) {
+    else if (screen == kFormEditionMenu) {
         statics["formsBackground"]->draw(batch);
         buttons["saveButton"]->draw(batch);
         buttons["backButton"]->draw(batch);
@@ -94,14 +93,14 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
     }
 }
 
-void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, int& mode, User& user)
+void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, Screen& screen, User& user)
 {
     for (auto & button : buttons) button.second->update();
 
-    if (mode == 0) {
-        if (buttons["playMenuButton"]->isClicked() || Input::pressed(Key::P)) mode = 1; // Play
+    if (screen == 0) {
+        if (buttons["playMenuButton"]->isClicked() || Input::pressed(Key::P)) screen = kFormSelectionMenu; // Play
         if (buttons["formsMenuButton"]->isClicked() || Input::pressed(Key::F)) {
-            mode = 3; // Forms
+            screen = kFormEditionSelectionMenu; // Forms
             user.formationSet.index = 4;
         }
         if (buttons["exitMenuButton"]->isClicked() || Input::pressed(Key::Escape)) App::exit(); // Exit
@@ -114,7 +113,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
         buttons["exitMenuButton"]->setY((int) (buttons["exitMenuButton"]->getY() +
                                                (560 - buttons["exitMenuButton"]->getY()) * (double) Time::delta * 4));
     }
-    else if (mode == 1) {
+    else if (screen == 1) {
         if (buttons["leftArrowButton"]->isClicked()) {
             if (user.formationSet.index == 0) user.formationSet.index = user.formationSet.size - 1;
             else user.formationSet.index--;
@@ -125,7 +124,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
         }
         if (buttons["startButton"]->isClicked()) {
             if (isFormValid(user.formationSet.forms[user.formationSet.index])) {
-                mode = 2;
+                screen = kMainGame;
                 startGame(game, user.formationSet.forms[user.formationSet.index], user.formationSet.forms[0]);
                 loadPieceCoords(game, pieces);
             } else {
@@ -133,23 +132,23 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
             }
         }
         if (buttons["backButton"]->isClicked()) {
-            mode = 0;
+            screen = kMainMenu;
         }
     }
-    else if (mode == 2) {
+    else if (screen == 2) {
         for (auto & piece : pieces) piece.update();
 
         for (auto & nexus : nexuses) nexus.update();
 
         if (buttons["helpGameButton"]->isClicked() || Input::pressed(Key::H)) statics["helpMenu"]->swapActive();
         if (buttons["menuGameButton"]->isClicked()) {
-            mode = 0;
+            screen = kMainMenu;
             loadPieceCoords(game, pieces);
         }
         if (buttons["exitGameButton"]->isClicked() || Input::pressed(Key::Escape)) App::exit();
-        if (game->nexus1hp <= 0 || game->nexus2hp <= 0) mode = 0;
+        if (game->nexus1hp <= 0 || game->nexus2hp <= 0) screen = kMainMenu;
     }
-    else if (mode == 3) {
+    else if (screen == 3) {
         if (buttons["leftArrowButton"]->isClicked()) {
             if (user.formationSet.index == 4) user.formationSet.index = user.formationSet.size - 1;
             else user.formationSet.index--;
@@ -159,20 +158,20 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
             else user.formationSet.index++;
         }
         if (buttons["editButton"]->isClicked()) {
-            mode = 4;
+            screen = kFormEditionMenu;
             startGame(game, user.formationSet.forms[user.formationSet.index], user.formationSet.forms[0]);
             loadPieceCoords(game, pieces);
         }
         if (buttons["backButton"]->isClicked()) {
-            mode = 0;
+            screen = kMainMenu;
         }
     }
-    else if (mode == 4) {
+    else if (screen == 4) {
         for (auto & piece:dpSprites) piece.second->update();
         if (buttons["saveButton"]->isClicked()) {
             if (isFormValid(DraggablePieceSprite::formBuffer)) {
                 user.formationSet.forms[user.formationSet.index] = DraggablePieceSprite::formBuffer;
-                mode = 0;
+                screen = kMainMenu;
             } else {
                 std::cout << "ERROR" << std::endl;
 
@@ -185,9 +184,9 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
             resetDPSprites();
         }
         if (buttons["backButton"]->isClicked()) {
-            mode = 3;
+            screen = kFormEditionSelectionMenu;
         }
-        if (Input::pressed(Key::Enter)) mode = 0;
+        if (Input::pressed(Key::Enter)) screen = kMainMenu;
         if (Input::pressed(Key::Escape)) App::exit();
     }
 }
@@ -340,10 +339,6 @@ String getSpritePath(int id)
         return "../data/img/units/assassinR.png";
     } else if (id >= 23 && id <= 24) {
         return "../data/img/units/golemR.png";
-    } else if (id == 25) {
-        return "../data/img/boredlion.png";
-    } else if (id == 26) {
-        return "../data/img/boredlion.png";
     } else {
         return "../data/img/boredlion.png";
     }
@@ -365,8 +360,6 @@ std::string getIconKey(int id)
         return "wizardRIcon";
     } else if (id >= 20 && id <= 22) {
         return "assassinRIcon";
-    } else if (id >= 23 && id <= 24) {
-        return "golemRIcon";
     } else {
         return "golemRIcon";
     }
@@ -421,7 +414,7 @@ void renderPieceData(Batch *batch, VcPieces& pieces, UmStatics& statics, Game ga
     }
 }
 
-void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, TextureRef blueNexusTex)
+void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, const TextureRef& blueNexusTex)
 {
     int x = 544;
     int y = 104;
@@ -496,7 +489,7 @@ User* Login::runSetup(DBManager& dbManager)
     std::cout << "3) Exit" << std::endl;
     std::cin >> op;
     char *username = new char[20];
-    char *password = new char[20];;
+    char *password = new char[20];
     if (op == 1) {
         std::cout << "Username: ";
         std::cin >> username;
