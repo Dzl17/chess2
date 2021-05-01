@@ -24,7 +24,7 @@ void writePieceDmg(Batch *batch, PieceSprite& piece);
 SpriteFont font;
 std::map<int, DraggablePieceSprite*> dpSprites;
 
-void Assets::load(UmStatics& statics, UmButtons& buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, int& mode, FormationSet& formSet)
+void Assets::load(UmStatics& statics, UmButtons& buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, int& mode, User& user)
 {
     font = SpriteFont("../data/fonts/dogica.ttf", 32);
     loadButtons(buttons);
@@ -36,7 +36,7 @@ void Assets::load(UmStatics& statics, UmButtons& buttons, VcPieces& pieces, VcNe
     nexuses.push_back(NexusSprite(1056, 256, "../data/img/nexusR.png"));
 }
 
-void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNexuses&nexuses, Game game, int& mode, FormationSet& formSet, Batch *batch)
+void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNexuses&nexuses, Game game, int& mode, User& user, Batch *batch)
 {
     if (mode == 0) { // Menú principal
         statics["mainMenu"]->draw(batch); // Fondo
@@ -50,8 +50,8 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         buttons["rightArrowButton"]->draw(batch);
         buttons["startButton"]->draw(batch);
         buttons["backButton"]->draw(batch);
-        renderFormation(batch, pieces, formSet.forms[formSet.index], nexuses[0].texture);
-        writeFormSetPos(batch, formSet);
+        renderFormation(batch, pieces, user.formationSet.forms[user.formationSet.index], nexuses[0].texture);
+        writeFormSetPos(batch, user.formationSet);
     }
     else if (mode == 2) {
         statics["backgroundG"]->draw(batch); // Fondo
@@ -80,8 +80,8 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         buttons["rightArrowButton"]->draw(batch);
         buttons["editButton"]->draw(batch);
         buttons["backButton"]->draw(batch);
-        renderFormation(batch, pieces, formSet.forms[formSet.index], nexuses[0].texture);
-        writeFormSetPos(batch, formSet);
+        renderFormation(batch, pieces, user.formationSet.forms[user.formationSet.index], nexuses[0].texture);
+        writeFormSetPos(batch, user.formationSet);
     }
     else if (mode == 4) {
         statics["formsBackground"]->draw(batch);
@@ -90,11 +90,11 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         buttons["resetButton"]->draw(batch);
         batch->tex(nexuses[0].texture, Vec2(544, 296));
         for (auto & piece:dpSprites) piece.second->draw(batch);
-        writeFormSetPos(batch, formSet);
+        writeFormSetPos(batch, user.formationSet);
     }
 }
 
-void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, int& mode, FormationSet& formSet)
+void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, int& mode, User& user)
 {
     for (auto & button : buttons) button.second->update();
 
@@ -102,7 +102,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
         if (buttons["playMenuButton"]->isClicked() || Input::pressed(Key::P)) mode = 1; // Play
         if (buttons["formsMenuButton"]->isClicked() || Input::pressed(Key::F)) {
             mode = 3; // Forms
-            formSet.index = 4;
+            user.formationSet.index = 4;
         }
         if (buttons["exitMenuButton"]->isClicked() || Input::pressed(Key::Escape)) App::exit(); // Exit
 
@@ -116,17 +116,17 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
     }
     else if (mode == 1) {
         if (buttons["leftArrowButton"]->isClicked()) {
-            if (formSet.index == 0) formSet.index = formSet.size - 1;
-            else formSet.index--;
+            if (user.formationSet.index == 0) user.formationSet.index = user.formationSet.size - 1;
+            else user.formationSet.index--;
         }
         if (buttons["rightArrowButton"]->isClicked()) {
-            if (formSet.index == formSet.size - 1) formSet.index = 0;
-            else formSet.index++;
+            if (user.formationSet.index == user.formationSet.size - 1) user.formationSet.index = 0;
+            else user.formationSet.index++;
         }
         if (buttons["startButton"]->isClicked()) {
-            if (isFormValid(formSet.forms[formSet.index])) {
+            if (isFormValid(user.formationSet.forms[user.formationSet.index])) {
                 mode = 2;
-                startGame(game, formSet.forms[formSet.index], formSet.forms[0]);
+                startGame(game, user.formationSet.forms[user.formationSet.index], user.formationSet.forms[0]);
                 loadPieceCoords(game, pieces);
             } else {
                 std::cout << "Formacion invalida" << std::endl;
@@ -151,16 +151,16 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
     }
     else if (mode == 3) {
         if (buttons["leftArrowButton"]->isClicked()) {
-            if (formSet.index == 4) formSet.index = formSet.size - 1;
-            else formSet.index--;
+            if (user.formationSet.index == 4) user.formationSet.index = user.formationSet.size - 1;
+            else user.formationSet.index--;
         }
         if (buttons["rightArrowButton"]->isClicked()) {
-            if (formSet.index == formSet.size - 1) formSet.index = 4;
-            else formSet.index++;
+            if (user.formationSet.index == user.formationSet.size - 1) user.formationSet.index = 4;
+            else user.formationSet.index++;
         }
         if (buttons["editButton"]->isClicked()) {
             mode = 4;
-            startGame(game, formSet.forms[formSet.index], formSet.forms[0]);
+            startGame(game, user.formationSet.forms[user.formationSet.index], user.formationSet.forms[0]);
             loadPieceCoords(game, pieces);
         }
         if (buttons["backButton"]->isClicked()) {
@@ -171,7 +171,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
         for (auto & piece:dpSprites) piece.second->update();
         if (buttons["saveButton"]->isClicked()) {
             if (isFormValid(DraggablePieceSprite::formBuffer)) {
-                formSet.forms[formSet.index] = DraggablePieceSprite::formBuffer;
+                user.formationSet.forms[user.formationSet.index] = DraggablePieceSprite::formBuffer;
                 mode = 0;
             } else {
                 std::cout << "ERROR" << std::endl;
@@ -487,7 +487,7 @@ void writePieceDmg(Batch *batch, PieceSprite& piece)
     batch->str(font, dmg_str, Vec2(620, 640), Color::black);
 }
 
-int Login::runSetup(DBManager& dbManager)
+User* Login::runSetup(DBManager& dbManager)
 {
     int op = 0;
     std::cout << "Choose an option:" << std::endl;
@@ -502,16 +502,15 @@ int Login::runSetup(DBManager& dbManager)
         std::cin >> username;
         std::cout << "Password: ";
         std::cin >> password;
-        User *user;
         if (dbManager.userExists(username) || strlen(username) > 0 || strlen(password) > 0) {
+            User *user;
             user = dbManager.loadUser(username, password);
             std::cout << "Welcome, " << user->getUsername() << "." << std::endl;
-            return 1;
+            return user;
         }
         else {
-            user = nullptr;
             std::cout << "User " << username << " not found." << std::endl;
-            return 0;
+            return nullptr;
         }
     } else if (op == 2){
         std::cout << "Username: ";
@@ -521,13 +520,14 @@ int Login::runSetup(DBManager& dbManager)
         if (!dbManager.userExists(username)) {
             dbManager.addNewUser(username, password);
             std::cout << "User " << username << " registered." << std::endl;
-            return 1;
+            if (dbManager.userExists(username)) return dbManager.loadUser(username, password);
+            else return nullptr;
         }
         else {
             std::cout << "Username " << username << " already exists." << std::endl;
-            return 0;
+            return nullptr;
         }
-    } else{
-        return 0;
+    } else {
+        return nullptr; // TODO
     }
 }

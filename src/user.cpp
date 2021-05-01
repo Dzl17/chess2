@@ -1,5 +1,10 @@
 #include <cstring>
+#include <cstdlib>
+#include <iostream>
 #include "user.h"
+extern "C" {
+    #include "game/filem.h"
+}
 
 char* User::getUsername(){
     return this->username;
@@ -15,7 +20,7 @@ int User::getLoses(){
     return this->loses;
 }
 char** User::getForms(){
-    return this->forms.forms;
+    return this->formationSet.forms;
 }
 void User::addWin(){
     this->wins++;
@@ -25,7 +30,7 @@ void User::addLose(){
 }
 void User::setForms(char **formArr){
     for (int i = 0; i < 4; i++) {
-        strncpy(this->forms.forms[i], formArr[i], 21);
+        strncpy(this->formationSet.forms[i], formArr[i], 21);
     }
 }
 void User::calculateElo(int enemyRating,bool win){
@@ -44,14 +49,15 @@ User::User(char *username, int elo, int wins, int loses, char **forms)
     this->elo = elo;
     this->wins = wins;
     this->loses = loses;
-    char** tempforms=new char*[8];
-    for (int i = 0; i < 4; ++i) {
-        char* meform=loadForm(i+1);
-        strncpy(tempforms[i], meform, 21);
+    char** tempforms = new char*[8];
+    for (int i = 0; i < 8; i++) tempforms[i] = new char[FORM_LENGTH];
+    for (int i = 0; i < 4; i++) {
+        char* meform = loadForm(i+1);
+        strncpy(tempforms[i], meform, FORM_LENGTH);
         free(meform);
     }
     for (int i = 4; i < 8; ++i) {
-         strncpy(tempforms[i], forms[i], 21);
+        strncpy(tempforms[i], forms[i-4], 21);
     }
-    this->forms = {tempforms,8,0};
+    this->formationSet = {tempforms,8,0};
 }

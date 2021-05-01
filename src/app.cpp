@@ -10,6 +10,7 @@ int currentMode = 0;
 Batch *batch;
 DBManager *dbManager;
 FormationSet formSet;
+User *user;
 
 Game game;
 UmStatics staticSprites;
@@ -34,7 +35,7 @@ void startup()
     /////////////////////////TEMP/////////////////////////
 
     batch = new Batch;
-    Assets::load(staticSprites, buttonSprites, pieceSprites, nexusSprites, &game, currentMode, formSet);
+    Assets::load(staticSprites, buttonSprites, pieceSprites, nexusSprites, &game, currentMode, *user);
 }
 
 void render()
@@ -45,7 +46,7 @@ void render()
     auto transform = Mat3x2::create_transform(Vec2::zero, Vec2::zero, scale, 0);
     batch->push_matrix(transform);
 
-    Assets::render(staticSprites, buttonSprites, pieceSprites, nexusSprites, game, currentMode, formSet, batch);
+    Assets::render(staticSprites, buttonSprites, pieceSprites, nexusSprites, game, currentMode, *user, batch);
 
     batch->pop_matrix();
     batch->render();
@@ -55,7 +56,7 @@ void render()
 void update()
 {
     if (Input::pressed(Key::F11)) App::fullscreen(fullscreen = !fullscreen);
-    Assets::update(staticSprites, buttonSprites, pieceSprites, nexusSprites, &game, currentMode, formSet);
+    Assets::update(staticSprites, buttonSprites, pieceSprites, nexusSprites, &game, currentMode, *user);
 }
 
 void dispose()
@@ -63,14 +64,16 @@ void dispose()
     for (auto & staticSprite:staticSprites) delete staticSprite.second;
     for (auto & button:buttonSprites) delete button.second;
     batch->dispose();
+    delete user->formationSet.forms;
+    delete user;
     delete batch;
     delete dbManager;
 }
 
 int main() {
     dbManager = new DBManager((char *) "../data/database.db");
-    int op = Login::runSetup(*dbManager); // Inicio de sesión, base de datos
-    if (op != 0) {
+    user = Login::runSetup(*dbManager); // Inicio de sesión, base de datos
+    if (user != nullptr) {
         Config config;
         config.name = "Chess 2";
         config.width = 1280;
@@ -80,6 +83,7 @@ int main() {
         config.on_render = render;
         config.on_shutdown = dispose;
         config.target_framerate = 60;
+
         App::run(&config);
     }
     return 0;

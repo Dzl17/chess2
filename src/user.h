@@ -1,15 +1,17 @@
 #ifndef CHESS2_USER_H
 #define CHESS2_USER_H
 
-
-#include "content.h"
+typedef struct {
+    char **forms;
+    int size, index;
+} FormationSet;
 
 class User {
 private:
     char* username;
     int elo, wins, loses;
-    FormationSet forms;
 public:
+    FormationSet formationSet = {};
     char* getUsername();
     int getElo();
     int getWins();

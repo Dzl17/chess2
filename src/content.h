@@ -8,6 +8,8 @@
 #include "gui/pieceSprite.h"
 #include "gui/nexusSprite.h"
 #include "dbmanager.h"
+#include "user.h"
+
 extern "C" {
     #include "game/game.h"
 };
@@ -19,11 +21,6 @@ using UmButtons = std::unordered_map<std::string, GuiButton*>;
 using VcPieces = std::vector<PieceSprite>;
 using VcNexuses = std::vector<NexusSprite>;
 
-typedef struct { // TODO sacar de BD
-    char **forms;
-    int size, index;
-} FormationSet;
-
 /*
  * La variable 'mode' denota qué pantalla debe dibujarse:
  * 0 - Menú principal
@@ -34,13 +31,13 @@ typedef struct { // TODO sacar de BD
  */
 
 namespace Assets {
-    void load(UmStatics& statics, UmButtons& buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, int& mode, FormationSet& formSet);
-    void render(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNexuses& nexuses, Game  game, int& mode, FormationSet& formSet, Batch *batch);
-    void update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, int& mode, FormationSet& formSet);
+    void load(UmStatics& statics, UmButtons& buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, int& mode, User& user);
+    void render(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNexuses& nexuses, Game  game, int& mode, User& user, Batch *batch);
+    void update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, int& mode, User& user);
 }
 
 namespace Login {
-    int runSetup(DBManager& dbManager);
+    User *runSetup(DBManager& dbManager);
 }
 
 #endif //CHESS2_CONTENT_H
