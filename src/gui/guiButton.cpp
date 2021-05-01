@@ -10,14 +10,6 @@ GuiButton::GuiButton(int xNum, int yNum, int widthNum, int heightNum, const Stri
     this->pressedTex = Texture::create(pressedTexPath);
 }
 
-void GuiButton::setWidth(int widthNum) {
-    this->width = widthNum;
-}
-
-void GuiButton::setHeight(int heigthNum) {
-    this->height = heigthNum;
-}
-
 void GuiButton::update() {
     this->updateTouched();
 }

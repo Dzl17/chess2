@@ -41,7 +41,7 @@ void DraggablePieceSprite::update() {
     if (this->grabbed) {
         this->setX((int) m.x - 32);
         this->setY((int) m.y - 32);
-        if (Input::released(MouseButton::Left)) { // TODO colocar en posición
+        if (Input::released(MouseButton::Left)) {
             int index = getCollidedIndex();
             if (index != -1 && formBuffer[index] == 'e') {
                 if (this->currIndex != -1) formBuffer[currIndex] = 'e';
@@ -63,6 +63,18 @@ void DraggablePieceSprite::update() {
 
 void DraggablePieceSprite::draw(Batch *batch) {
     batch->tex(this->texture, Vec2(this->getX(), this->getY()));
+}
+
+bool DraggablePieceSprite::isInDefaultPosition() {
+    return this->getX() != this->ogX || this->getY() != this->ogY;
+}
+
+int DraggablePieceSprite::getId() {
+    return this->id;
+}
+
+void DraggablePieceSprite::setCurrIndex(int i) {
+    this->currIndex = i;
 }
 
 void loadCollisionPositions()

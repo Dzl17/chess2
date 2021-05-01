@@ -159,8 +159,77 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
         }
         if (buttons["editButton"]->isClicked()) {
             screen = kFormEditionMenu;
-            startGame(game, user.formationSet.forms[user.formationSet.index], user.formationSet.forms[0]);
-            loadPieceCoords(game, pieces);
+
+            // TODO ajustar piezas a formBuffer y pasar a función aparte
+            strncpy(DraggablePieceSprite::formBuffer, user.formationSet.forms[user.formationSet.index], 21);
+
+            Vec2 collBuffer[FORM_LENGTH];
+            int x = 544;
+            int y = 104;
+            for (int i = 0; i < FORM_LENGTH; i++) {
+                collBuffer[i] = Vec2(x, y);
+                if ((i+1)%3 == 0) {
+                    x = 544;
+                    y += 64;
+                } else {
+                    x += 64;
+                }
+            }
+
+            int s = 1;
+            int w = 5;
+            int a = 8;
+            int g = 11;
+            for (int i = 0; i < FORM_LENGTH; i++) {
+                switch(DraggablePieceSprite::formBuffer[i]) {
+                    case 's':
+                        for (auto & dps:dpSprites) {
+                            if (dps.second->getId() == s) {
+                                dps.second->setX((int) collBuffer[i].x);
+                                dps.second->setY((int) collBuffer[i].y);
+                                dps.second->setCurrIndex(i);
+                                s++;
+                                break;
+                            }
+                        }
+                        break;
+                    case 'w':
+                        for (auto & dps:dpSprites) {
+                            if (dps.second->getId() == w) {
+                                dps.second->setX((int) collBuffer[i].x);
+                                dps.second->setY((int) collBuffer[i].y);
+                                dps.second->setCurrIndex(i);
+                                w++;
+                                break;
+                            }
+                        }
+                        break;
+                    case 'a':
+                        for (auto & dps:dpSprites) {
+                            if (dps.second->getId() == a) {
+                                dps.second->setX((int) collBuffer[i].x);
+                                dps.second->setY((int) collBuffer[i].y);
+                                dps.second->setCurrIndex(i);
+                                a++;
+                                break;
+                            }
+                        }
+                        break;
+                    case 'g':
+                        for (auto & dps:dpSprites) {
+                            if (dps.second->getId() == g) {
+                                dps.second->setX((int) collBuffer[i].x);
+                                dps.second->setY((int) collBuffer[i].y);
+                                dps.second->setCurrIndex(i);
+                                g++;
+                                break;
+                            }
+                        }
+                        break;
+                    default:
+                        continue;
+                }
+            }
         }
         if (buttons["backButton"]->isClicked()) {
             screen = kMainMenu;
@@ -169,15 +238,8 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
     else if (screen == 4) {
         for (auto & piece:dpSprites) piece.second->update();
         if (buttons["saveButton"]->isClicked()) {
-            if (isFormValid(DraggablePieceSprite::formBuffer)) {
-                user.formationSet.forms[user.formationSet.index] = DraggablePieceSprite::formBuffer;
-                screen = kMainMenu;
-            } else {
-                std::cout << "ERROR" << std::endl;
-
-                for (int i = 0; i < FORM_LENGTH; i++) std::cout << DraggablePieceSprite::formBuffer[i];
-                std::cout << std::endl;
-            }
+            user.formationSet.forms[user.formationSet.index] = DraggablePieceSprite::formBuffer;
+            screen = kMainMenu;
         }
         if (buttons["resetButton"]->isClicked()) {
             DraggablePieceSprite::resetFormBuffer();

@@ -30,7 +30,7 @@ using VcPieces = std::vector<PieceSprite>;
 using VcNexuses = std::vector<NexusSprite>;
 
 /*
- * La variable 'mode' denota qué pantalla debe dibujarse:
+ * La enum 'screen' denota qué pantalla debe dibujarse:
  * 0 - Menú principal
  * 1 - Selección de formación
  * 2 - Juego principal

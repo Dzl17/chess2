@@ -13,8 +13,6 @@ private:
     bool touched;
 public:
     GuiButton(int x, int y, int width, int height, const String& idleTex, const String& pressedTex);
-    void setWidth(int widthNum);
-    void setHeight(int heigthNum);
     bool isClicked();
 
     void update() override;

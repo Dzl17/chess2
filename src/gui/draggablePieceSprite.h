@@ -15,6 +15,10 @@ public:
 
     static void resetFormBuffer();
 
+    int getId();
+    void setCurrIndex(int i);
+    bool isInDefaultPosition();
+
     void update() override;
     void draw(Batch *batch) override;
 };
