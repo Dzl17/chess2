@@ -24,6 +24,7 @@ void writeUserData(Batch *batch, User user);
 
 SpriteFont font;
 std::map<int, DraggablePieceSprite*> dpSprites;
+bool useBrownBackground = false;
 
 void Assets::load(UmStatics& statics, UmButtons& buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, Screen& screen, User& user)
 {
@@ -43,7 +44,8 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         statics["mainMenu"]->draw(batch); // Fondo
         buttons["playMenuButton"]->draw(batch);
         buttons["formsMenuButton"]->draw(batch);
-        buttons["skinButton"]->draw(batch);
+        if (useBrownBackground) buttons["pressedSkinButton"]->draw(batch);
+        else buttons["skinButton"]->draw(batch);
         buttons["userButton"]->draw(batch);
         buttons["exitMenuButton"]->draw(batch);
     }
@@ -57,7 +59,8 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         writeFormSetPos(batch, user.formationSet);
     }
     else if (screen == kMainGame) {
-        statics["backgroundG"]->draw(batch); // Fondo
+        if (useBrownBackground) statics["backgroundB"]->draw(batch); // Fondo
+        else statics["backgroundG"]->draw(batch); // Fondo
         buttons["helpGameButton"]->draw(batch);
         buttons["menuGameButton"]->draw(batch);
         buttons["exitGameButton"]->draw(batch);
@@ -112,7 +115,12 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
             screen = kFormEditionSelectionMenu; // Forms
             user.formationSet.index = 4;
         }
-        if (buttons["skinButton"]->isClicked() || Input::pressed(Key::S)) std::cout << "S" << std::endl; // TODO
+        if (useBrownBackground) {
+            if (buttons["pressedSkinButton"]->isClicked() || Input::pressed(Key::S)) useBrownBackground = false;
+        }
+        else {
+            if (buttons["skinButton"]->isClicked() || Input::pressed(Key::S)) useBrownBackground = true;
+        }
         if (buttons["userButton"]->isClicked() || Input::pressed(Key::U)) screen = kUserInfoMenu; // Exit
         if (buttons["exitMenuButton"]->isClicked() || Input::pressed(Key::Escape)) App::exit(); // Exit
 
@@ -122,6 +130,8 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
         buttons["formsMenuButton"]->setY((int) (buttons["formsMenuButton"]->getY() +
                                                 (444 - buttons["formsMenuButton"]->getY()) * (double) Time::delta * 4));
         buttons["skinButton"]->setY((int) (buttons["skinButton"]->getY() +
+                                               (560 - buttons["skinButton"]->getY()) * (double) Time::delta * 4));
+        buttons["pressedSkinButton"]->setY((int) (buttons["skinButton"]->getY() +
                                                (560 - buttons["skinButton"]->getY()) * (double) Time::delta * 4));
         buttons["userButton"]->setY((int) (buttons["userButton"]->getY() +
                                                (560 - buttons["userButton"]->getY()) * (double) Time::delta * 4));
@@ -218,6 +228,8 @@ void loadButtons(UmButtons& buttons)
                                                      "data/img/buttons/formsMenuButtonIdle.png", "data/img/buttons/formsMenuButtonPressed.png")});
     buttons.insert({"skinButton",       new GuiButton(512, 1960, 80, 108, // Exit (menu)
                                                       "data/img/buttons/skinButtonIdle.png", "data/img/buttons/skinButtonPressed.png")});
+    buttons.insert({"pressedSkinButton",       new GuiButton(512, 1960, 80, 108, // Exit (menu)
+                                                      "data/img/buttons/skinButtonPressed.png", "data/img/buttons/skinButtonPressed.png")});
     buttons.insert({"userButton",       new GuiButton(600, 1960, 80, 108, // Exit (menu)
                                                       "data/img/buttons/userButtonIdle.png", "data/img/buttons/userButtonPressed.png")});
     buttons.insert({"exitMenuButton",   new GuiButton(688, 1960, 80, 108, // Exit (menu)
