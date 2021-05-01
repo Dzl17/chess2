@@ -61,6 +61,7 @@ void update()
 
 void dispose()
 {
+    dbManager->updateUserData(*user);
     for (auto & staticSprite:staticSprites) delete staticSprite.second;
     for (auto & button:buttonSprites) delete button.second;
     batch->dispose();

@@ -11,6 +11,7 @@
 
 //#include <SDL/SDL.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 //#include <SDL/SDL_syswm.h>
 #include <SDL2/sdl_video.h>
 #include <SDL2/SDL_syswm.h>
@@ -137,6 +138,9 @@ bool PlatformBackend::init(const Config* config)
 		Log::error("Failed to create a Window");
 		return false;
 	}
+    SDL_Surface *surface = IMG_Load((char*) "../data/img/boredlion.png");
+    SDL_SetWindowIcon(window, surface);
+    SDL_FreeSurface(surface);
 
 	// Scale Window to monitor for High DPI displays
 	// Other platforms do this automatically ... Windows we need to explitely do so

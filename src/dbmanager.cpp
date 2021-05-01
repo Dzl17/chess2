@@ -111,7 +111,7 @@ void DBManager::updateUserData(User user){
     int rc;
 
     // Usuario
-    char sql1[] = "update USER set elo=?, wins=?, loses=? where username=?";
+    char sql1[] = "update USER set elo=?, wins=?, losses=? where username=?";
     rc = sqlite3_prepare_v2(db, sql1, strlen(sql1) + 1, &stmt, NULL);
     if (rc != SQLITE_OK) std::cout << "PREPARE 1 ERROR" << std::endl;
 
@@ -136,29 +136,29 @@ void DBManager::updateUserData(User user){
     rc = sqlite3_bind_text(stmt, 1, user.getUsername(), strlen(user.getUsername()), SQLITE_STATIC);
     if (rc != SQLITE_OK) std::cout << "BIND 5 ERROR" << std::endl;
 
-    int formids[4];
+    int *formids = new int[4];
     int i=0;
     do {
         rc = sqlite3_step(stmt);
         if (rc == SQLITE_DONE) break;
-        formids[i]=sqlite3_column_int(stmt, 0);
+        formids[i] = sqlite3_column_int(stmt, 0);
         i++;
     } while (rc == SQLITE_ROW);
 
     for (int j = 0; j < 4; ++j) {
-        char sql3[] = "update FORMS set formation=? where forms_id=?";
+        char sql3[] = "update FORMS set formation=? where form_id=?";
 
         rc = sqlite3_prepare_v2(db, sql3, strlen(sql3) + 1, &stmt, NULL);
         if (rc != SQLITE_OK) std::cout << "PREPARE 3 ERROR" << std::endl;
 
-        rc = sqlite3_bind_text(stmt, 1, user.getForms()[i], strlen(user.getForms()[i]), SQLITE_STATIC);
+        rc = sqlite3_bind_text(stmt, 1, user.getForms()[j + 4], strlen(user.getForms()[j + 4]), SQLITE_STATIC);
         if (rc != SQLITE_OK) std::cout << "BIND 6 ERROR" << std::endl;
 
         rc = sqlite3_bind_int(stmt, 2, formids[j]);
         if (rc != SQLITE_OK) std::cout << "BIND 7 ERROR" << std::endl;
 
         rc = sqlite3_step(stmt);
-        if (rc != SQLITE_OK) std::cout << "STEP ERROR" << std::endl;
+        if (rc != SQLITE_ROW && rc != SQLITE_DONE) std::cout << "STEP ERROR" << std::endl;
     }
     sqlite3_finalize(stmt);
 }
