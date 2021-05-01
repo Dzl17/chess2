@@ -107,7 +107,60 @@ void DBManager::addNewUser(char* username, char* password){
 }
 
 void DBManager::updateUserData(User user){
+    sqlite3_stmt *stmt;
+    int rc;
 
+    // Usuario
+    char sql1[] = "update USER set elo=?, wins=?, loses=? where username=?";
+    rc = sqlite3_prepare_v2(db, sql1, strlen(sql1) + 1, &stmt, NULL);
+    if (rc != SQLITE_OK) std::cout << "PREPARE 1 ERROR" << std::endl;
+
+    rc = sqlite3_bind_int(stmt, 1, user.getElo());
+    if (rc != SQLITE_OK) std::cout << "BIND 1 ERROR" << std::endl;
+    rc = sqlite3_bind_int(stmt, 2, user.getWins());
+    if (rc != SQLITE_OK) std::cout << "BIND 2 ERROR" << std::endl;
+    rc = sqlite3_bind_int(stmt, 3, user.getLoses());
+    if (rc != SQLITE_OK) std::cout << "BIND 3 ERROR" << std::endl;
+    rc = sqlite3_bind_text(stmt, 4, user.getUsername(), strlen(user.getUsername()),SQLITE_STATIC);
+    if (rc != SQLITE_OK) std::cout << "BIND 4 ERROR" << std::endl;
+
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_ROW && rc != SQLITE_DONE) std::cout << "STEP 1 ERROR" << std::endl;
+
+    //Formaciones
+    char sql2[] = "select form_id from FORMS where user_id = (select user_id from USER where username=?)";
+
+    rc = sqlite3_prepare_v2(db, sql2, strlen(sql2) + 1, &stmt, NULL);
+    if (rc != SQLITE_OK) std::cout << "PREPARE 2 ERROR" << std::endl;
+
+    rc = sqlite3_bind_text(stmt, 1, user.getUsername(), strlen(user.getUsername()), SQLITE_STATIC);
+    if (rc != SQLITE_OK) std::cout << "BIND 5 ERROR" << std::endl;
+
+    int formids[4];
+    int i=0;
+    do {
+        rc = sqlite3_step(stmt);
+        if (rc == SQLITE_DONE) break;
+        formids[i]=sqlite3_column_int(stmt, 0);
+        i++;
+    } while (rc == SQLITE_ROW);
+
+    for (int j = 0; j < 4; ++j) {
+        char sql3[] = "update FORMS set formation=? where forms_id=?";
+
+        rc = sqlite3_prepare_v2(db, sql3, strlen(sql3) + 1, &stmt, NULL);
+        if (rc != SQLITE_OK) std::cout << "PREPARE 3 ERROR" << std::endl;
+
+        rc = sqlite3_bind_text(stmt, 1, user.getForms()[i], strlen(user.getForms()[i]), SQLITE_STATIC);
+        if (rc != SQLITE_OK) std::cout << "BIND 6 ERROR" << std::endl;
+
+        rc = sqlite3_bind_int(stmt, 2, formids[j]);
+        if (rc != SQLITE_OK) std::cout << "BIND 7 ERROR" << std::endl;
+
+        rc = sqlite3_step(stmt);
+        if (rc != SQLITE_OK) std::cout << "STEP ERROR" << std::endl;
+    }
+    sqlite3_finalize(stmt);
 }
 
 bool DBManager::userExists(char *username) {

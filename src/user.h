@@ -2,11 +2,13 @@
 #define CHESS2_USER_H
 
 
+#include "content.h"
+
 class User {
 private:
     char* username;
     int elo, wins, loses;
-    char **forms;
+    FormationSet forms;
 public:
     char* getUsername();
     int getElo();
@@ -15,7 +17,7 @@ public:
     char** getForms();
     void addWin();
     void addLose();
-    void setForms(char** form);
+    void setForms(char** forms);
     void calculateElo(int enemyRating,bool win);
 
     User(char* username, int elo, int wins, int loses, char** forms);
