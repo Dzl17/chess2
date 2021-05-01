@@ -59,8 +59,12 @@ void dispose()
 
 int main() {
     dbManager = new DBManager((char *) "data/database.db");
-    user = Login::runSetup(*dbManager); // Inicio de sesión, base de datos
-    if (user != nullptr) {
+    bool exit = false;
+    do {
+        user = Login::runSetup(*dbManager, exit);
+    } while (user == nullptr && !exit);
+
+    if (!exit) {
         Config config;
         config.name = "Chess 2";
         config.width = 1280;

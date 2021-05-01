@@ -594,7 +594,7 @@ void writeUserData(Batch *batch, User user)
     if (strlen(user.getUsername()) <= 14) {
         char usr_str[64] = "User: ";
         strcat(usr_str, user.getUsername());
-        batch->str(font, usr_str, Vec2(416, 206), Color::white);
+        batch->str(font, usr_str, Vec2(416, 226), Color::white);
     } else {
         offset = 44;
         char usr_str_1[64] = "User: ";
@@ -602,35 +602,35 @@ void writeUserData(Batch *batch, User user)
         strncpy(usr_sub_1, user.getUsername(), 7);
         strcat(usr_str_1, usr_sub_1);
         strcat(usr_str_1, "-");
-        batch->str(font, usr_str_1, Vec2(416, 206), Color::white);
+        batch->str(font, usr_str_1, Vec2(416, 226), Color::white);
 
         char usr_str_2[64] = "";
         char usr_sub_2[14];
         std::copy(user.getUsername() + 7, user.getUsername() + strlen(user.getUsername()), usr_sub_2);
         strcat(usr_str_2, usr_sub_2);
-        batch->str(font, usr_str_2, Vec2(416, 206 + offset), Color::white);
+        batch->str(font, usr_str_2, Vec2(416, 226 + offset), Color::white);
     }
 
     char elo_str[64] = "Elo: ";
     char elo_num[8];
     sprintf(elo_num, "%d", user.getElo());
     strcat(elo_str, elo_num);
-    batch->str(font, elo_str, Vec2(416, 250 + offset), Color::white);
+    batch->str(font, elo_str, Vec2(416, 270 + offset), Color::white);
 
     char wins_str[64] = "Wins: ";
     char wins_num[8];
     sprintf(wins_num, "%d", user.getWins());
     strcat(wins_str, wins_num);
-    batch->str(font, wins_str, Vec2(420, 294 + offset), Color::white);
+    batch->str(font, wins_str, Vec2(420, 314 + offset), Color::white);
 
     char losses_str[64] = "Losses: ";
     char losses_num[8];
     sprintf(losses_num, "%d", user.getLosses());
     strcat(losses_str, losses_num);
-    batch->str(font, losses_str, Vec2(412, 338 + offset), Color::white);
+    batch->str(font, losses_str, Vec2(412, 358 + offset), Color::white);
 }
 
-User* Login::runSetup(DBManager& dbManager)
+User* Login::runSetup(DBManager& dbManager, bool& exit)
 {
     int op = 0;
     std::cout << "Choose an option:" << std::endl;
@@ -641,24 +641,27 @@ User* Login::runSetup(DBManager& dbManager)
     char *username = new char[20];
     char *password = new char[20];
     if (op == 1) {
-        std::cout << "Username: ";
-        std::cin >> username;
-        std::cout << "Password: ";
-        std::cin >> password;
-        if (dbManager.userExists(username) || strlen(username) > 0 || strlen(password) > 0) {
-            User *user;
-            user = dbManager.loadUser(username, password);
-            std::cout << "Welcome, " << user->getUsername() << "." << std::endl;
-            delete[] username;
-            delete[] password;
-            return user;
-        }
-        else {
+        do {
+            std::cout << "Username: ";
+            std::cin >> username;
+        } while (strlen(username) <= 0);
+        if (!dbManager.userExists(username)) {
             std::cout << "User " << username << " not found." << std::endl;
             delete[] username;
             delete[] password;
             return nullptr;
         }
+
+        do {
+            std::cout << "Password: ";
+            std::cin >> password;
+        } while (strlen(password) <= 0);
+        User *user;
+        user = dbManager.loadUser(username, password);
+        std::cout << "Welcome, " << user->getUsername() << "." << std::endl;
+        delete[] username;
+        delete[] password;
+        return user;
     } else if (op == 2){
         std::cout << "Username: ";
         std::cin >> username;
@@ -675,6 +678,7 @@ User* Login::runSetup(DBManager& dbManager)
             return nullptr;
         }
     } else {
-        return nullptr; // TODO
+        exit = true;
+        return nullptr;
     }
 }

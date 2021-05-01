@@ -37,7 +37,7 @@ namespace Assets {
 }
 
 namespace Login {
-    User *runSetup(DBManager& dbManager);
+    User *runSetup(DBManager& dbManager, bool& exit);
 }
 
 #endif
