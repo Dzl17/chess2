@@ -656,12 +656,17 @@ User* Login::runSetup(DBManager& dbManager, bool& exit)
             std::cout << "Password: ";
             std::cin >> password;
         } while (strlen(password) <= 0);
-        User *user;
-        user = dbManager.loadUser(username, password);
-        std::cout << "Welcome, " << user->getUsername() << "." << std::endl;
-        delete[] username;
-        delete[] password;
-        return user;
+        if (dbManager.verifyUser(username, password)) {
+            User *user;
+            user = dbManager.loadUser(username);
+            std::cout << "Welcome, " << user->getUsername() << "." << std::endl;
+            delete[] username;
+            delete[] password;
+            return user;
+        } else {
+            std::cout << "Password is wrong for user '" << username << "'." << std::endl;
+            return nullptr;
+        }
     } else if (op == 2){
         std::cout << "Username: ";
         std::cin >> username;
@@ -670,7 +675,7 @@ User* Login::runSetup(DBManager& dbManager, bool& exit)
         if (!dbManager.userExists(username)) {
             dbManager.addNewUser(username, password);
             std::cout << "User " << username << " registered." << std::endl;
-            if (dbManager.userExists(username)) return dbManager.loadUser(username, password);
+            if (dbManager.userExists(username)) return dbManager.loadUser(username);
             else return nullptr;
         }
         else {

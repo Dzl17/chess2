@@ -13,11 +13,30 @@ DBManager::~DBManager() {
     sqlite3_close(this->db);
 }
 
-User* DBManager::loadUser(char* username, char* password){
+bool DBManager::verifyUser(char* username, char* password) {
     sqlite3_stmt *stmt;
     int rc;
 
-    char sql1[] = "SELECT username, elo, wins, losses, user_id FROM USER WHERE username=? AND password=?"; // Sentencia SQL
+    char sql1[] = "SELECT user_id FROM USER WHERE username=? AND password=?"; // Sentencia SQL
+
+    rc = sqlite3_prepare_v2(db, sql1, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) std::cout << "PREPARE 1 ERROR" << std::endl;
+
+    rc = sqlite3_bind_text(stmt, 1, username, strlen(username), SQLITE_STATIC); // Introducir username
+    if (rc != SQLITE_OK) std::cout << "BIND 1 ERROR" << std::endl;
+    rc = sqlite3_bind_text(stmt, 2, password, strlen(password), SQLITE_STATIC); // Introducir password
+    if (rc != SQLITE_OK) std::cout << "BIND 2 ERROR" << std::endl;
+
+    rc = sqlite3_step(stmt); // Ejecutar query
+    sqlite3_finalize(stmt);
+    return rc == SQLITE_ROW;
+}
+
+User* DBManager::loadUser(char* username){
+    sqlite3_stmt *stmt;
+    int rc;
+
+    char sql1[] = "SELECT username, elo, wins, losses, user_id FROM USER WHERE username=?"; // Sentencia SQL
 
     // Preparar y ejecutar consulta 1
     rc = sqlite3_prepare_v2(db, sql1, -1, &stmt, NULL); // TODO gestionar posibles errores
@@ -25,8 +44,6 @@ User* DBManager::loadUser(char* username, char* password){
 
     rc = sqlite3_bind_text(stmt, 1, username, strlen(username), SQLITE_STATIC); // Introducir username
     if (rc != SQLITE_OK) std::cout << "BIND 1 ERROR" << std::endl;
-    rc = sqlite3_bind_text(stmt, 2, password, strlen(password), SQLITE_STATIC); // Introducir password
-    if (rc != SQLITE_OK) std::cout << "BIND 2 ERROR" << std::endl;
 
     rc = sqlite3_step(stmt); // Ejecutar query
     if (rc != SQLITE_ROW && rc != SQLITE_DONE) std::cout << "STEP 1 ERROR" << std::endl;
@@ -46,7 +63,7 @@ User* DBManager::loadUser(char* username, char* password){
     if (rc != SQLITE_OK) std::cout << "PREPARE 2 ERROR" << std::endl;
 
     rc = sqlite3_bind_int(stmt, 1, temp_id);
-    if (rc != SQLITE_OK) std::cout << "BIND 3 ERROR" << std::endl;
+    if (rc != SQLITE_OK) std::cout << "BIND 2 ERROR" << std::endl;
 
     char **forms = new char*[4];
     for (int i = 0; i < 4; i++) forms[i] = new char[21];

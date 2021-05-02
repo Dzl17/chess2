@@ -14,7 +14,8 @@ public:
     explicit DBManager(char *database);
     ~DBManager();
 
-    User* loadUser(char* username, char* password);
+    bool verifyUser(char* username, char* password);
+    User* loadUser(char* username);
     void addNewUser(char* username, char* password);
     void updateUserData(User user);
 
