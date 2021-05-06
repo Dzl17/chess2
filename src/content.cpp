@@ -18,6 +18,8 @@ TextureRef getPieceTexture(VcPieces& pieces, char pieceLetter);
 char *getPieceName(int id);
 bool isFormValid(const char *form);
 void saveCurrentGame(Game *game);
+void loadCurrentGame(Game *game);
+char *getFormFromGame(Game *game);
 void writeFormSetPos(Batch *batch, FormationSet& formSet);
 void writePieceHp(Batch *batch, PieceSprite& piece);
 void writePieceDmg(Batch *batch, PieceSprite& piece);
@@ -175,7 +177,8 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
 
         if (buttons["helpGameButton"]->isClicked() || Input::pressed(Key::H)) statics["helpMenu"]->swapActive();
         if (buttons["loadGameButton"]->isClicked()) {
-
+            loadCurrentGame(game);
+            loadPieceCoords(game, pieces);
         }
         if (buttons["saveGameButton"]->isClicked()) {
             saveCurrentGame(game);
@@ -461,6 +464,31 @@ void saveCurrentGame(Game *game)
         }
     }
     saveGame(game->turn, game->nexus1hp, game->nexus2hp, savePieces);
+}
+
+void loadCurrentGame(Game *game)
+{
+    int **data = loadGame(); // Cargado de los datos de la partida
+    game->turn = data[0][0];
+    game->nexus1hp = data[0][1];
+    game->nexus2hp = data[0][2];
+    for (int i = 1; i < 25; ++i) game->pieces[i-1] = (Piece) {data[i][0], data[i][1], getBaseDmg(data[i][0])};
+    game->pieces[24] = (Piece) {25, data[0][1]};
+    game->pieces[25] = (Piece) {26, data[0][2]};
+    for (auto & i : game->data) {
+        for (int & j : i) {
+            j = 0;
+        }
+    }
+    game->data[3][0] = 25;
+    game->data[3][10] = 26;
+    for (int i = 1; i < 25; i++) {
+        if (game->pieces[i-1].hp > 0){
+            game->data[data[i][2]][data[i][3]] = data[i][0];
+        }
+    }
+    for (int i = 0; i < 25; i++) free(data[i]);
+    free(data);
 }
 
 String getSpritePath(int id)
