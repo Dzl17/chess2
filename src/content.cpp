@@ -17,6 +17,7 @@ std::string getIconKey(int id);
 TextureRef getPieceTexture(VcPieces& pieces, char pieceLetter);
 char *getPieceName(int id);
 bool isFormValid(const char *form);
+void saveCurrentGame(Game *game);
 void writeFormSetPos(Batch *batch, FormationSet& formSet);
 void writePieceHp(Batch *batch, PieceSprite& piece);
 void writePieceDmg(Batch *batch, PieceSprite& piece);
@@ -67,6 +68,8 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         if (useBrownBackground) statics["backgroundB"]->draw(batch); // Fondo
         else statics["backgroundG"]->draw(batch); // Fondo
         buttons["helpGameButton"]->draw(batch);
+        buttons["loadGameButton"]->draw(batch);
+        buttons["saveGameButton"]->draw(batch);
         buttons["menuGameButton"]->draw(batch);
         buttons["exitGameButton"]->draw(batch);
 
@@ -171,6 +174,12 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
         for (auto & nexus : nexuses) nexus.update();
 
         if (buttons["helpGameButton"]->isClicked() || Input::pressed(Key::H)) statics["helpMenu"]->swapActive();
+        if (buttons["loadGameButton"]->isClicked()) {
+
+        }
+        if (buttons["saveGameButton"]->isClicked()) {
+            saveCurrentGame(game);
+        }
         if (buttons["menuGameButton"]->isClicked()) {
             screen = kMainMenu;
             loadPieceCoords(game, pieces);
@@ -253,13 +262,16 @@ void loadButtons(UmButtons& buttons)
     buttons.insert({"backButton",       new GuiButton(780, 602,  64,  76,
                                                 "data/img/buttons/backButtonIdle.png", "data/img/buttons/backButtonPressed.png")});
 
-    buttons.insert({"helpGameButton",   new GuiButton( 16,  16, 224,  80, // Help (game)
+    buttons.insert({"helpGameButton",   new GuiButton( 16,  16, 224,  80,
                                                     "data/img/buttons/helpButtonIdle.png", "data/img/buttons/helpButtonPressed.png")});
-    buttons.insert({"menuGameButton",   new GuiButton( 16, 112, 224,  80, // Menu (game)
+    buttons.insert({"loadGameButton",   new GuiButton( 16, 144, 224,  80,
+                                                       "data/img/buttons/loadButtonIdle.png", "data/img/buttons/loadButtonPressed.png")});
+    buttons.insert({"saveGameButton",   new GuiButton( 16, 240, 224,  80,
+                                                       "data/img/buttons/saveGameButtonIdle.png", "data/img/buttons/saveGameButtonPressed.png")});
+    buttons.insert({"menuGameButton",   new GuiButton( 16, 368, 224,  80,
                                                     "data/img/buttons/menuButtonIdle.png", "data/img/buttons/menuButtonPressed.png")});
-    buttons.insert({"exitGameButton",   new GuiButton( 16, 208, 224,  80, // Exit (game)
+    buttons.insert({"exitGameButton",   new GuiButton( 16, 464, 224,  80,
                                                     "data/img/buttons/exitButtonIdle.png", "data/img/buttons/exitButtonPressed.png")});
-
 }
 
 void loadStatics(UmStatics& statics)
@@ -430,6 +442,25 @@ void resetDPSprites()
             x += 80;
         }
     }
+}
+
+void saveCurrentGame(Game *game)
+{
+    int savePieces[24][4];
+    for (int i = 0; i < 24; ++i) {  // Se guardan las posiciones de las piezas
+        savePieces[i][0] = game->pieces[i].id;
+        savePieces[i][1] = game->pieces[i].hp;
+        for (int j = 0; j < B_ROWS; j++) {
+            for (int k = 0; k < B_COLUMNS; k++) {
+                if (game->data[j][k] == game->pieces[i].id) {
+                    savePieces[i][2] = j;
+                    savePieces[i][3] = k;
+                    break;
+                }
+            }
+        }
+    }
+    saveGame(game->turn, game->nexus1hp, game->nexus2hp, savePieces);
 }
 
 String getSpritePath(int id)
