@@ -19,7 +19,6 @@ char *getPieceName(int id);
 bool isFormValid(const char *form);
 void saveCurrentGame(Game *game);
 void loadCurrentGame(Game *game);
-char *getFormFromGame(Game *game);
 void writeFormSetPos(Batch *batch, FormationSet& formSet);
 void writePieceHp(Batch *batch, PieceSprite& piece);
 void writePieceDmg(Batch *batch, PieceSprite& piece);
@@ -28,7 +27,9 @@ void writeUserData(Batch *batch, User user);
 SpriteFont font;
 std::map<int, DraggablePieceSprite*> dpSprites;
 bool useBrownBackground = false;
-double error_timer = 0;
+double form_error_timer = 0;
+double load_msg_timer = 0;
+double save_msg_timer = 0;
 
 void Assets::load(UmStatics& statics, UmButtons& buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, Screen& screen, User& user)
 {
@@ -61,7 +62,7 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         buttons["backButton"]->draw(batch);
         renderFormation(batch, pieces, user.formationSet.forms[user.formationSet.index], nexuses[0].texture);
         writeFormSetPos(batch, user.formationSet);
-        if (Time::seconds < error_timer) {
+        if (Time::seconds < form_error_timer) {
             batch->str(font, "Invalid", Vec2(120, 600), Color::white);
             batch->str(font, "formation.", Vec2(124, 640), Color::white);
         }
@@ -89,6 +90,14 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         for (auto & nexus : nexuses) nexus.draw(batch);
 
         statics["helpMenu"]->draw(batch);
+
+        if (Time::seconds < load_msg_timer && save_msg_timer < load_msg_timer) {
+            batch->str(font, " Game", Vec2(30, 600), Color::white);
+            batch->str(font, "loaded", Vec2(30, 640), Color::white);
+        } else if (Time::seconds < save_msg_timer && load_msg_timer < save_msg_timer) {
+            batch->str(font, " Game", Vec2(30, 600), Color::white);
+            batch->str(font, "saved", Vec2(47, 640), Color::white);
+        }
     }
     else if (screen == kFormEditionSelectionMenu) {
         statics["choosingBackground"]->draw(batch);
@@ -163,7 +172,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
                 startGame(game, user.formationSet.forms[user.formationSet.index], user.formationSet.forms[0]);
                 loadPieceCoords(game, pieces);
             } else {
-                error_timer = Time::seconds + 2;
+                form_error_timer = Time::seconds + 2;
             }
         }
         if (buttons["backButton"]->isClicked()) {
@@ -179,9 +188,11 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
         if (buttons["loadGameButton"]->isClicked()) {
             loadCurrentGame(game);
             loadPieceCoords(game, pieces);
+            load_msg_timer = Time::seconds + 2;
         }
         if (buttons["saveGameButton"]->isClicked()) {
             saveCurrentGame(game);
+            save_msg_timer = Time::seconds + 2;
         }
         if (buttons["menuGameButton"]->isClicked()) {
             screen = kMainMenu;
