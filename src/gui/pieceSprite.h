@@ -8,6 +8,7 @@ extern "C"{
 
 class PieceSprite : public Sprite {
 private:
+    static int selectedPiece;
     Vec2 focus;
     Game *gameRef; // Referencia a game
     bool overlapsPoint(int x, int y);

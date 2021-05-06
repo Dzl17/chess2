@@ -24,7 +24,7 @@ public:
     void setY(int);
 
     virtual void update() = 0;
-    virtual void draw(Batch *batch) = 0;
+    virtual void draw(Batch *batch);
 };
 
 

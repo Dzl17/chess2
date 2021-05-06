@@ -19,3 +19,7 @@ void Sprite::setY(int yNum) {
 std::ostream& operator<<(std::ostream &strm, const Sprite &sprite) {
     return strm << "X: " << sprite.x << ", Y: " << sprite.y;
 }
+
+void Sprite::draw(Batch *batch) {
+    batch->tex(this->texture, Vec2(this->getX(), this->getY()));
+}

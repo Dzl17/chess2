@@ -12,7 +12,3 @@ void NexusSprite::update() {
     this->deltaCounter += Time::delta;
     this->setY((int) (256 + std::sin(deltaCounter * 4) * 5));
 }
-
-void NexusSprite::draw(Batch *batch) {
-    batch->tex(this->texture, Vec2(this->getX(), this->getY()));
-}

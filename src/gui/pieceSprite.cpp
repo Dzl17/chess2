@@ -1,7 +1,7 @@
 #include "pieceSprite.h"
 #include <cmath>
 
-static int selectedPiece = 0; // TODO pasar a variable estática de clase?
+int PieceSprite::selectedPiece = 0;
 
 bool PieceSprite::overlapsPoint(int x, int y){
     return this->getX() <= x && this->getX() + 64 >= x && this->getY() <= y && this->getY() + 64 >= y;

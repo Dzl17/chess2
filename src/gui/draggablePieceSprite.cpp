@@ -61,10 +61,6 @@ void DraggablePieceSprite::update() {
     }
 }
 
-void DraggablePieceSprite::draw(Batch *batch) {
-    batch->tex(this->texture, Vec2(this->getX(), this->getY()));
-}
-
 bool DraggablePieceSprite::isInDefaultPosition() {
     return this->getX() != this->ogX || this->getY() != this->ogY;
 }

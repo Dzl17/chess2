@@ -20,7 +20,6 @@ public:
     bool isInDefaultPosition();
 
     void update() override;
-    void draw(Batch *batch) override;
 };
 
 static Vec2 collisionPositions[FORM_LENGTH];

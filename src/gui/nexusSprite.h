@@ -9,7 +9,6 @@ private:
 public:
     NexusSprite(int x, int y, const String& texturePath);
     void update() override;
-    void draw(Batch *batch) override;
 };
 
 
