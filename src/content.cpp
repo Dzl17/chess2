@@ -80,15 +80,17 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         batch->rect(Rect(404, 700, 8, (float)game.nexus1hp * (-112) / NEXUS_HP), Color("4d9be6")); // Vida azul
         batch->rect(Rect(1124, 700, 8, (float)game.nexus2hp * (-112) / NEXUS_HP), Color("ea4f36")); // Vida roja
 
-        // Turno de jugador TODO
-        if (game.turn % 2 == 0) batch->rect(Rect(416, 256, 64, 64), Color("#8a0da6"));
-        else batch->rect(Rect(1056, 256, 64, 64), Color("#8a0da6"));
+        // Turno de jugador
+        if (game.turn % 2 == 0) batch->rect(Rect(268, 580, 128, 128), Color("#9b5dab"));
+        else batch->rect(Rect(1140, 580, 128, 128), Color("#9b5dab"));
 
         renderPieceData(batch, pieces, statics, game);
 
         for (auto & piece : pieces) piece.draw(batch);
         for (auto & nexus : nexuses) nexus.draw(batch);
 
+        statics["leftPortrait"]->draw(batch);
+        statics["rightPortrait"]->draw(batch);
         statics["helpMenu"]->draw(batch);
 
         if (Time::seconds < load_msg_timer && save_msg_timer < load_msg_timer) {
@@ -296,6 +298,8 @@ void loadStatics(UmStatics& statics)
     statics.insert({"choosingBackground",new StaticSprite(0,     0, "data/img/choosingBackground.png",  true)});
     statics.insert({"userBackground",    new StaticSprite(0,     0, "data/img/userBackground.png",      true)});
     statics.insert({"emptyBackground",   new StaticSprite(0,     0, "data/img/emptyBackground.png",     true)});
+    statics.insert({"leftPortrait",      new StaticSprite(268, 580, "data/img/leftPortrait.png",        true)});
+    statics.insert({"rightPortrait",     new StaticSprite(1140,580, "data/img/rightPortrait.png",       true)});
     statics.insert({"helpMenu",          new StaticSprite(320,  64, "data/img/helpmenu.png",            false)});
     statics.insert({"spearmanLIcon",     new StaticSprite(480, 556, "data/img/icons/spearmanLIcon.png", true)});
     statics.insert({"spearmanRIcon",     new StaticSprite(480, 556, "data/img/icons/spearmanRIcon.png", true)});
@@ -546,7 +550,7 @@ std::string getIconKey(int id)
     }
 }
 
-char * getPieceName(int id) {
+char *getPieceName(int id) {
     switch (id) {
         case 0: return (char*) "Spearman";
         case 1: return (char*) "Wizard";
@@ -588,7 +592,10 @@ void renderPieceData(Batch *batch, VcPieces& pieces, UmStatics& statics, Game ga
                 batch->rect(Rect(pos.x + 4, pos.y + 4, 56, 56), Color("#ea4f36"));
             }
 
-            batch->str(font, getPieceName(piece.getPieceCode()), Vec2(620, 568), Color("#1ebc73"));
+            batch->str(font,
+                       getPieceName(piece.getPieceCode()),
+                       Vec2(620, 568),
+                       piece.id <= 12 ? Color("#4d65b4") : Color("#b33831"));
             writePieceHp(batch, piece);
             writePieceDmg(batch, piece);
         }
@@ -706,6 +713,14 @@ void writeUserData(Batch *batch, User user)
 User* Login::runSetup(DBManager& dbManager, bool& exit)
 {
     int op = 0;
+    std::cout << "  /$$$$$$  /$$                                           /$$$$$$ " << std::endl;
+    std::cout << " /$$__  $$| $$                                          /$$__  $$" << std::endl;
+    std::cout << "| $$  \\__/| $$$$$$$   /$$$$$$   /$$$$$$$ /$$$$$$$      |__/  \\ $$" << std::endl;
+    std::cout << "| $$      | $$__  $$ /$$__  $$ /$$_____//$$_____/        /$$$$$$/" << std::endl;
+    std::cout << "| $$      | $$  \\ $$| $$$$$$$$|  $$$$$$|  $$$$$$        /$$____/ " << std::endl;
+    std::cout << "| $$    $$| $$  | $$| $$_____/ \\____  $$\\____  $$      | $$      " << std::endl;
+    std::cout << "|  $$$$$$/| $$  | $$|  $$$$$$$ /$$$$$$$//$$$$$$$/      | $$$$$$$$" << std::endl;
+    std::cout << " \\______/ |__/  |__/ \\_______/|_______/|_______/       |________/" << std::endl << std::endl;
     std::cout << "Choose an option:" << std::endl;
     std::cout << "1) Log in" << std::endl;
     std::cout << "2) Register" << std::endl;
