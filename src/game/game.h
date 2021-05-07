@@ -3,7 +3,7 @@
 
 #define B_ROWS 7 // Por si se cambia el tamaño
 #define B_COLUMNS 11
-#define NEXUS_HP 20 // Vida fija del nexo
+#define NEXUS_HP 150 // Vida fija del nexo
 
 #include "piece.h"
 

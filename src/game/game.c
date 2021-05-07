@@ -160,8 +160,8 @@ int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY
             printf("Pieza eliminada.\n");
             return 3;
         } else if (attackResult == 2) { // Has atacado a un nexo
-            if (enemypiece->id == 25) game->nexus1hp -= 5;  // Se le resta vida a la variable global de vida nexo
-            else if (enemypiece->id == 26) game->nexus2hp -= 5;
+            if (enemypiece->id == 25) game->nexus1hp -= piece->dmg;  // Se le resta vida a la variable global de vida nexo
+            else if (enemypiece->id == 26) game->nexus2hp -= piece->dmg;
             printf("Nexo atacado.\n");
             return 2;
         } else {
