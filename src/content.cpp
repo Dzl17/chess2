@@ -322,6 +322,7 @@ void loadPieceCoords(Game *gameRef, VcPieces& pieces)
                     if (piece.id == dataCode) {
                         piece.setX(j * 64 + 416);
                         piece.setY(i * 64 + 64);
+                        piece.hp = getBaseHp(piece.id);
                     }
                 }
             }

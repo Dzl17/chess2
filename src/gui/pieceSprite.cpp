@@ -51,6 +51,9 @@ PieceSprite::PieceSprite(int x, int y, int id, const String& texturePath, Game *
     this->touched = false;
     this->focus = Vec2(0,0);
     this->gameRef = gameRef;
+    this->attackDir = C;
+    this->attack_timer = 0;
+    this->positionBuffer = Vec2(0,0);
 }
 
 void PieceSprite::update() {
@@ -58,6 +61,8 @@ void PieceSprite::update() {
     if (this->hp <= 0) {
         this->active = false;
         return;
+    } else {
+        this->active = true;
     }
     this->hp = this->gameRef->pieces[this->id - 1].hp;
     switch (this->state) {
@@ -101,6 +106,10 @@ void PieceSprite::update() {
                     int result = updatePiece(this->gameRef,originX,originY,destinyX,destinyY); // Actualizar backend
                     if (result == 2) { // Ataque sin destruir
                         this->gameRef->turn++;
+                        this->setAttackDir(Vec2(originY, originX), Vec2(destinyY, destinyX));
+                        this->attack_timer = Time::seconds + 0.2;
+                        this->positionBuffer.x = this->getX();
+                        this->positionBuffer.y = this->getY();
                         this->state = ATTACKING;
                     } else if (result == 3) { // Ataque destruyendo
                         this->gameRef->turn++;
@@ -127,9 +136,16 @@ void PieceSprite::update() {
             }
             break;
         case ATTACKING:
-            // Animación de ataque
             selectedPiece = 0;
-            this->state = IDLE;
+            // Animación de ataque
+            if (this->attack_timer > Time::seconds) {
+                this->animateAttack();
+            } else {
+                this->state = IDLE;
+                this->attackDir = C;
+                this->setX((int) this->positionBuffer.x);
+                this->setY((int) this->positionBuffer.y);
+            }
             break;
     }
 }
@@ -247,4 +263,51 @@ std::vector<Vec2> PieceSprite::getAttackPositions(int data[7][11])
         }
     }
     return positions;
+}
+
+void PieceSprite::setAttackDir(Vec2 origin, Vec2 destiny) {
+    if (origin.x == destiny.x && origin.y < destiny.y) this->attackDir = N;
+    else if (origin.x > destiny.x && origin.y < destiny.y) this->attackDir = NW;
+    else if (origin.x > destiny.x && origin.y == destiny.y) this->attackDir = W;
+    else if (origin.x > destiny.x && origin.y > destiny.y) this->attackDir = SW;
+    else if (origin.x == destiny.x && origin.y > destiny.y) this->attackDir = S;
+    else if (origin.x < destiny.x && origin.y > destiny.y) this->attackDir = SE;
+    else if (origin.x < destiny.x && origin.y == destiny.y) this->attackDir = E;
+    else if (origin.x < destiny.x && origin.y < destiny.y) this->attackDir = NE;
+    else this->attackDir = C;
+}
+
+void PieceSprite::animateAttack() {
+    switch (this->attackDir) {
+        case N:
+            this->setY(this->getY() + 300 * Time::delta);
+            break;
+        case NW:
+            this->setX(this->getX() - 300 * Time::delta);
+            this->setY(this->getY() + 300 * Time::delta);
+            break;
+        case W:
+            this->setX(this->getX() - 300 * Time::delta);
+            break;
+        case SW:
+            this->setX(this->getX() - 300 * Time::delta);
+            this->setY(this->getY() - 300 * Time::delta);
+            break;
+        case S:
+            this->setY(this->getY() - 300 * Time::delta);
+            break;
+        case SE:
+            this->setX(this->getX() + 300 * Time::delta);
+            this->setY(this->getY() - 300 * Time::delta);
+            break;
+        case E:
+            this->setX(this->getX() + 300 * Time::delta);
+            break;
+        case NE:
+            this->setX(this->getX() + 300 * Time::delta);
+            this->setY(this->getY() + 300 * Time::delta);
+            break;
+        case C:
+            break;
+    }
 }
