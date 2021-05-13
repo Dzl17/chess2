@@ -132,7 +132,9 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
     for (auto & button : buttons) button.second->update();
 
     if (screen == kMainMenu) {
-        if (buttons["playMenuButton"]->isClicked() || Input::pressed(Key::P)) screen = kFormSelectionMenu; // Play
+        if (buttons["playMenuButton"]->isClicked() || Input::pressed(Key::P) || Input::pressed(Key::Enter)) {
+            screen = kFormSelectionMenu; // Play
+        }
         if (buttons["formsMenuButton"]->isClicked() || Input::pressed(Key::F)) {
             screen = kFormEditionSelectionMenu; // Forms
             user.formationSet.index = 4;
@@ -220,7 +222,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
         }
     }
     else if (screen == kFormEditionSelectionMenu) {
-        if (buttons["leftArrowButton"]->isClicked()|| Input::pressed(Key::Left)) {
+        if (buttons["leftArrowButton"]->isClicked() || Input::pressed(Key::Left)) {
             if (user.formationSet.index == 4) user.formationSet.index = user.formationSet.size - 1;
             else user.formationSet.index--;
         }
