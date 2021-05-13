@@ -93,6 +93,8 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         statics["leftPortrait"]->draw(batch);
         statics["rightPortrait"]->draw(batch);
         statics["helpMenu"]->draw(batch);
+        statics["leftWin"]->draw(batch);
+        statics["rightWin"]->draw(batch);
 
         if (Time::seconds < load_msg_timer && save_msg_timer < load_msg_timer) {
             batch->str(font, " Game", Vec2(30, 600), Color::white);
@@ -176,6 +178,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
                 screen = kMainGame;
                 startGame(game, user.formationSet.forms[user.formationSet.index], user.formationSet.forms[0]);
                 loadPieceCoords(game, pieces);
+                statics["helpMenu"]->setActive(false);
             } else {
                 form_error_timer = Time::seconds + 2;
             }
@@ -191,13 +194,17 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
 
         if (buttons["helpGameButton"]->isClicked() || Input::pressed(Key::H)) statics["helpMenu"]->swapActive();
         if (buttons["loadGameButton"]->isClicked() || Input::pressed(Key::L)) {
-            loadCurrentGame(game);
-            loadPieceCoords(game, pieces);
-            load_msg_timer = Time::seconds + 2;
+            if (game_end_timer == 0) {
+                loadCurrentGame(game);
+                loadPieceCoords(game, pieces);
+                load_msg_timer = Time::seconds + 2;
+            }
         }
         if (buttons["saveGameButton"]->isClicked() || Input::pressed(Key::S)) {
-            saveCurrentGame(game);
-            save_msg_timer = Time::seconds + 2;
+            if (game_end_timer == 0) {
+                saveCurrentGame(game);
+                save_msg_timer = Time::seconds + 2;
+            }
         }
         if (buttons["menuGameButton"]->isClicked() || Input::pressed(Key::M)) {
             screen = kMainMenu;
@@ -213,9 +220,11 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
                 game_end_timer = Time::seconds + 5;
                 for (auto & piece:pieces) piece.active = false; // Desactivar todas las piezad, por seguridad
             } else if (Time::seconds < game_end_timer) {
-                statics["helpMenu"]->setActive(true); // TODO imagen de victoria
+                if (game->nexus2hp <= 0) statics["leftWin"]->setActive(true);
+                else if (game->nexus1hp <= 0) statics["rightWin"]->setActive(true);
             } else {
-                statics["helpMenu"]->setActive(false);
+                statics["leftWin"]->setActive(false);
+                statics["rightWin"]->setActive(false);
                 game_end_timer = 0;
                 screen = kMainMenu;
             }
@@ -312,6 +321,8 @@ void loadStatics(UmStatics& statics)
     statics.insert({"leftPortrait",      new StaticSprite(268, 580, "data/img/leftPortrait.png",        true)});
     statics.insert({"rightPortrait",     new StaticSprite(1140,580, "data/img/rightPortrait.png",       true)});
     statics.insert({"helpMenu",          new StaticSprite(320,  64, "data/img/helpmenu.png",            false)});
+    statics.insert({"leftWin",           new StaticSprite(320,  64, "data/img/leftWins.png",            false)});
+    statics.insert({"rightWin",          new StaticSprite(320,  64, "data/img/rightWins.png",           false)});
     statics.insert({"spearmanLIcon",     new StaticSprite(480, 556, "data/img/icons/spearmanLIcon.png", true)});
     statics.insert({"spearmanRIcon",     new StaticSprite(480, 556, "data/img/icons/spearmanRIcon.png", true)});
     statics.insert({"wizardLIcon",       new StaticSprite(480, 556, "data/img/icons/wizardLIcon.png",   true)});
