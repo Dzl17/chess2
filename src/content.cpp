@@ -161,15 +161,15 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
                                                (560 - buttons["exitMenuButton"]->getY()) * (double) Time::delta * 4));
     }
     else if (screen == kFormSelectionMenu) {
-        if (buttons["leftArrowButton"]->isClicked()) {
+        if (buttons["leftArrowButton"]->isClicked() || Input::pressed(Key::Left)) {
             if (user.formationSet.index == 0) user.formationSet.index = user.formationSet.size - 1;
             else user.formationSet.index--;
         }
-        if (buttons["rightArrowButton"]->isClicked()) {
+        if (buttons["rightArrowButton"]->isClicked() || Input::pressed(Key::Right)) {
             if (user.formationSet.index == user.formationSet.size - 1) user.formationSet.index = 0;
             else user.formationSet.index++;
         }
-        if (buttons["startButton"]->isClicked()) {
+        if (buttons["startButton"]->isClicked() || Input::pressed(Key::Enter) || Input::pressed(Key::S)) {
             if (isFormValid(user.formationSet.forms[user.formationSet.index])) {
                 screen = kMainGame;
                 startGame(game, user.formationSet.forms[user.formationSet.index], user.formationSet.forms[0]);
@@ -178,7 +178,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
                 form_error_timer = Time::seconds + 2;
             }
         }
-        if (buttons["backButton"]->isClicked()) {
+        if (buttons["backButton"]->isClicked() || Input::pressed(Key::Escape)) {
             screen = kMainMenu;
         }
     }
@@ -188,20 +188,21 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
         for (auto & nexus : nexuses) nexus.update();
 
         if (buttons["helpGameButton"]->isClicked() || Input::pressed(Key::H)) statics["helpMenu"]->swapActive();
-        if (buttons["loadGameButton"]->isClicked()) {
+        if (buttons["loadGameButton"]->isClicked() || Input::pressed(Key::L)) {
             loadCurrentGame(game);
             loadPieceCoords(game, pieces);
             load_msg_timer = Time::seconds + 2;
         }
-        if (buttons["saveGameButton"]->isClicked()) {
+        if (buttons["saveGameButton"]->isClicked() || Input::pressed(Key::S)) {
             saveCurrentGame(game);
             save_msg_timer = Time::seconds + 2;
         }
-        if (buttons["menuGameButton"]->isClicked()) {
+        if (buttons["menuGameButton"]->isClicked() || Input::pressed(Key::M)) {
             screen = kMainMenu;
             loadPieceCoords(game, pieces);
         }
-        if (buttons["exitGameButton"]->isClicked() || Input::pressed(Key::Escape)) App::exit();
+        if (buttons["exitGameButton"]->isClicked() || Input::pressed(Key::E)) App::exit();
+        if (Input::pressed(Key::Escape)) PieceSprite::selectedPiece = 0;
         if (game->nexus1hp <= 0 || game->nexus2hp <= 0) {
             if (game_end_timer == 0) {
                 if (game->nexus2hp <= 0) user.addWin();
@@ -219,42 +220,40 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
         }
     }
     else if (screen == kFormEditionSelectionMenu) {
-        if (buttons["leftArrowButton"]->isClicked()) {
+        if (buttons["leftArrowButton"]->isClicked()|| Input::pressed(Key::Left)) {
             if (user.formationSet.index == 4) user.formationSet.index = user.formationSet.size - 1;
             else user.formationSet.index--;
         }
-        if (buttons["rightArrowButton"]->isClicked()) {
+        if (buttons["rightArrowButton"]->isClicked() || Input::pressed(Key::Right)) {
             if (user.formationSet.index == user.formationSet.size - 1) user.formationSet.index = 4;
             else user.formationSet.index++;
         }
-        if (buttons["editButton"]->isClicked()) {
+        if (buttons["editButton"]->isClicked() || Input::pressed(Key::E) || Input::pressed(Key::Enter)) {
             screen = kFormEditionMenu;
             strncpy(DraggablePieceSprite::formBuffer, user.formationSet.forms[user.formationSet.index], 21);
             loadDPSPositions();
         }
-        if (buttons["backButton"]->isClicked()) {
+        if (buttons["backButton"]->isClicked() || Input::pressed(Key::Escape)) {
             screen = kMainMenu;
         }
     }
     else if (screen == kFormEditionMenu) {
         for (auto & piece:dpSprites) piece.second->update();
-        if (buttons["saveButton"]->isClicked()) {
+        if (buttons["saveButton"]->isClicked() || Input::pressed(Key::S) || Input::pressed(Key::Enter)) {
             user.formationSet.forms[user.formationSet.index] = DraggablePieceSprite::formBuffer;
             screen = kMainMenu;
         }
-        if (buttons["resetButton"]->isClicked()) {
+        if (buttons["resetButton"]->isClicked() || Input::pressed(Key::R)) {
             DraggablePieceSprite::resetFormBuffer();
             resetDPSprites();
         }
-        if (buttons["backButton"]->isClicked()) {
+        if (buttons["backButton"]->isClicked() || Input::pressed(Key::Escape)) {
             screen = kFormEditionSelectionMenu;
         }
         if (Input::pressed(Key::Enter)) screen = kMainMenu;
-        if (Input::pressed(Key::Escape)) App::exit();
     }
     else if (screen == kUserInfoMenu) {
-        if (Input::pressed(Key::Escape)) App::exit();
-        if (buttons["backButton"]->isClicked() ||Input::pressed(Key::B)) screen = kMainMenu;
+        if (buttons["backButton"]->isClicked() || Input::pressed(Key::Escape)) screen = kMainMenu;
     }
 }
 
@@ -724,14 +723,6 @@ void writeUserData(Batch *batch, User user)
 User* Login::runSetup(DBManager& dbManager, bool& exit)
 {
     int op = 0;
-    std::cout << "  /$$$$$$  /$$                                           /$$$$$$ " << std::endl;
-    std::cout << " /$$__  $$| $$                                          /$$__  $$" << std::endl;
-    std::cout << "| $$  \\__/| $$$$$$$   /$$$$$$   /$$$$$$$ /$$$$$$$      |__/  \\ $$" << std::endl;
-    std::cout << "| $$      | $$__  $$ /$$__  $$ /$$_____//$$_____/        /$$$$$$/" << std::endl;
-    std::cout << "| $$      | $$  \\ $$| $$$$$$$$|  $$$$$$|  $$$$$$        /$$____/ " << std::endl;
-    std::cout << "| $$    $$| $$  | $$| $$_____/ \\____  $$\\____  $$      | $$      " << std::endl;
-    std::cout << "|  $$$$$$/| $$  | $$|  $$$$$$$ /$$$$$$$//$$$$$$$/      | $$$$$$$$" << std::endl;
-    std::cout << " \\______/ |__/  |__/ \\_______/|_______/|_______/       |________/" << std::endl << std::endl;
     std::cout << "Choose an option:" << std::endl;
     std::cout << "1) Log in" << std::endl;
     std::cout << "2) Register" << std::endl;
