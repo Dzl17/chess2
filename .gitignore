@@ -35,3 +35,7 @@
 .idea/
 cmake-build-debug/
 out/
+
+# Database + files
+data/database.db
+data/save.txt
