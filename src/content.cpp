@@ -30,6 +30,7 @@ bool useBrownBackground = false;
 double form_error_timer = 0;
 double load_msg_timer = 0;
 double save_msg_timer = 0;
+double game_end_timer = 0;
 
 void Assets::load(UmStatics& statics, UmButtons& buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, Screen& screen, User& user)
 {
@@ -202,10 +203,19 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
         }
         if (buttons["exitGameButton"]->isClicked() || Input::pressed(Key::Escape)) App::exit();
         if (game->nexus1hp <= 0 || game->nexus2hp <= 0) {
-            if (game->nexus2hp <= 0) user.addWin();
-            else user.addLose();
-            user.calculateElo(1000, game->nexus2hp <= 0);
-            screen = kMainMenu;
+            if (game_end_timer == 0) {
+                if (game->nexus2hp <= 0) user.addWin();
+                else user.addLose();
+                user.calculateElo(1000, game->nexus2hp <= 0);
+                game_end_timer = Time::seconds + 5;
+                for (auto & piece:pieces) piece.active = false; // Desactivar todas las piezad, por seguridad
+            } else if (Time::seconds < game_end_timer) {
+                statics["helpMenu"]->setActive(true); // TODO imagen de victoria
+            } else {
+                statics["helpMenu"]->setActive(false);
+                game_end_timer = 0;
+                screen = kMainMenu;
+            }
         }
     }
     else if (screen == kFormEditionSelectionMenu) {

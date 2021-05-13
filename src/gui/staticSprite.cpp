@@ -20,3 +20,7 @@ void StaticSprite::update() {
 
 }
 
+void StaticSprite::setActive(bool _active) {
+    this->active = _active;
+}
+
