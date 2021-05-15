@@ -17,6 +17,8 @@ UmButtons buttonSprites;
 VcPieces pieceSprites;
 VcNexuses nexusSprites;
 
+void printTitle();
+
 void startup()
 {
     batch = new Batch;
@@ -58,6 +60,7 @@ void dispose()
 }
 
 int main() {
+    printTitle();
     dbManager = new DBManager((char *) "data/database.db");
     bool exit = false;
     do {
@@ -78,4 +81,16 @@ int main() {
         App::run(&config);
     }
     return 0;
+}
+
+void printTitle()
+{
+    std::cout << "  /$$$$$$  /$$                                           /$$$$$$ " << std::endl;
+    std::cout << " /$$__  $$| $$                                          /$$__  $$" << std::endl;
+    std::cout << "| $$  \\__/| $$$$$$$   /$$$$$$   /$$$$$$$ /$$$$$$$      |__/  \\ $$" << std::endl;
+    std::cout << "| $$      | $$__  $$ /$$__  $$ /$$_____//$$_____/        /$$$$$$/" << std::endl;
+    std::cout << "| $$      | $$  \\ $$| $$$$$$$$|  $$$$$$|  $$$$$$        /$$____/ " << std::endl;
+    std::cout << "| $$    $$| $$  | $$| $$_____/ \\____  $$\\____  $$      | $$      " << std::endl;
+    std::cout << "|  $$$$$$/| $$  | $$|  $$$$$$$ /$$$$$$$//$$$$$$$/      | $$$$$$$$" << std::endl;
+    std::cout << " \\______/ |__/  |__/ \\_______/|_______/|_______/       |________/" << std::endl << std::endl;
 }

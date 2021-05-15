@@ -8,6 +8,7 @@ private:
     bool active;
 public:
     StaticSprite(int x, int y, const String& texturePath, bool active);
+    void setActive(bool active);
     void swapActive();
 
     void update() override;

@@ -113,8 +113,16 @@ void PieceSprite::update() {
                         this->state = ATTACKING;
                     } else if (result == 3) { // Ataque destruyendo
                         this->gameRef->turn++;
-                        this->focus = Vec2((int) pos.x, (int) pos.y);
-                        this->state = MOVING;
+                        if ((this->id >= 5 && this->id <= 7) || (this->id >= 17 && this->id <= 19)) { // Mago no se mueve al matar
+                            this->setAttackDir(Vec2(originY, originX), Vec2(destinyY, destinyX));
+                            this->attack_timer = Time::seconds + 0.2;
+                            this->positionBuffer.x = this->getX();
+                            this->positionBuffer.y = this->getY();
+                            this->state = ATTACKING;
+                        } else {
+                            this->focus = Vec2((int) pos.x, (int) pos.y);
+                            this->state = MOVING;
+                        }
                     } else if (result == 0 || result == 1) { // Ataque no realizado/pieza movida
                         this->state = IDLE;
                         selectedPiece = 0;
