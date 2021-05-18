@@ -38,6 +38,7 @@ namespace Assets {
 
 namespace Login {
     User *runSetup(DBManager& dbManager, bool& exit);
+    bool chooseGamemode(User& user, bool& exit);
 }
 
 #endif

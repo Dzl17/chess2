@@ -66,6 +66,7 @@ int main() {
     do {
         user = Login::runSetup(*dbManager, exit);
     } while (user == nullptr && !exit);
+    while (!exit && !Login::chooseGamemode(*user, exit));
 
     if (!exit) {
         Config config;

@@ -56,6 +56,7 @@ User::User(char *username, int elo, int wins, int loses, char **forms)
     this->elo = elo;
     this->wins = wins;
     this->losses = loses;
+    this->multiplayer = false;
     char** tempforms = new char*[8];
     for (int i = 0; i < 8; i++) tempforms[i] = new char[FORM_LENGTH];
     for (int i = 0; i < 4; i++) {
@@ -68,4 +69,12 @@ User::User(char *username, int elo, int wins, int loses, char **forms)
     }
     this->formationSet = {tempforms,8,0};
     delete forms;
+}
+
+void User::setMultiplayer(bool var) {
+    this->multiplayer = var;
+}
+
+bool User::isMultiplayer() const {
+    return this->multiplayer;
 }

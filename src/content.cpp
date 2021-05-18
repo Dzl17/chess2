@@ -736,10 +736,13 @@ void writeUserData(Batch *batch, User user)
 User* Login::runSetup(DBManager& dbManager, bool& exit)
 {
     int op = 0;
-    std::cout << "Choose an option:" << std::endl;
-    std::cout << "1) Log in" << std::endl;
-    std::cout << "2) Register" << std::endl;
-    std::cout << "3) Exit" << std::endl;
+    std::cout << "/---------------------\\" << std::endl;
+    std::cout << "| Choose an option:   |" << std::endl;
+    std::cout << "| 1) Login            |" << std::endl;
+    std::cout << "| 2) Register         |" << std::endl;
+    std::cout << "| 3) Exit             |" << std::endl;
+    std::cout << "\\---------------------/" << std::endl;
+    std::cout << "Option: ";
     std::cin >> op;
     char *username = new char[20];
     char *password = new char[20];
@@ -763,6 +766,7 @@ User* Login::runSetup(DBManager& dbManager, bool& exit)
             User *user;
             user = dbManager.loadUser(username);
             std::cout << "Welcome, " << user->getUsername() << "." << std::endl;
+            std::cout << std::endl;
             delete[] username;
             delete[] password;
             return user;
@@ -788,5 +792,30 @@ User* Login::runSetup(DBManager& dbManager, bool& exit)
     } else {
         exit = true;
         return nullptr;
+    }
+}
+
+bool Login::chooseGamemode(User& user, bool& exit)
+{
+    int op = 0;
+    std::cout << "/---------------------\\" << std::endl;
+    std::cout << "| Choose an gamemode: |" << std::endl;
+    std::cout << "| 1) Singleplayer     |" << std::endl;
+    std::cout << "| 2) Multiplayer      |" << std::endl;
+    std::cout << "| 3) Exit             |" << std::endl;
+    std::cout << "\\---------------------/" << std::endl;
+    std::cout << "Option: ";
+    std::cin >> op;
+    if (op == 1) {
+        user.setMultiplayer(false);
+        return true;
+    }
+    else if (op == 2) {
+        user.setMultiplayer(true);
+        return true;
+    }
+    else {
+        exit = true;
+        return false;
     }
 }
