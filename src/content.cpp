@@ -1,6 +1,7 @@
 #include <map>
 #include "content.h"
 #include "gui/draggablePieceSprite.h"
+#include "aiUtils.h"
 
 void loadButtons(UmButtons& buttons);
 void loadStatics(UmStatics& statics);
@@ -189,6 +190,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
     }
     else if (screen == kMainGame) {
         for (auto & piece : pieces) piece.update();
+        if (!PieceSprite::multiplayer && game->turn % 2 == 1) aiMovePiece(pieces, game);
 
         for (auto & nexus : nexuses) nexus.update();
 
@@ -276,7 +278,7 @@ void loadButtons(UmButtons& buttons)
                                                      "data/img/buttons/formsMenuButtonIdle.png", "data/img/buttons/formsMenuButtonPressed.png")});
     buttons.insert({"skinButton",       new GuiButton(512, 1960, 80, 108, // Exit (menu)
                                                       "data/img/buttons/skinButtonIdle.png", "data/img/buttons/skinButtonPressed.png")});
-    buttons.insert({"pressedSkinButton",       new GuiButton(512, 1960, 80, 108, // Exit (menu)
+    buttons.insert({"pressedSkinButton",new GuiButton(512, 1960, 80, 108, // Exit (menu)
                                                       "data/img/buttons/skinButtonPressed.png", "data/img/buttons/skinButtonPressed.png")});
     buttons.insert({"userButton",       new GuiButton(600, 1960, 80, 108, // Exit (menu)
                                                       "data/img/buttons/userButtonIdle.png", "data/img/buttons/userButtonPressed.png")});
@@ -807,11 +809,11 @@ bool Login::chooseGamemode(User& user, bool& exit)
     std::cout << "Option: ";
     std::cin >> op;
     if (op == 1) {
-        user.setMultiplayer(false);
+        PieceSprite::multiplayer = false;
         return true;
     }
     else if (op == 2) {
-        user.setMultiplayer(true);
+        PieceSprite::multiplayer = true;
         return true;
     }
     else {

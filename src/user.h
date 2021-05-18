@@ -10,7 +10,6 @@ class User {
 private:
     char* username;
     int elo, wins, losses;
-    bool multiplayer;
 public:
     FormationSet formationSet = {};
 
@@ -19,8 +18,6 @@ public:
     int getWins() const;
     int getLosses() const;
     char** getForms() const;
-    void setMultiplayer(bool multiplayer);
-    bool isMultiplayer() const;
 
     void addWin();
     void addLose();

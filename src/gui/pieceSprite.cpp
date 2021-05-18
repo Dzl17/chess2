@@ -2,6 +2,7 @@
 #include <cmath>
 
 int PieceSprite::selectedPiece = 0;
+bool PieceSprite::multiplayer = false;
 
 bool PieceSprite::overlapsPoint(int x, int y){
     return this->getX() <= x && this->getX() + 64 >= x && this->getY() <= y && this->getY() + 64 >= y;
@@ -14,7 +15,7 @@ bool PieceSprite::overlapsMouse() {
     return this->getX() <= x && this->getX() + 64 >= x && this->getY() <= y && this->getY() + 64 >= y;
 }
 
-int PieceSprite::getPieceCode()
+int PieceSprite::getPieceCode() const
 {
     int piece = this->id;
     if ((piece >= 1 && piece <= 4) || (piece >= 13 && piece <= 16)) {
@@ -28,7 +29,7 @@ int PieceSprite::getPieceCode()
     }
 }
 
-int PieceSprite::getDmg() {
+int PieceSprite::getDmg() const {
     return this->dmg;
 }
 
@@ -58,6 +59,7 @@ PieceSprite::PieceSprite(int x, int y, int id, const String& texturePath, Game *
 
 void PieceSprite::update() {
     if (this->touched && this->overlapsMouse() && Input::released(MouseButton::Left)) this->touched = false;
+    // Ajustes de vida
     if (this->hp <= 0) {
         this->active = false;
         return;
@@ -65,6 +67,7 @@ void PieceSprite::update() {
         this->active = true;
     }
     this->hp = this->gameRef->pieces[this->id - 1].hp;
+
     switch (this->state) {
         case IDLE:
             if (this->overlapsMouse() && Input::pressed(MouseButton::Left) && !this->touched) {
@@ -80,6 +83,7 @@ void PieceSprite::update() {
                 selectedPiece = 0;
             }
             if (selectedPiece != this->id) this->state = IDLE;
+            if (!PieceSprite::multiplayer && this->gameRef->turn % 2 == 1) break;
             for (auto & pos:this->getMovePositions(this->gameRef->data)) {
                 if (mouseOverlapsPoint((int)pos.x, (int) pos.y) && Input::pressed(MouseButton::Left) && !this->touched){
                     int originY = this->getX()/64 - 6;

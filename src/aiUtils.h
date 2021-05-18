@@ -19,6 +19,10 @@
  *
  * ESTRATEGIA ESPECÍFICA
  * - Colocar los tanques para defender el nexo (atacan si hay enemigos alcanzables)
+ *
+ * TODO:
+ * - aiMovePiece() debe gestionar los cambios de estado de la pieza movida de Choosing/Idle a Moving/Attacking
+ *   y el cambio de turno
  */
 
 void aiMovePiece(VcPieces& pieces, Game *game);

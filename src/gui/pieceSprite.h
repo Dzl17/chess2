@@ -24,10 +24,11 @@ private:
     void animateAttack();
 public:
     static int selectedPiece;
+    static bool multiplayer;
     int id, hp;
     bool active;
-    int getDmg();
-    int getPieceCode();
+    int getDmg() const;
+    int getPieceCode() const;
     PieceSprite(int x, int y, int id, const String& texturePath, Game *gameRef);
 
     enum State {
