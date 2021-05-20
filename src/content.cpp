@@ -738,12 +738,12 @@ void writeUserData(Batch *batch, User user)
 User* Login::runSetup(DBManager& dbManager, bool& exit)
 {
     int op = 0;
-    std::cout << "/---------------------\\" << std::endl;
-    std::cout << "| Choose an option:   |" << std::endl;
-    std::cout << "| 1) Login            |" << std::endl;
-    std::cout << "| 2) Register         |" << std::endl;
-    std::cout << "| 3) Exit             |" << std::endl;
-    std::cout << "\\---------------------/" << std::endl;
+    std::cout << "\t\t     /---------------------\\" << std::endl;
+    std::cout << "\t\t     | Choose an option:   |" << std::endl;
+    std::cout << "\t\t     | 1) Login            |" << std::endl;
+    std::cout << "\t\t     | 2) Register         |" << std::endl;
+    std::cout << "\t\t     | 3) Exit             |" << std::endl;
+    std::cout << "\t\t     \\---------------------/" << std::endl;
     std::cout << "Option: ";
     std::cin >> op;
     char *username = new char[20];
@@ -800,12 +800,12 @@ User* Login::runSetup(DBManager& dbManager, bool& exit)
 bool Login::chooseGamemode(User& user, bool& exit)
 {
     int op = 0;
-    std::cout << "/---------------------\\" << std::endl;
-    std::cout << "| Choose an gamemode: |" << std::endl;
-    std::cout << "| 1) Singleplayer     |" << std::endl;
-    std::cout << "| 2) Multiplayer      |" << std::endl;
-    std::cout << "| 3) Exit             |" << std::endl;
-    std::cout << "\\---------------------/" << std::endl;
+    std::cout << "\t\t     /---------------------\\" << std::endl;
+    std::cout << "\t\t     | Choose an gamemode: |" << std::endl;
+    std::cout << "\t\t     | 1) Singleplayer     |" << std::endl;
+    std::cout << "\t\t     | 2) Multiplayer      |" << std::endl;
+    std::cout << "\t\t     | 3) Exit             |" << std::endl;
+    std::cout << "\t\t     \\---------------------/" << std::endl;
     std::cout << "Option: ";
     std::cin >> op;
     if (op == 1) {
