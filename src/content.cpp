@@ -190,7 +190,10 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
     }
     else if (screen == kMainGame) {
         for (auto & piece : pieces) piece.update();
-        if (!PieceSprite::multiplayer && game->turn % 2 == 1) aiMovePiece(pieces, game);
+        if (!PieceSprite::multiplayer && game->turn % 2 == 1) {
+            aiMovePiece(pieces, game);
+            game->turn++;
+        }
 
         for (auto & nexus : nexuses) nexus.update();
 

@@ -38,7 +38,9 @@ void aiMovePiece(VcPieces& pieces, Game *game)
             updatePiece(game, move.first->getX(), move.first->getY(), move.second.x, move.second.y);
         } else{
             move = getMoveObjective(pieces,game);
-            updatePiece(game, move.first->getX(), move.first->getY(), move.second.x, move.second.y);
+            updatePiece(game, move.first->getY()/64 - 1, move.first->getX()/64 - 6, move.second.x, move.second.y);
+            move.first->focus = Vec2(((int) move.second.y+1) * 64, ((int) move.second.x+6)*64);
+            move.first->state = PieceSprite::MOVING;
         }
     }
 
@@ -169,6 +171,12 @@ pair<PieceSprite*, Vec2> getMoveObjective(VcPieces pieces, Game *game)
         }
         return focus;
     } else{
+        for (auto & square:moveSquares) { // Iterar todos los pares Pieza-casillas
+            if (!square.second.empty()){
+                Vec2 casilla= getNexusPos(square.second,game);
+                movementOptions.emplace_back(square.first, Vec2(casilla.x, casilla.y));   // añadirla a las opciones
+            }
+        }
         int randomInt = rand() % movementOptions.size();
         return movementOptions[randomInt];
     }
@@ -177,7 +185,7 @@ pair<PieceSprite*, Vec2> getMoveObjective(VcPieces pieces, Game *game)
 
 Vec2 getNexusPos(vector<Vec2> availablePositions, Game *game)
 {
-    int *obj = getPiecePos(*game,25);
+    int obj[2] = {4,0};
     int diff= abs(availablePositions[0].x + availablePositions[0].y -obj[0] -obj[1]);
     Vec2 result=availablePositions[0];
     for (auto & position:availablePositions) {
