@@ -28,7 +28,20 @@ Vec2 getNexusPos(vector<Vec2> availablePositions, Game *game);
 
 void aiMovePiece(VcPieces& pieces, Game *game)
 {
-    getAvailableSquares(pieces,game,true);
+    pair<PieceSprite*, Vec2> move = confirmKill(pieces,game);
+    if (move.first != nullptr){
+        updatePiece(game, move.first->getX(), move.first->getY(), move.second.x, move.second.y);
+    }
+    else {
+        move = getAttackObjective(pieces,game);
+        if (move.first != nullptr){
+            updatePiece(game, move.first->getX(), move.first->getY(), move.second.x, move.second.y);
+        } else{
+            move = getMoveObjective(pieces,game);
+            updatePiece(game, move.first->getX(), move.first->getY(), move.second.x, move.second.y);
+        }
+    }
+
 }
 
 vector<Vec2> positionsToCoords(const vector<Vec2>& positions)
@@ -135,10 +148,43 @@ pair<PieceSprite*, Vec2> getAttackObjective(VcPieces pieces, Game *game)
 
 pair<PieceSprite*, Vec2> getMoveObjective(VcPieces pieces, Game *game)
 {
+    vector<pair<PieceSprite*, Vec2>> movementOptions; // Posibles opciones para atacar
+    map<PieceSprite*, vector<Vec2>> moveSquares = getAvailableSquares(pieces, game, false);
+
+    for (auto & square:moveSquares) { // Iterar todos los pares Pieza-casillas
+        if (!square.second.empty()){
+            Vec2 casilla= getNexusPos(square.second,game);
+            if (abs(casilla.x + casilla.y -pieces[25].getX() -pieces[25].getY()) < 5){
+                movementOptions.emplace_back(square.first, Vec2(casilla.x, casilla.y));   // añadirla a las opciones
+            }
+        }
+    }
+    if (!movementOptions.empty()){
+        pair<PieceSprite*, Vec2> focus = movementOptions[0];
+        for (auto & option:movementOptions) { // Iterar sobre las opciones para elegir la mejor opción
+            if (abs(option.second.x + option.second.y -pieces[25].getX() -pieces[25].getY()) <
+            abs(focus.second.x + focus.second.y -pieces[25].getX() -pieces[25].getY())) { // Elegir prioridad
+                focus = option;
+            }
+        }
+        return focus;
+    } else{
+        int randomInt = rand() % movementOptions.size();
+        return movementOptions[randomInt];
+    }
 
 }
 
 Vec2 getNexusPos(vector<Vec2> availablePositions, Game *game)
 {
-
+    int *obj = getPiecePos(*game,25);
+    int diff= abs(availablePositions[0].x + availablePositions[0].y -obj[0] -obj[1]);
+    Vec2 result=availablePositions[0];
+    for (auto & position:availablePositions) {
+        if (abs(position.x + position.y - obj[0] -obj[1]) < diff){
+            result=position;
+            diff=abs(position.x + position.y -obj[0] -obj[1]);
+        }
+    }
+    return result;
 }
