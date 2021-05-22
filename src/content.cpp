@@ -18,6 +18,7 @@ std::string getIconKey(int id);
 TextureRef getPieceTexture(VcPieces& pieces, char pieceLetter);
 char *getPieceName(int id);
 bool isFormValid(const char *form);
+bool areUserAnimationsFinished(VcPieces& pieces);
 void saveCurrentGame(Game *game);
 void loadCurrentGame(Game *game);
 void writeFormSetPos(Batch *batch, FormationSet& formSet);
@@ -190,8 +191,8 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
     }
     else if (screen == kMainGame) {
         for (auto & piece : pieces) piece.update();
-        if (!PieceSprite::multiplayer && game->turn % 2 == 1) {
-            aiMovePiece(pieces, game); // TODO esperar a que acabe el movimiento
+        if (!PieceSprite::multiplayer && game->turn % 2 == 1 && areUserAnimationsFinished(pieces)) {
+            aiMovePiece(pieces, game);
             game->turn++;
             printBoard(*game);
         }
@@ -604,6 +605,15 @@ bool isFormValid(const char *form)
         }
     }
     return s == 4 && a == 3 && w == 3 && g == 2 && form[9] == 'N';
+}
+
+bool areUserAnimationsFinished(VcPieces& pieces)
+{
+    bool finished = true;
+    for (int i = 0; i < 12; i++) {
+        if (pieces[i].state != PieceSprite::IDLE) finished = false;
+    }
+    return finished;
 }
 
 void renderPieceData(Batch *batch, VcPieces& pieces, UmStatics& statics, Game game)
