@@ -194,7 +194,6 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
         if (!PieceSprite::multiplayer && game->turn % 2 == 1 && areUserAnimationsFinished(pieces)) {
             aiMovePiece(pieces, game);
             game->turn++;
-            printBoard(*game);
         }
 
         for (auto & nexus : nexuses) nexus.update();
