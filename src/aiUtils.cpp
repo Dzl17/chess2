@@ -23,6 +23,9 @@ pair<PieceSprite*, Vec2> getAttackObjective(VcPieces pieces, Game *game);
 // Obtener mejor casilla de movimiento (pieza atacante + posición a moverse)
 pair<PieceSprite*, Vec2> getMoveObjective(VcPieces pieces, Game *game);
 
+// Devuelve la distancia al nexo
+double distanceToNexus(Vec2 position);
+
 // Devuelve la casilla más cercana al nexo desde las casillas parámetro
 Vec2 getNexusRoute(vector<Vec2> availablePositions);
 
@@ -36,8 +39,8 @@ void aiMovePiece(VcPieces& pieces, Game *game)
             if (piece->id >= 17 && piece->id <= 19) { // Mago no se mueve al matar
                 piece->setAttackDir(Vec2(piece->getX()/64 - 6, piece->getY()/64 - 1), Vec2(move.second.x, move.second.y));
                 piece->attack_timer = Time::seconds + 0.2;
-                piece->positionBuffer.x = piece->getX();
-                piece->positionBuffer.y = piece->getY();
+                piece->positionBuffer.x = (float) piece->getX();
+                piece->positionBuffer.y = (float) piece->getY();
                 piece->state = PieceSprite::ATTACKING;
             } else {
                 piece->focus = Vec2((int) ((move.second.y + 6.5) * 64), (move.second.x + 1) * 64);
@@ -53,15 +56,15 @@ void aiMovePiece(VcPieces& pieces, Game *game)
             int result = updatePiece(game, move.first->getY()/64 - 1, move.first->getX()/64 - 6, (int) move.second.x, (int) move.second.y);
             PieceSprite *piece = &pieces[move.first->id - 1];
             if (result == 2) {
-                piece->setAttackDir(Vec2(piece->getX()/64 - 6, piece->getY()/64 - 1), Vec2(move.second.x, move.second.y));
+                piece->setAttackDir(Vec2(piece->getX()/64 - 6, piece->getY()/64 - 1), Vec2(move.second.y, move.second.x));
                 piece->attack_timer = Time::seconds + 0.2;
-                piece->positionBuffer.x = piece->getX();
-                piece->positionBuffer.y = piece->getY();
+                piece->positionBuffer.x = (float) piece->getX();
+                piece->positionBuffer.y = (float) piece->getY();
                 piece->state = PieceSprite::ATTACKING;
             } else {
                 cout << "Error de ataque." << endl; // TODO?
             }
-        } else {                        // Movimiento
+        } else {    // Movimiento
             move = getMoveObjective(pieces,game);
             if (move.first != nullptr) {
                 if (updatePiece(game, move.first->getY() / 64 - 1, move.first->getX() / 64 - 6, (int) move.second.x, (int) move.second.y) == 1) {
@@ -73,7 +76,7 @@ void aiMovePiece(VcPieces& pieces, Game *game)
                     PieceSprite::selectedPiece = 0;
                 }
             } else {
-                cout << "ERROR" << endl;
+                cout << "Error de movimiento." << endl;
             }
         }
     }
@@ -92,14 +95,14 @@ vector<Vec2> positionsToCoords(const vector<Vec2>& positions)
 map<PieceSprite*, vector<Vec2>> getAvailableSquares(VcPieces pieces, Game *game, bool attack)
 {
     map<PieceSprite*, vector<Vec2>> squares;
-    if (!attack) {
-        for (int i = 12; i < pieces.size(); ++i) {
-            squares[&pieces[i]] = positionsToCoords(pieces[i].getMovePositions(game->data));
-        }
-    } else {
-        for (int i = 12; i < pieces.size(); ++i) {
-            squares[&pieces[i]] = positionsToCoords(pieces[i].getAttackPositions(game->data));
-        }
+    for (int i = 12; i < pieces.size(); i++) {
+        if (pieces[i].hp <= 0) continue;
+
+        vector<Vec2> allPositions;
+        if (attack) allPositions = pieces[i].getAttackPositions(game->data);
+        else allPositions = pieces[i].getMovePositions(game->data);
+
+        if (!allPositions.empty()) squares[&pieces[i]] = positionsToCoords(allPositions);
     }
     return squares;
 }
@@ -145,9 +148,10 @@ bool hasHigherKillPriority(int comparingID, int baseID)
 
 pair<PieceSprite*, Vec2> getAttackObjective(VcPieces pieces, Game *game)
 {
-    vector<pair<PieceSprite*, Vec2>> threatOptions; // Posibles opciones para atacar
-    vector<pair<PieceSprite*, Vec2>> focusOptions; // Posibles opciones para atacar
+    vector<pair<PieceSprite*, Vec2>> threatOptions; // Posibles amenazas para atacar
+    vector<pair<PieceSprite*, Vec2>> focusOptions;  // Posibles opciones para atacar
     map<PieceSprite*, vector<Vec2>> attackSquares = getAvailableSquares(pieces, game, true);
+    if (attackSquares.empty()) return make_pair(nullptr, Vec2());
 
     for (auto & square:attackSquares) { // Iterar todos los pares Pieza-casillas
         for (auto & position:square.second) { // Iterar todas las casillas atacables
@@ -185,31 +189,26 @@ pair<PieceSprite*, Vec2> getMoveObjective(VcPieces pieces, Game *game)
     vector<pair<PieceSprite*, Vec2>> movementOptions; // Posibles opciones para moverse
     map<PieceSprite*, vector<Vec2>> moveSquares = getAvailableSquares(pieces, game, false);
     for (auto & square:moveSquares) { // Iterar todos los pares Pieza-casillas
-        if (!square.second.empty()){
-            Vec2 casilla = getNexusRoute(square.second);
-            if (abs(casilla.x + casilla.y - pieces[25].getX() - pieces[25].getY()) < 5){
-                movementOptions.emplace_back(square.first, Vec2(casilla.x, casilla.y));   // añadirla a las opciones
-            }
+        Vec2 nexusSquare = getNexusRoute(square.second);
+        if (distanceToNexus(nexusSquare) < 5) {
+            movementOptions.emplace_back(square.first, nexusSquare);   // añadirla a las opciones
         }
     }
-    if (!movementOptions.empty()){
+    if (!movementOptions.empty()) { // Si no hay piezas cerca del nexo, sacar pieza más cercana al Nexo
         pair<PieceSprite*, Vec2> focus = movementOptions[0];
-        for (auto & option:movementOptions) { // Iterar sobre las opciones para elegir la mejor opción
-            if (abs(option.second.x + option.second.y -pieces[25].getX() -pieces[25].getY()) <
-            abs(focus.second.x + focus.second.y -pieces[25].getX() -pieces[25].getY())) { // Elegir prioridad
+        for (auto & option:movementOptions) { // Iterar sobre las opciones para elegir la mejor opción de movimiento
+            if (distanceToNexus(option.second) < distanceToNexus(focus.second)) { // Elegir prioridad
                 focus = option;
             }
         }
         return focus;
-    } else {
+    } else {    // Si no hay piezas cerca del nexo, elegir una al azar para moverse
         for (auto & square:moveSquares) { // Iterar todos los pares Pieza-casillas
-            if (!square.second.empty()){
-                Vec2 casilla= getNexusRoute(square.second);
-                movementOptions.emplace_back(square.first, Vec2(casilla.x, casilla.y));   // añadirla a las opciones
-            }
+            Vec2 nexusSquare = getNexusRoute(square.second);
+            movementOptions.emplace_back(square.first, nexusSquare);   // añadirla a las opciones
         }
-        int randomInt = rand() % movementOptions.size();
-        return movementOptions[randomInt];
+        int randomIndex = rand() % movementOptions.size();
+        return movementOptions[randomIndex];
     }
 }
 
