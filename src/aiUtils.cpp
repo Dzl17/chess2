@@ -52,7 +52,6 @@ void aiMovePiece(VcPieces& pieces, Game *game)
         if (move.first != nullptr){     // Ataque normal
             int result = updatePiece(game, move.first->getY()/64 - 1, move.first->getX()/64 - 6, (int) move.second.x, (int) move.second.y);
             PieceSprite *piece = &pieces[move.first->id - 1];
-            cout << result << endl;
             if (result == 2) {
                 piece->setAttackDir(Vec2(piece->getX()/64 - 6, piece->getY()/64 - 1), Vec2(move.second.x, move.second.y));
                 piece->attack_timer = Time::seconds + 0.2;
@@ -65,7 +64,6 @@ void aiMovePiece(VcPieces& pieces, Game *game)
         } else {                        // Movimiento
             move = getMoveObjective(pieces,game);
             if (move.first != nullptr) {
-                cout<<move.first->getY() / 64 - 1<<" e "<<move.first->getX() / 64 - 6<<endl;
                 if (updatePiece(game, move.first->getY() / 64 - 1, move.first->getX() / 64 - 6, (int) move.second.x, (int) move.second.y) == 1) {
                     PieceSprite::selectedPiece = move.first->id;
                     pieces[move.first->id - 1].state = PieceSprite::MOVING;
@@ -113,7 +111,7 @@ pair<PieceSprite*, Vec2> confirmKill(VcPieces pieces, Game *game)
     for (auto & square:attackSquares) { // Iterar todos los pares Pieza-casillas
         for (auto & position:square.second) { // Iterar todas las casillas atacables
             int pieceID = game->data[(int) position.x][(int) position.y]; // ID de la pieza atacable
-            if (pieces[pieceID].hp <= square.first->getDmg()) {                             // Si la pieza es eliminable,
+            if (pieces[pieceID - 1].hp <= getBaseDmg(square.first->id)) {                             // Si la pieza es eliminable,
                 focusOptions.emplace_back(square.first, Vec2(position.x, position.y));   // añadirla a las opciones
             }
         }
