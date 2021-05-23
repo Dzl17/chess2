@@ -140,13 +140,12 @@ int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY
 
         int attackResult = attackPiece(enemypiece, getBaseDmg(piece->id)); // Realizar ataque
         if (attackResult == 0) {  // La pieza enemiga ha sobrevivido
-            if (pieceType(piece) != 1){  // No es un mago
+            if (pieceType(piece) == 1 && pieceType(enemypiece) == 1) {  // Si eres un mago, sólo te puede contraatacar otro mago
+                attackPiece(piece, getBaseDmg(enemypiece->id));
+            }
+            else if (pieceType(piece) != 1 && pieceType(enemypiece) != 1){  // Si la pieza atacante NO es un mago:
                 if (attackPiece(piece, getBaseDmg(enemypiece->id))){    // Contraataque
                     movePiece(enemypiece, game, originX, originY, destinyX, destinyY); // Tu pieza ha muerto y la enemiga toma su lugar
-                }
-            } else {
-                if (pieceType(enemypiece) == 1) {   // Contraataque si la pieza a la que has atacado tambien es un mago
-                    attackPiece(piece, getBaseDmg(enemypiece->id));
                 }
             }
             printf("Ataque realizado.\n");
