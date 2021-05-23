@@ -64,6 +64,7 @@ void aiMovePiece(VcPieces& pieces, Game *game)
         } else {                        // Movimiento
             move = getMoveObjective(pieces,game);
             if (move.first != nullptr) {
+                cout<<move.first->getY() / 64 - 1<<" e "<<move.first->getX() / 64 - 6<<endl;
                 if (updatePiece(game, move.first->getY() / 64 - 1, move.first->getX() / 64 - 6, (int) move.second.x, (int) move.second.y) == 1) {
                     PieceSprite::selectedPiece = move.first->id;
                     pieces[move.first->id - 1].state = PieceSprite::MOVING;
@@ -93,12 +94,12 @@ map<PieceSprite*, vector<Vec2>> getAvailableSquares(VcPieces pieces, Game *game,
 {
     map<PieceSprite*, vector<Vec2>> squares;
     if (!attack) {
-        for (auto & piece:pieces) {
-            squares[&piece] = positionsToCoords(piece.getMovePositions(game->data));
+        for (int i = 12; i < pieces.size(); ++i) {
+            squares[&pieces[i]] = positionsToCoords(pieces[i].getMovePositions(game->data));
         }
     } else {
-        for (auto & piece:pieces) {
-            squares[&piece] = positionsToCoords(piece.getAttackPositions(game->data));
+        for (int i = 12; i < pieces.size(); ++i) {
+            squares[&pieces[i]] = positionsToCoords(pieces[i].getAttackPositions(game->data));
         }
     }
     return squares;
