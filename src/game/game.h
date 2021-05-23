@@ -47,7 +47,7 @@ int movePiece(Piece *piece, Game *game, int originX, int originY, int destinyX, 
  * @param piece Pieza atacada
  * @return Resultado del ataque: 0 = pieza golpeada, 1 = pieza eliminada, 2 = nexo golpeado, 3 = nexo eliminado
  */
-int attackPiece(Piece *piece);
+int attackPiece(Piece *piece, int damage);
 
 /**
  * Imprime el estado actual de el tablero.

@@ -39,7 +39,7 @@ User* DBManager::loadUser(char* username){
     char sql1[] = "SELECT username, elo, wins, losses, user_id FROM USER WHERE username=?"; // Sentencia SQL
 
     // Preparar y ejecutar consulta 1
-    rc = sqlite3_prepare_v2(db, sql1, -1, &stmt, NULL); // TODO gestionar posibles errores
+    rc = sqlite3_prepare_v2(db, sql1, -1, &stmt, NULL);
     if (rc != SQLITE_OK) std::cout << "PREPARE 1 ERROR" << std::endl;
 
     rc = sqlite3_bind_text(stmt, 1, username, strlen(username), SQLITE_STATIC); // Introducir username

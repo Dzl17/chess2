@@ -133,20 +133,20 @@ int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY
             }
         }
 
-        if (!canAttack(piece, enemypiece,originX, originY, destinyX, destinyY)) {
+        if (!canAttack(piece, enemypiece, originX, originY, destinyX, destinyY)) {
             printf("No puedes atacar esa casilla.\n");
             return 0;
         }
 
-        int attackResult = attackPiece(enemypiece); // Realizar ataque
+        int attackResult = attackPiece(enemypiece, getBaseDmg(piece->id)); // Realizar ataque
         if (attackResult == 0) {  // La pieza enemiga ha sobrevivido
             if (pieceType(piece) != 1){  // No es un mago
-                if (attackPiece(piece)){    // Contraataque
+                if (attackPiece(piece, getBaseDmg(enemypiece->id))){    // Contraataque
                     movePiece(enemypiece, game, originX, originY, destinyX, destinyY); // Tu pieza ha muerto y la enemiga toma su lugar
                 }
             } else {
                 if (pieceType(enemypiece) == 1) {   // Contraataque si la pieza a la que has atacado tambien es un mago
-                    attackPiece(piece);
+                    attackPiece(piece, getBaseDmg(enemypiece->id));
                 }
             }
             printf("Ataque realizado.\n");
@@ -186,9 +186,9 @@ int movePiece(Piece *piece, Game *game, int originX, int originY, int destinyX, 
     }
 }
 
-int attackPiece(Piece *piece)
+int attackPiece(Piece *piece, int damage)
 {
-    piece->hp -= getBaseDmg(piece->id);
+    piece->hp -= damage;
     if (piece->hp < 1 && piece->id <= 24) return 1; // Pieza eliminada
     else if (piece->id > 24) return 2; // Nexo golpeado
     else if (piece->hp < 1 && piece->id > 24) return 3; // Nexo eliminado

@@ -188,8 +188,8 @@ pair<PieceSprite*, Vec2> getMoveObjective(VcPieces pieces, Game *game)
     map<PieceSprite*, vector<Vec2>> moveSquares = getAvailableSquares(pieces, game, false);
     for (auto & square:moveSquares) { // Iterar todos los pares Pieza-casillas
         if (!square.second.empty()){
-            Vec2 casilla= getNexusRoute(square.second);
-            if (abs(casilla.x + casilla.y -pieces[25].getX() -pieces[25].getY()) < 5){
+            Vec2 casilla = getNexusRoute(square.second);
+            if (abs(casilla.x + casilla.y - pieces[25].getX() - pieces[25].getY()) < 5){
                 movementOptions.emplace_back(square.first, Vec2(casilla.x, casilla.y));   // añadirla a las opciones
             }
         }
@@ -203,7 +203,7 @@ pair<PieceSprite*, Vec2> getMoveObjective(VcPieces pieces, Game *game)
             }
         }
         return focus;
-    } else{
+    } else {
         for (auto & square:moveSquares) { // Iterar todos los pares Pieza-casillas
             if (!square.second.empty()){
                 Vec2 casilla= getNexusRoute(square.second);

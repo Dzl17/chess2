@@ -5,7 +5,7 @@
 
 class DraggablePieceSprite :  public Sprite{
 private:
-    int ogX, ogY, id, currIndex; // TODO newX/newY para comodidad
+    int ogX, ogY, id, currIndex;
 public:
     DraggablePieceSprite(int x, int y, int id, const String& texturePath);
 

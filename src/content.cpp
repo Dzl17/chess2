@@ -700,7 +700,7 @@ void writePieceDmg(Batch *batch, PieceSprite& piece)
 {
     // Dibujar DMG
     char dmg_int_str[4]; // n+1 de tamaño mínimo, siendo n los dígitos del int
-    sprintf(dmg_int_str, "%d", piece.getDmg());
+    sprintf(dmg_int_str, "%d", getBaseDmg(piece.id));
     char dmg_str[64] = "DMG:";
     strcat(dmg_str, dmg_int_str);
     batch->str(font, dmg_str, Vec2(620, 640), Color::black);
