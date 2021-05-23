@@ -52,6 +52,7 @@ void aiMovePiece(VcPieces& pieces, Game *game)
         if (move.first != nullptr){     // Ataque normal
             int result = updatePiece(game, move.first->getY()/64 - 1, move.first->getX()/64 - 6, (int) move.second.x, (int) move.second.y);
             PieceSprite *piece = &pieces[move.first->id - 1];
+            cout << result << endl;
             if (result == 2) {
                 piece->setAttackDir(Vec2(piece->getX()/64 - 6, piece->getY()/64 - 1), Vec2(move.second.x, move.second.y));
                 piece->attack_timer = Time::seconds + 0.2;

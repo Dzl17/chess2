@@ -62,6 +62,7 @@ void PieceSprite::update() {
     // Ajustes de vida
     if (this->hp <= 0) {
         this->active = false;
+        this->state = IDLE;
         return;
     } else {
         this->active = true;
