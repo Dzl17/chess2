@@ -120,7 +120,7 @@ int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY
         printf("Esa no es una de tus piezas.\n");
         return 0;
     }
-    else if (((destinyCode <= 12 || destinyCode == 25) && team == 1) || ((destinyCode >= 12) && team == 0)) { // Atacar a pieza enemiga
+    else if (((destinyCode <= 12 || destinyCode == 25) && team == 1) || ((destinyCode >= 12 && destinyCode != 25) && team == 0)) { // Atacar a pieza enemiga
         // Localizar pieza enemiga
         Piece *enemypiece = NULL; // Puntero a pieza enemiga
         int enemyId = locateId(*game, destinyX, destinyY);

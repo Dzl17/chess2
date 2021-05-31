@@ -100,6 +100,11 @@ void PieceSprite::update() {
                         selectedPiece = 0;
                     }
                 }
+                for (int i = 0; i < B_ROWS; i++) {  // Evitar errores de vida en el backend
+                    for (int j = 0; j < B_COLUMNS; j++) {
+                        if (this->gameRef->pieces[this->gameRef->data[i][j] - 1].hp <= 0) this->gameRef->data[i][j] = 0;
+                    }
+                }
             }
             for (auto & pos:this->getAttackPositions(this->gameRef->data)) {
                 if (mouseOverlapsPoint((int)pos.x, (int) pos.y) && Input::pressed(MouseButton::Left) && !this->touched){
@@ -131,6 +136,11 @@ void PieceSprite::update() {
                     } else if (result == 0 || result == 1) { // Ataque no realizado/pieza movida
                         this->state = IDLE;
                         selectedPiece = 0;
+                    }
+                    for (int i = 0; i < B_ROWS; i++) {  // Evitar errores de vida en el backend
+                        for (int j = 0; j < B_COLUMNS; j++) {
+                            if (this->gameRef->pieces[this->gameRef->data[i][j] - 1].hp <= 0) this->gameRef->data[i][j] = 0;
+                        }
                     }
                 }
             }
