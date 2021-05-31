@@ -33,9 +33,10 @@ void aiMovePiece(VcPieces& pieces, Game *game)
 {
     pair<PieceSprite*, Vec2> move = confirmKill(pieces,game);
     if (move.first != nullptr) {
+        int tempNexusHp = game->nexus1hp;   // Para comprobar si la pieza ha golpeado al Nexo azul
         int result = updatePiece(game, move.first->getY()/64 - 1, move.first->getX()/64 - 6, (int) move.second.x, (int) move.second.y);
         PieceSprite *piece = &pieces[move.first->id - 1];
-        if (result == 3) {
+        if (result == 3 || game->nexus1hp != tempNexusHp) {
             if (piece->id >= 17 && piece->id <= 19) { // Mago no se mueve al matar
                 piece->setAttackDir(Vec2(piece->getX()/64 - 6, piece->getY()/64 - 1), Vec2(move.second.x, move.second.y));
                 piece->attack_timer = Time::seconds + 0.2;

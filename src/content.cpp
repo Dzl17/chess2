@@ -12,6 +12,7 @@ void resetDPSprites();
 
 void renderPieceData(Batch *batch, VcPieces& pieces, UmStatics& statics, Game game);
 void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, const TextureRef& blueNexusTex);
+void renderAIPositions(Batch *batch, VcPieces& pieces, Game game);
 
 String getSpritePath(int id);
 std::string getIconKey(int id);
@@ -29,6 +30,7 @@ void writeUserData(Batch *batch, User user);
 SpriteFont font;
 std::map<int, DraggablePieceSprite*> dpSprites;
 bool useBrownBackground = false;
+bool aiPositionTag = false;
 double form_error_timer = 0;
 double load_msg_timer = 0;
 double save_msg_timer = 0;
@@ -88,6 +90,7 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         else batch->rect(Rect(1140, 580, 128, 128), Color("#9b5dab"));
 
         renderPieceData(batch, pieces, statics, game);
+        if (aiPositionTag) renderAIPositions(batch, pieces, game);
 
         for (auto & piece : pieces) piece.draw(batch);
         for (auto & nexus : nexuses) nexus.draw(batch);
@@ -133,6 +136,7 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
 
 void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNexuses& nexuses, Game *game, Screen& screen, User& user)
 {
+    if (Input::pressed(Key::T)) aiPositionTag = !aiPositionTag;
     for (auto & button : buttons) button.second->update();
 
     if (screen == kMainMenu) {
@@ -654,6 +658,24 @@ void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, cons
         }
         else {
             x += 64;
+        }
+    }
+}
+
+void renderAIPositions(Batch *batch, VcPieces& pieces, Game game)
+{
+    for (int i = 12; i < pieces.size(); i++) {
+        if (pieces[i].hp <= 0) continue;
+
+        vector<Vec2> movePositions, attackPositions;
+        movePositions = pieces[i].getMovePositions(game.data);
+        attackPositions = pieces[i].getAttackPositions(game.data);
+
+        for (auto & movePosition:movePositions) {
+            batch->rect(Rect(movePosition.x + 4, movePosition.y + 4, 56, 56), Color("1ebc73"));
+        }
+        for (auto & attackPosition:attackPositions) {
+            batch->rect(Rect(attackPosition.x + 4, attackPosition.y + 4, 56, 56), Color("ea4f36"));
         }
     }
 }

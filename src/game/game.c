@@ -106,7 +106,7 @@ int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY
     int destinyCode = game->data[destinyX][destinyY]; // Comprobar estado de la casilla objetivo
 
     if (destinyCode == 0 && team == game->turn % 2) { // Casilla vacía y pieza aliada
-        if (spearBlock(game->data, team, originX, originY, destinyY)) {
+        if (spearBlock(game->data, team, originX, originY, destinyY) && pieceType(piece) == 0) {
             printf("El lancero no puede atravesar piezas enemigas.\n");
             return 0;
         }
@@ -180,7 +180,7 @@ int movePiece(Piece *piece, Game *game, int originX, int originY, int destinyX, 
         game->data[destinyX][destinyY] = piece->id; // Ocupas la casilla libre
         return 1;
     } else {
-        printf("Movimiento ilegal\n");
+        printf("Movimiento ilegal, ID: %d\n", piece->id);
         return 0;
     }
 }
