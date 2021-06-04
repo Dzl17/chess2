@@ -5,21 +5,21 @@
 #include <iostream>
 extern "C" {
     #include "../game/chess2.h"
-};
+}
 
 using namespace Blah;
 
 class Sprite {
 private:
-    int x, y;
+    int x{}, y{};
     friend std::ostream& operator<<(std::ostream &strm, const Sprite &sprite);
 protected:
     Sprite() = default; // Para evitar instanciar la clase
 public:
     TextureRef texture;
 
-    int getX();
-    int getY();
+    int getX() const;
+    int getY() const;
     void setX(int);
     void setY(int);
 

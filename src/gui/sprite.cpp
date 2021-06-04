@@ -1,6 +1,6 @@
 #include "sprite.h"
 
-int Sprite::getX() {
+int Sprite::getX() const {
     return this->x;
 }
 
@@ -8,7 +8,7 @@ void Sprite::setX(int xNum) {
     this->x = xNum;
 }
 
-int Sprite::getY() {
+int Sprite::getY() const {
     return this->y;
 }
 

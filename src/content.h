@@ -23,8 +23,6 @@ enum Screen {
     kUserInfoMenu               // Información de usuario
 };
 
-using namespace Blah;
-
 using UmStatics = std::unordered_map<std::string, StaticSprite*>;
 using UmButtons = std::unordered_map<std::string, GuiButton*>;
 using VcPieces = std::vector<PieceSprite>;

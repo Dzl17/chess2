@@ -61,11 +61,7 @@ void DraggablePieceSprite::update() {
     }
 }
 
-bool DraggablePieceSprite::isInDefaultPosition() {
-    return this->getX() != this->ogX || this->getY() != this->ogY;
-}
-
-int DraggablePieceSprite::getId() {
+int DraggablePieceSprite::getId() const {
     return this->id;
 }
 

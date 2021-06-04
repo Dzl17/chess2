@@ -9,18 +9,15 @@ extern "C"{
 class PieceSprite : public Sprite {
 private:
     Game *gameRef; // Referencia a game
-    bool overlapsPoint(int x, int y);
     bool overlapsMouse();
-    bool mouseOverlapsPoint(int x, int y);
+    static bool mouseOverlapsPoint(int x, int y);
     bool touched;
-    int dmg;
 public:
     Vec2 focus;
     static int selectedPiece;
     static bool multiplayer;
     int id, hp;
     bool active;
-    int getDmg() const;
     int getPieceCode() const;
     PieceSprite(int x, int y, int id, const String& texturePath, Game *gameRef);
 

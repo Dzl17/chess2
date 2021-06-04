@@ -4,10 +4,6 @@
 int PieceSprite::selectedPiece = 0;
 bool PieceSprite::multiplayer = false;
 
-bool PieceSprite::overlapsPoint(int x, int y){
-    return this->getX() <= x && this->getX() + 64 >= x && this->getY() <= y && this->getY() + 64 >= y;
-}
-
 bool PieceSprite::overlapsMouse() {
     Vec2 mouse = Input::mouse_draw();
     int x = (int) mouse.x;
@@ -29,10 +25,6 @@ int PieceSprite::getPieceCode() const
     }
 }
 
-int PieceSprite::getDmg() const {
-    return this->dmg;
-}
-
 bool PieceSprite::mouseOverlapsPoint(int x, int y) {
     Vec2 mouse = Input::mouse_draw();
     int mx = (int) mouse.x;
@@ -46,7 +38,6 @@ PieceSprite::PieceSprite(int x, int y, int id, const String& texturePath, Game *
     this->setY(y);
     this->id = id;
     this->hp = getBaseHp(this->getPieceCode());
-    this->dmg = getBaseDmg(this->getPieceCode());
     this->active = true;
     this->texture = Texture::create(texturePath);
     this->touched = false;
@@ -118,16 +109,16 @@ void PieceSprite::update() {
                         this->gameRef->turn++;
                         this->setAttackDir(Vec2(originY, originX), Vec2(destinyY, destinyX));
                         this->attack_timer = Time::seconds + 0.2;
-                        this->positionBuffer.x = this->getX();
-                        this->positionBuffer.y = this->getY();
+                        this->positionBuffer.x = (float) this->getX();
+                        this->positionBuffer.y = (float) this->getY();
                         this->state = ATTACKING;
                     } else if (result == 3) { // Ataque destruyendo
                         this->gameRef->turn++;
                         if ((this->id >= 5 && this->id <= 7) || (this->id >= 17 && this->id <= 19)) { // Mago no se mueve al matar
                             this->setAttackDir(Vec2(originY, originX), Vec2(destinyY, destinyX));
                             this->attack_timer = Time::seconds + 0.2;
-                            this->positionBuffer.x = this->getX();
-                            this->positionBuffer.y = this->getY();
+                            this->positionBuffer.x = (float) this->getX();
+                            this->positionBuffer.y = (float) this->getY();
                             this->state = ATTACKING;
                         } else {
                             this->focus = Vec2((int) pos.x, (int) pos.y);

@@ -15,9 +15,8 @@ public:
 
     static void resetFormBuffer();
 
-    int getId();
+    int getId() const;
     void setCurrIndex(int i);
-    bool isInDefaultPosition();
 
     void update() override;
 };

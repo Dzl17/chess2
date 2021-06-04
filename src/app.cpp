@@ -4,7 +4,6 @@
 
 using namespace Blah;
 
-bool fullscreen = false;
 Screen screen = kMainMenu;
 
 Batch *batch;
@@ -42,7 +41,6 @@ void render()
 
 void update()
 {
-    if (Input::pressed(Key::F11)) App::fullscreen(fullscreen = !fullscreen);
     Assets::update(staticSprites, buttonSprites, pieceSprites, nexusSprites, &game, screen, *user);
 }
 
