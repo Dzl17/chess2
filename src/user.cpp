@@ -41,12 +41,8 @@ void User::setForms(char **formArr) const{
 }
 
 void User::calculateElo(int enemyRating, bool win){
-    if (win){
-        this->elo += 400 + enemyRating;
-    }
-    else {
-        this->elo -= 400 + enemyRating;
-    }
+    if (win) this->elo += 400 + enemyRating;
+    else this->elo -= 400 + enemyRating;
     this->elo = this->elo/(wins+losses);
 }
 

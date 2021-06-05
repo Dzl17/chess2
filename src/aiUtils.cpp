@@ -189,6 +189,10 @@ pair<PieceSprite*, Vec2> getMoveObjective(VcPieces pieces, Game *game)
 {
     vector<pair<PieceSprite*, Vec2>> movementOptions; // Posibles opciones para moverse
     map<PieceSprite*, vector<Vec2>> moveSquares = getAvailableSquares(pieces, game, false);
+    if (moveSquares.empty()) {
+        game->nexus2hp = 0;
+        return make_pair(nullptr, Vec2());
+    }
     for (auto & square:moveSquares) { // Iterar todos los pares Pieza-casillas
         Vec2 nexusSquare = getNexusRoute(square.second);
         if (distanceToNexus(nexusSquare) < 5) {

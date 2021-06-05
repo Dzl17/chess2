@@ -182,7 +182,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
         if (buttons["startButton"]->isClicked() || Input::pressed(Key::Enter) || Input::pressed(Key::S)) {
             if (isFormValid(user.formationSet.forms[user.formationSet.index])) {
                 screen = kMainGame;
-                startGame(game, user.formationSet.forms[user.formationSet.index], user.formationSet.forms[0]);
+                startGame(game, user.formationSet.forms[user.formationSet.index], user.formationSet.forms[1]);
                 loadPieceCoords(game, pieces);
                 statics["helpMenu"]->setActive(false);
             } else {

@@ -1,8 +1,7 @@
 #include <stdio.h>
-#include <stdlib.h>
-
 #include "game.h"
-#include "filem.h"
+
+#define LOGGING 1
 
 /**
  * Comprueba si las casillas introducidas son válidas.
@@ -80,17 +79,17 @@ int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY
 {
     // Posiciones fuera del tablero
     if (invalidPositions(originX, originY, destinyX, destinyY)) {
-        printf("Posicion no valida.\n");
+        if (LOGGING) printf("Posicion no valida.\n");
         return 0;
     }
 
     // Localizar pieza, si la hay
     int id = locateId(*game, originX, originY); // ID de la pieza en la posición de origen
     if (id == 0) { // Si no hay pieza
-        printf("Casilla vacia.\n");
+        if (LOGGING) printf("Casilla vacia.\n");
         return 0;
     } else if (id >= 25) { // Si la pieza es un nexo (IDs 25 y 26)
-        printf("No se puede mover el nexo.\n");
+        if (LOGGING) printf("No se puede mover el nexo.\n");
         return 0;
     }
     Piece *piece = NULL; // Puntero a pieza objetivo
@@ -107,17 +106,17 @@ int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY
 
     if (destinyCode == 0 && team == game->turn % 2) { // Casilla vacía y pieza aliada
         if (spearBlock(game->data, team, originX, originY, destinyY) && pieceType(piece) == 0) {
-            printf("El lancero no puede atravesar piezas enemigas.\n");
+            if (LOGGING) printf("El lancero no puede atravesar piezas enemigas.\n");
             return 0;
         }
         if (movePiece(piece, game, originX, originY, destinyX, destinyY)) {
-            printf("Pieza movida correctamente.\n");
+            if (LOGGING) printf("Pieza movida correctamente.\n");
             return 1;
         }
         else return 0;
     }
     else if (team != game->turn % 2) { // Mover a pieza enemiga
-        printf("Esa no es una de tus piezas.\n");
+        if (LOGGING) printf("Esa no es una de tus piezas.\n");
         return 0;
     }
     else if (((destinyCode <= 12 || destinyCode == 25) && team == 1) || ((destinyCode >= 12 && destinyCode != 25) && team == 0)) { // Atacar a pieza enemiga
@@ -134,7 +133,7 @@ int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY
         }
 
         if (!canAttack(piece, enemypiece, originX, originY, destinyX, destinyY)) {
-            printf("No puedes atacar esa casilla.\n");
+            if (LOGGING) printf("No puedes atacar esa casilla.\n");
             return 0;
         }
 
@@ -148,7 +147,7 @@ int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY
                     movePiece(enemypiece, game, originX, originY, destinyX, destinyY); // Tu pieza ha muerto y la enemiga toma su lugar
                 }
             }
-            printf("Ataque realizado.\n");
+            if (LOGGING) printf("Ataque realizado.\n");
             return 2;
         } else if (attackResult == 1) { // Has eliminado la pieza enemiga
             if (pieceType(piece) != 1){ // Si no eres un mago tomas tu posicion
@@ -156,19 +155,19 @@ int updatePiece(Game *game, int originX, int originY, int destinyX, int destinyY
             } else {    // Si eres un mago la pieza es simplemente eliminada
                 game->data[destinyX][destinyY] = 0;
             }
-            printf("Pieza eliminada.\n");
+            if (LOGGING) printf("Pieza eliminada.\n");
             return 3;
         } else if (attackResult == 2) { // Has atacado a un nexo
             if (enemypiece->id == 25) game->nexus1hp -= piece->dmg;  // Se le resta vida a la variable global de vida nexo
             else if (enemypiece->id == 26) game->nexus2hp -= piece->dmg;
-            printf("Nexo atacado.\n");
+            if (LOGGING) printf("Nexo atacado.\n");
             return 2;
         } else {
             return 0;
         }
     }
     else { // Pieza propia
-        printf("La casilla esta ocupada por una pieza propia.\n");
+        if (LOGGING) printf("La casilla esta ocupada por una pieza propia.\n");
         return 0;
     }
 }
@@ -180,7 +179,7 @@ int movePiece(Piece *piece, Game *game, int originX, int originY, int destinyX, 
         game->data[destinyX][destinyY] = piece->id; // Ocupas la casilla libre
         return 1;
     } else {
-        printf("Movimiento ilegal, ID: %d\n", piece->id);
+        if (LOGGING) printf("Movimiento ilegal, ID: %d\n", piece->id);
         return 0;
     }
 }
