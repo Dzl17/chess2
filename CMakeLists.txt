@@ -227,7 +227,7 @@ add_executable(chess2 ${SOURCE_FILES}
         dependencies/blah/src/internal/platform_backend_win32.cpp
         src/user.cpp src/user.h src/aiUtils.cpp src/aiUtils.h)
 
-target_link_libraries(chess2 PUBLIC ${LIBS} SDL2 SDL2_Image winmm)
+target_link_libraries(chess2 PUBLIC ${LIBS} SDL2 SDL2_Image)
 
 add_executable(chess2cmd ${SOURCE_FILES}
         src/game/filem.c

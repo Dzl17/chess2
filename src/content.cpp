@@ -11,7 +11,7 @@ void loadDPSPositions();
 void resetDPSprites();
 
 void renderPieceData(Batch *batch, VcPieces& pieces, UmStatics& statics, Game game);
-void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, const TextureRef& blueNexusTex);
+void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, const TextureRef& blueNexusTex, int x, int y);
 void renderAIPositions(Batch *batch, VcPieces& pieces, Game game);
 
 String getSpritePath(int id);
@@ -31,6 +31,8 @@ SpriteFont font;
 std::map<int, DraggablePieceSprite*> dpSprites;
 bool useBrownBackground = false;
 bool aiPositionTag = false;
+bool leftPlayerHasChosen = false;
+int leftPlayerFormationIndex = 0;
 double form_error_timer = 0;
 double load_msg_timer = 0;
 double save_msg_timer = 0;
@@ -65,8 +67,12 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         buttons["rightArrowButton"]->draw(batch);
         buttons["startButton"]->draw(batch);
         buttons["backButton"]->draw(batch);
-        renderFormation(batch, pieces, user.formationSet.forms[user.formationSet.index], nexuses[0].texture);
+        renderFormation(batch, pieces, user.formationSet.forms[user.formationSet.index], nexuses[0].texture, 544, 104);
         writeFormSetPos(batch, user.formationSet);
+        if (leftPlayerHasChosen) {
+            statics["leftFormBackground"]->draw(batch);
+            renderFormation(batch, pieces, user.formationSet.forms[leftPlayerFormationIndex], nexuses[0].texture, 100, 104);
+        }
         if (Time::seconds < form_error_timer) {
             batch->str(font, "Invalid", Vec2(120, 600), Color::white);
             batch->str(font, "formation.", Vec2(124, 640), Color::white);
@@ -115,7 +121,7 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         buttons["rightArrowButton"]->draw(batch);
         buttons["editButton"]->draw(batch);
         buttons["backButton"]->draw(batch);
-        renderFormation(batch, pieces, user.formationSet.forms[user.formationSet.index], nexuses[0].texture);
+        renderFormation(batch, pieces, user.formationSet.forms[user.formationSet.index], nexuses[0].texture, 544, 104);
         writeFormSetPos(batch, user.formationSet);
     }
     else if (screen == kFormEditionMenu) {
@@ -142,6 +148,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
     if (screen == kMainMenu) {
         if (buttons["playMenuButton"]->isClicked() || Input::pressed(Key::P) || Input::pressed(Key::Enter)) {
             screen = kFormSelectionMenu; // Play
+            leftPlayerHasChosen = false;
         }
         if (buttons["formsMenuButton"]->isClicked() || Input::pressed(Key::F)) {
             screen = kFormEditionSelectionMenu; // Forms
@@ -181,10 +188,22 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
         }
         if (buttons["startButton"]->isClicked() || Input::pressed(Key::Enter) || Input::pressed(Key::S)) {
             if (isFormValid(user.formationSet.forms[user.formationSet.index])) {
-                screen = kMainGame;
-                startGame(game, user.formationSet.forms[user.formationSet.index], user.formationSet.forms[1]);
-                loadPieceCoords(game, pieces);
-                statics["helpMenu"]->setActive(false);
+                if (PieceSprite::multiplayer) {
+                    if (!leftPlayerHasChosen) {
+                        leftPlayerHasChosen = true;
+                        leftPlayerFormationIndex = user.formationSet.index;
+                    } else {
+                        screen = kMainGame;
+                        startGame(game, user.formationSet.forms[leftPlayerFormationIndex], user.formationSet.forms[user.formationSet.index]);
+                        loadPieceCoords(game, pieces);
+                        statics["helpMenu"]->setActive(false);
+                    }
+                } else {
+                    screen = kMainGame;
+                    startGame(game, user.formationSet.forms[user.formationSet.index], user.formationSet.forms[1]);
+                    loadPieceCoords(game, pieces);
+                    statics["helpMenu"]->setActive(false);
+                }
             } else {
                 form_error_timer = Time::seconds + 2;
             }
@@ -325,6 +344,7 @@ void loadStatics(UmStatics& statics)
     statics.insert({"backgroundG",       new StaticSprite(0,     0, "data/img/backgroundG.png",         true)});
     statics.insert({"backgroundB",       new StaticSprite(0,     0, "data/img/backgroundB.png",         true)});
     statics.insert({"formsBackground",   new StaticSprite(0,     0, "data/img/formsBackground.png",     true)});
+    statics.insert({"leftFormBackground",new StaticSprite(92,   96, "data/img/formBackground.png",     true)});
     statics.insert({"choosingBackground",new StaticSprite(0,     0, "data/img/choosingBackground.png",  true)});
     statics.insert({"userBackground",    new StaticSprite(0,     0, "data/img/userBackground.png",      true)});
     statics.insert({"emptyBackground",   new StaticSprite(0,     0, "data/img/emptyBackground.png",     true)});
@@ -644,17 +664,16 @@ void renderPieceData(Batch *batch, VcPieces& pieces, UmStatics& statics, Game ga
     }
 }
 
-void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, const TextureRef& blueNexusTex)
+void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, const TextureRef& blueNexusTex, int x, int y)
 {
-    int x = 544;
-    int y = 104;
+    int baseX = x;
     for (int i = 0; i < FORM_LENGTH; i++) {
         if (formation[i] != 'e' && formation[i] != 'N') batch->tex(getPieceTexture(pieces, formation[i]), Vec2(x, y));
         else if (formation[i] == 'N') batch->tex(blueNexusTex, Vec2(x, y));
 
         if ((i+1) % 3 == 0) {
             y += 64;
-            x = 544;
+            x = baseX;
         }
         else {
             x += 64;
