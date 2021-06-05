@@ -11,12 +11,12 @@ void loadDPSPositions();
 void resetDPSprites();
 
 void renderPieceData(Batch *batch, VcPieces& pieces, UmStatics& statics, Game game);
-void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, const TextureRef& blueNexusTex, int x, int y);
+void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, const TextureRef& blueNexusTex, int x, int y, bool flip);
 void renderAIPositions(Batch *batch, VcPieces& pieces, Game game);
 
 String getSpritePath(int id);
 std::string getIconKey(int id);
-TextureRef getPieceTexture(VcPieces& pieces, char pieceLetter);
+TextureRef getPieceTexture(VcPieces& pieces, char pieceLetter, bool flip);
 char *getPieceName(int id);
 bool isFormValid(const char *form);
 bool areUserAnimationsFinished(VcPieces& pieces);
@@ -67,11 +67,13 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         buttons["rightArrowButton"]->draw(batch);
         buttons["startButton"]->draw(batch);
         buttons["backButton"]->draw(batch);
-        renderFormation(batch, pieces, user.formationSet.forms[user.formationSet.index], nexuses[0].texture, 544, 104);
+        renderFormation(batch, pieces, user.formationSet.forms[user.formationSet.index], nexuses[0].texture, 544, 104,
+                        PieceSprite::multiplayer && leftPlayerHasChosen);
         writeFormSetPos(batch, user.formationSet);
-        if (leftPlayerHasChosen) {
+        if (leftPlayerHasChosen && PieceSprite::multiplayer) {
             statics["leftFormBackground"]->draw(batch);
-            renderFormation(batch, pieces, user.formationSet.forms[leftPlayerFormationIndex], nexuses[0].texture, 100, 104);
+            batch->str(font, "Player 1", Vec2(70,42), Color::white);
+            renderFormation(batch, pieces, user.formationSet.forms[leftPlayerFormationIndex], nexuses[0].texture, 100, 104, false);
         }
         if (Time::seconds < form_error_timer) {
             batch->str(font, "Invalid", Vec2(120, 600), Color::white);
@@ -121,7 +123,7 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         buttons["rightArrowButton"]->draw(batch);
         buttons["editButton"]->draw(batch);
         buttons["backButton"]->draw(batch);
-        renderFormation(batch, pieces, user.formationSet.forms[user.formationSet.index], nexuses[0].texture, 544, 104);
+        renderFormation(batch, pieces, user.formationSet.forms[user.formationSet.index], nexuses[0].texture, 544, 104, false);
         writeFormSetPos(batch, user.formationSet);
     }
     else if (screen == kFormEditionMenu) {
@@ -280,7 +282,7 @@ void Assets::update(UmStatics statics, UmButtons buttons, VcPieces& pieces, VcNe
     else if (screen == kFormEditionMenu) {
         for (auto & piece:dpSprites) piece.second->update();
         if (buttons["saveButton"]->isClicked() || Input::pressed(Key::S) || Input::pressed(Key::Enter)) {
-            user.formationSet.forms[user.formationSet.index] = DraggablePieceSprite::formBuffer;
+            strncpy(user.formationSet.forms[user.formationSet.index], DraggablePieceSprite::formBuffer, 21);
             screen = kMainMenu;
         }
         if (buttons["resetButton"]->isClicked() || Input::pressed(Key::R)) {
@@ -413,6 +415,7 @@ void loadDPSprites()
 
 void loadDPSPositions()
 {
+    resetDPSprites();
     Vec2 collBuffer[FORM_LENGTH];
     int x = 544;
     int y = 104;
@@ -664,11 +667,14 @@ void renderPieceData(Batch *batch, VcPieces& pieces, UmStatics& statics, Game ga
     }
 }
 
-void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, const TextureRef& blueNexusTex, int x, int y)
+void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, const TextureRef& blueNexusTex, int x, int y, bool flip)
 {
+    if (flip) {
+        x += 128;
+    }
     int baseX = x;
     for (int i = 0; i < FORM_LENGTH; i++) {
-        if (formation[i] != 'e' && formation[i] != 'N') batch->tex(getPieceTexture(pieces, formation[i]), Vec2(x, y));
+        if (formation[i] != 'e' && formation[i] != 'N') batch->tex(getPieceTexture(pieces, formation[i], flip), Vec2(x, y));
         else if (formation[i] == 'N') batch->tex(blueNexusTex, Vec2(x, y));
 
         if ((i+1) % 3 == 0) {
@@ -676,7 +682,8 @@ void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, cons
             x = baseX;
         }
         else {
-            x += 64;
+            if (flip) x -= 64;
+            else x += 64;
         }
     }
 }
@@ -699,7 +706,7 @@ void renderAIPositions(Batch *batch, VcPieces& pieces, Game game)
     }
 }
 
-TextureRef getPieceTexture(VcPieces& pieces, char pieceLetter)
+TextureRef getPieceTexture(VcPieces& pieces, char pieceLetter, bool flip)
 {
     int id;
     switch (pieceLetter) {
@@ -709,7 +716,7 @@ TextureRef getPieceTexture(VcPieces& pieces, char pieceLetter)
         case 'g': id = 11; break;
         default: id = -1; break;
     }
-
+    if (flip) id += 12;
     for (auto & piece:pieces) {
         if (piece.id == id) return piece.texture;
     }
