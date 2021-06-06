@@ -67,7 +67,8 @@ void Assets::render(UmStatics statics, UmButtons buttons, VcPieces&pieces, VcNex
         buttons["rightArrowButton"]->draw(batch);
         buttons["startButton"]->draw(batch);
         buttons["backButton"]->draw(batch);
-        renderFormation(batch, pieces, user.formationSet.forms[user.formationSet.index], nexuses[0].texture, 544, 104,
+        renderFormation(batch, pieces, user.formationSet.forms[user.formationSet.index],
+                        nexuses[PieceSprite::multiplayer && leftPlayerHasChosen].texture, 544, 104,
                         PieceSprite::multiplayer && leftPlayerHasChosen);
         writeFormSetPos(batch, user.formationSet);
         if (leftPlayerHasChosen && PieceSprite::multiplayer) {
@@ -366,6 +367,7 @@ void loadStatics(UmStatics& statics)
     statics.insert({"mainMenu",          new StaticSprite(0,     0, "data/img/mainMenu.png",            true)});
 }
 
+// Carga las coordenadas base de las piezas
 void loadPieceCoords(Game *gameRef, VcPieces& pieces)
 {
     for (int i = 0; i < B_ROWS; i++) {
@@ -384,6 +386,7 @@ void loadPieceCoords(Game *gameRef, VcPieces& pieces)
     }
 }
 
+// Carga las piezas arrastrables del menú de edición de formaciones
 void loadDPSprites()
 {
     int x = 128;
@@ -413,9 +416,10 @@ void loadDPSprites()
     }
 }
 
+// Carga las posiciones de las piezas arrastrables del menú de edición de formaciones
 void loadDPSPositions()
 {
-    resetDPSprites();
+    resetDPSprites();   // Resetear los sprites para que los no colocados no se bugeen
     Vec2 collBuffer[FORM_LENGTH];
     int x = 544;
     int y = 104;
@@ -485,6 +489,7 @@ void loadDPSPositions()
     }
 }
 
+// Coloca las piezas arrastrables del menú de edición de formaciones en la posición por defecto (a la izquierda)
 void resetDPSprites()
 {
     int x = 128;
@@ -518,6 +523,7 @@ void resetDPSprites()
     }
 }
 
+// Guarda la partida en su estado actual
 void saveCurrentGame(Game *game)
 {
     int savePieces[24][4];
@@ -537,6 +543,7 @@ void saveCurrentGame(Game *game)
     saveGame(game->turn, game->nexus1hp, game->nexus2hp, savePieces);
 }
 
+// Carga la partida guardada
 void loadCurrentGame(Game *game)
 {
     int **data = loadGame(); // Cargado de los datos de la partida
@@ -562,6 +569,7 @@ void loadCurrentGame(Game *game)
     free(data);
 }
 
+// Devuelve la ruta de la imagen de cada pieza
 String getSpritePath(int id)
 {
     if (id >= 1 && id <= 4) {
@@ -585,6 +593,7 @@ String getSpritePath(int id)
     }
 }
 
+// Devuelve la 'key' del icono de pieza de id parámetro
 std::string getIconKey(int id)
 {
     if (id >= 1 && id <= 4) {
@@ -606,6 +615,7 @@ std::string getIconKey(int id)
     }
 }
 
+// Devulve el nombre de la pieza de id parámetro
 char *getPieceName(int id) {
     switch (id) {
         case 0: return (char*) "Spearman";
@@ -616,6 +626,7 @@ char *getPieceName(int id) {
     }
 }
 
+// Verifica si una formación introducida es válida (todas las piezas colocadas)
 bool isFormValid(const char *form)
 {
     int s = 0;
@@ -633,6 +644,7 @@ bool isFormValid(const char *form)
     return s == 4 && a == 3 && w == 3 && g == 2 && form[9] == 'N';
 }
 
+// Comprueba si no hay animaciones del lado izquierdo en curso (utiliado en modo un jugador)
 bool areUserAnimationsFinished(VcPieces& pieces)
 {
     bool finished = true;
@@ -642,6 +654,7 @@ bool areUserAnimationsFinished(VcPieces& pieces)
     return finished;
 }
 
+// Renderiza las casillas de movimiento/ataque de las piezas seleccionadas
 void renderPieceData(Batch *batch, VcPieces& pieces, UmStatics& statics, Game game)
 {
     for (auto & piece : pieces) {
@@ -667,6 +680,7 @@ void renderPieceData(Batch *batch, VcPieces& pieces, UmStatics& statics, Game ga
     }
 }
 
+// Renderiza una formación introducida en la posición solicitada
 void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, const TextureRef& blueNexusTex, int x, int y, bool flip)
 {
     if (flip) {
@@ -688,6 +702,7 @@ void renderFormation(Batch *batch, VcPieces& pieces, const char *formation, cons
     }
 }
 
+// Función de debugging. Renderiza las casillas de movimiento/ataque de la IA
 void renderAIPositions(Batch *batch, VcPieces& pieces, Game game)
 {
     for (int i = 12; i < pieces.size(); i++) {
@@ -706,6 +721,7 @@ void renderAIPositions(Batch *batch, VcPieces& pieces, Game game)
     }
 }
 
+// Devuelve una referencia a la textura solicitada
 TextureRef getPieceTexture(VcPieces& pieces, char pieceLetter, bool flip)
 {
     int id;
@@ -723,6 +739,7 @@ TextureRef getPieceTexture(VcPieces& pieces, char pieceLetter, bool flip)
     return pieces[0].texture;
 }
 
+// Escribe el índice de la formación seleccionada
 void writeFormSetPos(Batch *batch, FormationSet& formSet)
 {
     char index_str[4];
@@ -734,6 +751,7 @@ void writeFormSetPos(Batch *batch, FormationSet& formSet)
     batch->str(font, index_str, Vec2(594, 50), Color::white);
 }
 
+// Escribe los datos de vida de la pieza parámetro
 void writePieceHp(Batch *batch, PieceSprite& piece)
 {
     // Dibujar HP
@@ -744,6 +762,7 @@ void writePieceHp(Batch *batch, PieceSprite& piece)
     batch->str(font, hp_str, Vec2(620, 604), Color::black);
 }
 
+// Escribe los datos de daño de la pieza parámetro
 void writePieceDmg(Batch *batch, PieceSprite& piece)
 {
     // Dibujar DMG
@@ -754,6 +773,7 @@ void writePieceDmg(Batch *batch, PieceSprite& piece)
     batch->str(font, dmg_str, Vec2(620, 640), Color::black);
 }
 
+// Escribe los datos del usuario parámetro
 void writeUserData(Batch *batch, User user)
 {
     int offset = 0;
@@ -796,6 +816,7 @@ void writeUserData(Batch *batch, User user)
     batch->str(font, losses_str, Vec2(412, 358 + offset), Color::white);
 }
 
+// Lleva a cabo el inicio de sesión/registro de usuario
 User* Login::runSetup(DBManager& dbManager, bool& exit)
 {
     int op = 0;
@@ -858,6 +879,7 @@ User* Login::runSetup(DBManager& dbManager, bool& exit)
     }
 }
 
+// Lleva acabo la elección de modo de juego
 bool Login::chooseGamemode(User& user, bool& exit)
 {
     int op = 0;
